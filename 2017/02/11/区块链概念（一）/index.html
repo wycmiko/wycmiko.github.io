@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        区块链概念（一） · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">区块链概念（一）</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            区块链概念（一）
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 区块链>区块链</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/02/11</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>2008年10月，神秘人“中本聪”（Satoshi Nakamoto）发表论文《比特币：一种点对点的电子现金系统》，根据中本聪的思路设计发布的开源软件以及建构其上的P2P网络。比特币是一种P2P形式的数字货币。点对点的传输意味着一个去中心化的支付系统。2009年1月，比特币网络诞生，中本聪发布了开源的第一版比特币客户端。</p>
+<h2 id="比特币特点："><a href="#比特币特点：" class="headerlink" title="比特币特点："></a>比特币特点：</h2><ul>
+<li>加密数字货币，互联网上点到点支付转账，无需中介机构，流通成本</li>
+<li>去中心，无发行机构；比特币通过特定算法的大量计算产生，总量2100万</li>
+<li>交易记录不可更改，网络节点集体维护账本</li>
+<li>防止双重支付</li>
+<li>匿名身份，匿名交易，私密性强</li>
+</ul>
+<h2 id="比特币用途："><a href="#比特币用途：" class="headerlink" title="比特币用途："></a>比特币用途：</h2><ul>
+<li>投资标的</li>
+<li>支付汇款</li>
+<li>资金公开</li>
+<li>非法用途（洗钱、赌博等）</li>
+</ul>
+<h2 id="区块链定义"><a href="#区块链定义" class="headerlink" title="区块链定义:"></a>区块链定义:</h2><p>世界经济论坛创始人克劳斯·施瓦布（Klaus Schwab）说，自蒸汽机、电和计算机发明以来，我们又迎来了四次工业革命——数字革命，而区块链技术就是第四次工业革命的成果。<br>区块链技术起源于2008年中本聪《比特币：一种点对点电子现金系统》，区块链诞生自中本聪的比特币。区块链是比特币的核心创新,它是一个分布式账本，一个通过去中心化，去信任的方式集体维护的一个可靠数据库的技术方案。</p>
+<h3 id="从数据角度看"><a href="#从数据角度看" class="headerlink" title="从数据角度看"></a>从数据角度看</h3><p>区块链是一种几乎不可能被更改的分布式数据库，这里的“分布式”不仅体现为数据的分布式存储，也体现数据的“分布式记录”（即由系统参与者共同维护）。</p>
+<h3 id="从技术角度看"><a href="#从技术角度看" class="headerlink" title="从技术角度看"></a>从技术角度看</h3><p>区块链并不是一种单一的技术，而是分布式数据存储、点对点传输、共识机制、加密算法等多种技术整合的结果，这些技术以新的结构而组合在一起，形成的新型应用模式。区块链是信任革命，是价值互联网和金融科技的关键底层技术。交易双方不需要中心化的第三方机构进行交易背书，而只需要信任数学算法就可以建立互信。<br>区块链是算法在为人们创造信用，达成共识背书。共建信用，重构价值。</p>
+<p><img src="/avatar/qukuai1.png" alt="Alt text" title="区块链数据结构"></p>
+<h2 id="区块链数据结构"><a href="#区块链数据结构" class="headerlink" title="区块链数据结构:"></a>区块链数据结构:</h2><p>时序数据，可追溯验证，数字签名不可篡改，分布式多节点存储。<br><img src="/avatar/qukuai2.png" alt="Alt text" title="区块链数据结构"></p>
+<h2 id="区块链网络类型"><a href="#区块链网络类型" class="headerlink" title="区块链网络类型:"></a>区块链网络类型:</h2><p><img src="/avatar/qukuai3.png" alt="Alt text" title="区块链网络类型"></p>
+<h2 id="发展阶段"><a href="#发展阶段" class="headerlink" title="发展阶段"></a>发展阶段</h2><p><img src="/avatar/qukuai4.png" alt="Alt text" title="区块链发展阶段"></p>
+<h2 id="主要开源区块链平台项目"><a href="#主要开源区块链平台项目" class="headerlink" title="主要开源区块链平台项目"></a>主要开源区块链平台项目</h2><p>  <strong> 超级账本Hyperledger </strong>是Linux基金会2015年发起的区块链开源项目，提供分布式账簿平台，支持各种增值解决方案的开发。以智能合约为中心，商用情形考虑比较周到。适合联盟链，私有链的构建。<br>  <strong> 以太坊Ethereum </strong>是瑞士非盈利组织Ethereum Foundation管理，2015年正式版发布，开源的区块链底层平台和编程语言，提供了丰富的API和接口，在算法、智能合约和账本扩展性有较大改善。超级账本和以太坊是目前最主流的开源区块链平台，超级账本在会员和权限上比较完善。以太坊生态圈更活跃和成熟，应用多。目前以太坊正式运行1.0版本，采用的是POW挖矿的共识算法，公网TPS是25笔。开发中的1.5版本，将采用类POSCasper算法，以使区块链的确认速度相对于POW的线性效率，达到指数级。采用Casper后将会更好的确认机制，以及大幅降低能量消耗。<br>  瑞波Ripple世界上第一个开放的支付网络，瞄准细分应用场景，银行间直接转账、外汇兑换和跨境支付结算。目前未考虑智能合约、隐私和监管支持。</p>
+<h2 id="超级账本Hyperledger平台架构"><a href="#超级账本Hyperledger平台架构" class="headerlink" title="超级账本Hyperledger平台架构"></a>超级账本Hyperledger平台架构</h2><p><img src="/avatar/qukuai5.png" alt="Alt text" title="超级账本Hyperledger平台架构"><br>1）MembershipServices这项服务用来管理节点身份、隐私、保密性、可审计性。<br>2）Blockchain services使用建立在HTTP/2上的P2P协议来管理分布式账本，提供最有效的哈希算法来维护区块链世界状态的副本。采取可插拔的方式来根据具体需求来设置共识协议，比如PBFT，Raft，PoW和PoS等等，IBM首选PBFT算法。<br>3）Chaincode services 会提供一种安全且轻量级的沙盒运行模式，来在VP节点上执行chaincode逻辑，类似以太坊的EVM虚拟机及其他上面运行的智能合约。</p>
+<h2 id="以太坊Ethereum平台架构"><a href="#以太坊Ethereum平台架构" class="headerlink" title="以太坊Ethereum平台架构"></a>以太坊Ethereum平台架构</h2><p><img src="/avatar/qukuai6.png" alt="Alt text" title="以太坊Ethereum平台架构"><br> POW(Proof of Work)工作量证明。<br> POS(Proof of Stake)权益证明。</p>
+<h2 id="主要区块链对比"><a href="#主要区块链对比" class="headerlink" title="主要区块链对比"></a>主要区块链对比</h2><p><img src="/avatar/qukuai7.png" alt="Alt text" title="主要区块链对比"></p>
+<p>  目前以太坊正式运行1.0版本，采用的是POW挖矿的共识算法，公网TPS是25笔。开发中的1.5版本，将采用类POS的Casper算法，以使区块链的确认速度相对于POW的线性效率，达到指数级。采用Casper后将会更好的确认机制，以及大幅降低能量消耗。</p>
+<h2 id="区块链五层技术架构"><a href="#区块链五层技术架构" class="headerlink" title="区块链五层技术架构"></a>区块链五层技术架构</h2><p><img src="/avatar/qukuai8.png" alt="Alt text" title="主要区块链对比"></p>
+<p>POW (Proof of Work)工作量证明。<br>POS (Proof of Stake)权益证明。<br>DPOS (Delegated Proof of Stake)委任权益证明。<br>PBFT (Practical Byzantine Fault Tolerance)实用拜占庭容错算法。<br>PBFT算法中，如果有超过2/3的正常节点，整个系统就可以正常工作。总成员数N&gt;=3F+1，F为恶意节点数。</p>
+<h2 id="区块链上交易过程"><a href="#区块链上交易过程" class="headerlink" title="区块链上交易过程"></a>区块链上交易过程</h2><p><img src="/avatar/qukuai9.png" alt="Alt text" title="区块链上交易过程"></p>
+<h3 id="关键技术"><a href="#关键技术" class="headerlink" title="关键技术"></a>关键技术</h3><ul>
+<li>P2P网络<ul>
+<li>共识机制</li>
+<li>数据可验证</li>
+<li>奖励合作</li>
+<li>智能合约</li>
+<li>安全体系</li>
+</ul>
+</li>
+</ul>
+<h3 id="P2P点到点对等网络"><a href="#P2P点到点对等网络" class="headerlink" title="P2P点到点对等网络"></a>P2P点到点对等网络</h3><ul>
+<li>对等网络</li>
+<li>权限对等、数据公开</li>
+<li>数据分布式、高冗余存储</li>
+<li>中心网络</li>
+<li>中央服务器分配权限</li>
+<li>数据备份</li>
+</ul>
+<h3 id="共识机制"><a href="#共识机制" class="headerlink" title="共识机制"></a>共识机制</h3><ul>
+<li>共识过程</li>
+<li>区块链系统中各个节点达成一致的策略和方法</li>
+<li>将全网交易数据客观记录并且不可篡改的过程</li>
+<li>简单说就是少数服从多数</li>
+<li>共识算法</li>
+<li>POW工作量证明</li>
+<li>POS权益证明</li>
+<li>DPOS委任权益证明</li>
+<li>PBFT实用拜占庭容错算法</li>
+<li>防止“双重支付”</li>
+<li>信息复制的零边际成本 vs 价值的唯一不可复制</li>
+<li>信息互联网 -&gt; 价值互联网</li>
+</ul>
+<h2 id="分布式共识机制概况"><a href="#分布式共识机制概况" class="headerlink" title="分布式共识机制概况"></a>分布式共识机制概况</h2><p><img src="/avatar/qukuai10.png" alt="Alt text" title="分布式共识机制概况"></p>
+<h2 id="数据可验证"><a href="#数据可验证" class="headerlink" title="数据可验证"></a>数据可验证</h2><ul>
+<li>PKI公钥体系</li>
+<li>数字签名提供密码学证据</li>
+<li>“零知识证明”等隐私保护算法</li>
+<li>不可变数据</li>
+<li>只可添加，不可编辑</li>
+<li>不可变数据+时间戳，为互联网加上时间轴<br>零知识证明：证明者向验证者证明并使其相信自己知道或拥有某一消息，但证明过程不能向验证者泄漏任何关于被证明消息的信息。</li>
+</ul>
+<h3 id="数据区块"><a href="#数据区块" class="headerlink" title="数据区块"></a>数据区块</h3><pre><code>数据区块 = 区块头 (Header) + 区块体 (Body)
+</code></pre><p><img src="/avatar/qukuai11.png" alt="Alt text" title="区块链数据区块"></p>
+<ul>
+<li>区块头 = 当前版本号 (Version) + 前一区块Hash地址(Prev-block)+ Merkle根 (Merkle-root) + 时间戳 (Timestamp) + …</li>
+<li>区块体则包括当前区块的交易数量以及经过验证的、区块创建过程中生成的所有交易记录。这些记录通过 Merkle 树的哈希过程生成唯一的Merkle根并记入区块头</li>
+<li>时间戳 </li>
+<li>区块数据的存在性证明 (Proof of existence)，有助于形成不可篡改和不可伪造的区块链数据库</li>
+<li>Hash哈希函数</li>
+<li>区块链通常并不直接保存原始数据或交易记录, 而是保存其哈希函数值, 即将原始数据编码为特定长度的由数字和字母组成的字符串后记入区块链。通过哈希输出几乎不能反<br>推输入值 (单向性)。</li>
+<li>Merkle树</li>
+<li>Merkle 树是区块链的重要数据结构, 其作用是快速归纳和校验区块数据的存在性和完整性。</li>
+</ul>
+<h3 id="非对称加密算法："><a href="#非对称加密算法：" class="headerlink" title="非对称加密算法："></a>非对称加密算法：</h3><p>由对应的一对唯一性密钥（即公开密钥和私有密钥）组成的加密方法。任何获悉用户公钥的人都可用用户的公钥对信息进行加密与用户实现安全信息交互。</p>
+<h3 id="奖励合作制度的设计"><a href="#奖励合作制度的设计" class="headerlink" title="奖励合作制度的设计"></a>奖励合作制度的设计</h3><ul>
+<li>非合作博弈</li>
+<li>不基于信任，无外部强制力</li>
+<li>合作是一种演化稳定策略，合作达到纳什均衡</li>
+<li>攻击问题</li>
+<li>少数服从多数</li>
+</ul>
+<h2 id="1-0-数字货币-与-2-0-支付结算"><a href="#1-0-数字货币-与-2-0-支付结算" class="headerlink" title="1.0 数字货币 与 2.0 支付结算"></a>1.0 数字货币 与 2.0 支付结算</h2><p>2017年2月，央行在发行数字货币方面取得了新进展。据了解，央行推动的基于区块链的数字票据交易平台已测试成功，由央行发行的法定数字货币已在该平台试运行，春节后央行旗下的数字货币研究所也将正式挂牌。这意味着在全球范围内，中国央行将成为首个发行数字货币并开展真实应用的中央银行。<br>央行研发的数字货币率先探索了区块链技术的实际应用。据央行科技司司长李伟介绍，近年来，部分国家的中央银行、商业银行、互联网企业积极探索区块链技术及其在金融领域的应用。作为新技术，区块链技术在系统稳定性、应用安全性、业务模式等方面尚未成熟，目前主要适用于非实时性的、轻量级信息的、交易吞吐量较小和信息敏感度较低的业务场景。<br>央行数字货币私有云:用于支撑央行数字货币运行的底层基础设施。<br>数字货币:由央行担保并签名发行的代表具体金额的加密数字串。<br>数字货币发行库:人民银行在央行数字货币私有云上存放央行数字货币发行基金的数据库。<br>数字货币商业银行库:商业银行存放央行数字货币的数据库,可以在本地也可以在央行数字货币私有云上。<br>数字货币数字钱包:指在流通市场上个人或单位用户使用央行数字货币的客户端,此钱包可以基于硬件也可以基于软件。<br>认证中心:央行对央行数字货币机构及用户身份信息进行集中管理。<br>登记中心:记录央行数字货币及对应用户身份,完成权属登记;记录流水,完成央行数字货币产生、流通、清点核对及消亡全过程登记。<br>大数据分析中心:反洗钱、支付行为分析、监管调控指标分析等。<br>央行数字货币研究所筹备组组长、科技司副司长姚前公开表示,央行发行法定数字货币的原型方案已完成两轮修订。姚前称,央行发行的数字货币的目的是替代实物现金,降低传统纸币发行、流通的成本,提升经济交易活动的便利性和透明度,至于何时能推出中国的法定数字货币,现在并没有一个时间表。那么,这个听起来包含科技含量的数字货币到底是什么?与虚拟货币又有什么区别呢?数字货币又将如何发行和流通呢?数字货币有别于虚拟货币,不是比特币也不是Q币。<br>对于很多人而言,数字货币的概念云里雾里,也容易将数字货币与电子货币、虚拟货币混淆。其实,从广义来看,数字货币包含的方面比较广阔,包括电子货币、虚拟货币和法定数字货币。OKCoin币行副总裁段新星对新快报记者表示,电子货币是法币的电子化,包括我们常见的银行卡、网银、电子现金等;还有近年来发展起来的第三方支付,如支付宝、财付通等。“这些电子货币无论其形态如何,通过哪些机构流通,其最初的源头都是中央银行发行的法币。”<br>他表示,与电子货币一样,虚拟货币也是无形的,两者之间最重要的区别就是发行者的不同。虚拟货币是非法币的电子化,其最初的发行者并不是央行。比如腾讯Q币以及其他的游戏币等,这类虚拟货币主要限于特定的虚拟环境里流通;再比如比特币,就是通过区块链技术,较好地解决了去中心化、去信任的问题,实现了全球流通,在世界范围内受到追捧。<br>也就是说,虚拟货币只能在网络中封闭流通,而数字货币是可以被用于真实的商品和服务交易,但只有国家发行的数字货币才是法定数字货币,比特币是非法定数字货币。<br>而对于法定数字货币,目前国际尚无统一定义。央行科技司副司长兼数字货币研究所筹备组组长姚前认为,央行研究发行的数字货币是指数字化人民币,从各国方案看属于法定加密数字货币,其本身是货币而不仅仅是支付工具。而与之对应,虚拟货币也称为非法定数字货币。<br>数字货币要如何落地?<br>中央银行负责发行与验证监测,商业银行负责流通服务。作为法定数字货币必须由国家主权保障,姚前表示,我国数字货币在设计时的初步考虑是,由央行主导,在保持实物现金发行的同时发行以加密算法为基础的数字货币,流通现金(M0)的一部分由数字货币构成。为充分保障数字货币的安全性,发行者可采用安全芯片为载体,来保护密钥和算法运算过程的安全。<br>“央行数字货币的发行和回笼基于 中央银行——商业银行 的二元体系来完成,”他表示,“将由中央银行负责数字货币的发行与验证监测,商业银行从中央银行申请到数字货币后,直接面向社会,负责提供数字货币流通服务与应用生态体系构建服务。”但是数字货币这个体系到底是如何运行的,又包括哪些东西呢?姚前解释,在央行数字货币体系中,有央行的数字货币发行库、商业银行的数字货币银行库和用户端(如手机)的数字钱包。这三者的关系是这样的,根据数字货币发行总量,央行统一生成数字货币(即生产数字货币基金),存放在央行发行库中;然后再根据商业银行数字货币的需求申请,将数字货币发送到相应商业银行存放数字货币的数据库,即数字货币从发行库到银行库。<br>当用户申请提取数字货币时,其实就相当于我们现在取钱的行为,那么数字货币就从银行库到流通环节,进入用户客户端的存储介质中(如手机内),即从银行库到用户的数字钱包;在流通环节的话,数字货币实际上就是在两个用户各自数字钱包间进行转移来完成支付。比如小张直接打开自己的数字钱包完成向小王数字钱包的转账。</p>
+<blockquote>
+<p>来源：<a href="http://news.163.com/16/1205/00/C7FU32U500014Q4P.html" target="_blank" rel="noopener">http://news.163.com/16/1205/00/C7FU32U500014Q4P.html</a></p>
+</blockquote>
+<p>Google投资的Ripple最近又获得了5500万美元B轮融资，这家公司采用区块链技术为全球大型银行解决金融交易问题。截止目前，Ripple共获得了9300万美元融资。Ripple宣布一些大型银行会加入其网络，其中包括渣打、西太银行、澳大利亚国家银行、瑞穗金融集团、蒙特利尔银行金融集团和上海华瑞银行等。每家金融机构都在Ripple的网络中成功进行过转账，并都在依据各自的使用场景开发商业化产品。<br>公司的主要业务是帮助银行让跨境支付更便捷，其核心产品则是Ripple协议。Ripple协议本质上是一个实时结算系统，和货币兑换与汇款网络，它基于一个分布式开源互联网协议、共识总账（consensus ledger）和原生的货币XRP（瑞波币）。<br>现在，一笔国际支付的完成往往需要数天，而且成本很高。Ripple则表示，自己的技术能让银行在支付中减少33%的成本，数秒内即可完成交易。区块链是Ripple的技术基础，作为比特币的底层技术，这是一个大型的去中心化账本，能记录每一笔交易，并存储在全球计算机网络中。<br>对于区块链，几乎成为共识的是，它能减少很多银行业务的成本。分析公司Juniper Research的一份报告指出，在安全的前提下，区块链系统能为交易结算等领域显著减少出错风险及核查时间。不少银行认为，区块链技术很适合用于汇款和证券交易。<br>银行很头疼的一项业务是大量但低价值的交易。对银行来说，这些交易成本很高，但利润低，因为转账流程复杂但收取的费率没有大型交易那么多。Ripple则认为自己能让这类交易也有利可图。<br>另外，与比特币不同，Ripple的账本需要允许才能加入，即银行不用担心匿名方插足交易之中。而且Ripple的分布式账本不需要使用自家的数字货币XRP就能运行。</p>
+<blockquote>
+<p>来源： <a href="http://www.leiphone.com/news/201609/LwqVC90MJXmkeYfU.html" target="_blank" rel="noopener">http://www.leiphone.com/news/201609/LwqVC90MJXmkeYfU.html</a></p>
+<p>参考文献：工信部《中国区块链技术和应用发展白皮书》</p>
+</blockquote>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/02/11/区块链概念（二）/" title= 区块链概念（二） >
+                    <span>Next Post</span>
+                    <span>区块链概念（二）</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/01/21/密码学原理/" title= 密码学原理 >
+                    <span>Previous Post</span>
+                    <span>密码学原理</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#比特币特点："><span class="toc-number">1.</span> <span class="toc-text">比特币特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#比特币用途："><span class="toc-number">2.</span> <span class="toc-text">比特币用途：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区块链定义"><span class="toc-number">3.</span> <span class="toc-text">区块链定义:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#从数据角度看"><span class="toc-number">3.1.</span> <span class="toc-text">从数据角度看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从技术角度看"><span class="toc-number">3.2.</span> <span class="toc-text">从技术角度看</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区块链数据结构"><span class="toc-number">4.</span> <span class="toc-text">区块链数据结构:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区块链网络类型"><span class="toc-number">5.</span> <span class="toc-text">区块链网络类型:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发展阶段"><span class="toc-number">6.</span> <span class="toc-text">发展阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主要开源区块链平台项目"><span class="toc-number">7.</span> <span class="toc-text">主要开源区块链平台项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超级账本Hyperledger平台架构"><span class="toc-number">8.</span> <span class="toc-text">超级账本Hyperledger平台架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#以太坊Ethereum平台架构"><span class="toc-number">9.</span> <span class="toc-text">以太坊Ethereum平台架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主要区块链对比"><span class="toc-number">10.</span> <span class="toc-text">主要区块链对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区块链五层技术架构"><span class="toc-number">11.</span> <span class="toc-text">区块链五层技术架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区块链上交易过程"><span class="toc-number">12.</span> <span class="toc-text">区块链上交易过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">12.1.</span> <span class="toc-text">关键技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#P2P点到点对等网络"><span class="toc-number">12.2.</span> <span class="toc-text">P2P点到点对等网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共识机制"><span class="toc-number">12.3.</span> <span class="toc-text">共识机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分布式共识机制概况"><span class="toc-number">13.</span> <span class="toc-text">分布式共识机制概况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据可验证"><span class="toc-number">14.</span> <span class="toc-text">数据可验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据区块"><span class="toc-number">14.1.</span> <span class="toc-text">数据区块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非对称加密算法："><span class="toc-number">14.2.</span> <span class="toc-text">非对称加密算法：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#奖励合作制度的设计"><span class="toc-number">14.3.</span> <span class="toc-text">奖励合作制度的设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-0-数字货币-与-2-0-支付结算"><span class="toc-number">15.</span> <span class="toc-text">1.0 数字货币 与 2.0 支付结算</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 3 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

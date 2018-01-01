@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        区块链概念（二） · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">区块链概念（二）</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            区块链概念（二）
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 区块链>区块链</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/02/11</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <pre><code>上一篇我们介绍了区块链基本概念，作为一种概念金融货币。
+</code></pre><p>比特币主要是希望解决已有金融货币系统的几个问题：</p>
+<ul>
+<li>被掌控在发行机构手中；</li>
+<li>自身的价值无法保证；</li>
+<li>无法匿名化交易。</li>
+</ul>
+<h1 id="实际场景"><a href="#实际场景" class="headerlink" title="实际场景"></a>实际场景</h1><p>  搞金融的人都能想到，实际上，要设计这么一套系统，最关键的还是一套强大的交易记录系统和中立的货币发行机制。<br>首先，这个系统要能中立、公正、无法被篡改地记录发生过的每一笔交易。对比已有的银行系统，可以看出，现在的银行机制作为第三方，是有代价的提供了这样的服务，即如果交易双方都相信银行的数据库，那么就没问题了。可是如果是世界范围内流通的货币呢？有哪个银行能让大家完全信任它？于是，需要有一套分布式的数据库，在世界范围内都可以访问，而且都无法去控制。这也就是区块链设计的目的。<br>人们开始意识到，记账本相关的技术，对于资产（包括有形资产和无形资产）的管理（包括所有权和流通）十分关键；而去中心化的分布式记账本技术，对于当前开放多维化的商业网络意义重大。区块链，正是实现去中心化记账本系统的一种极具潜力的可行技术。<br>目前，区块链技术已经脱离开比特币，在包括金融、贸易、征信、物联网、共享经济等诸多领域崭露头角。现在当人们提到“区块链”时，往往已经与比特币网络没有直接联系了，除非特别指出是承载比特币交易系统的“比特币区块链”。区块链（Blockchain）技术自身仍然在飞速发展中，目前还缺乏统一的规范和标准。最早区块链技术雏形出现在比特币项目中。作为比特币背后的分布式记账平台，在无集中式管理的情况下，比特币网络稳定运行了近八年时间，支持了海量的交易记录，并未出现严重的漏洞。<br>注：比特币历史上唯一已知的漏洞事件曾导致比特币的恶意增发，但问题很快被发现并修正，相关非法交易被撤销。公认的最早关于区块链的描述性文献是中本聪所撰写的 比特币：一种点对点的电子现金系统，但该文献重点在于讨论比特币系统，实际上并没有明确提出区块链的定义和概念。在其中，区块链被描述为用于记录比特币交易的账目历史。<br>更广泛意义地看，区块链属于一种去中心化的记录技术。参与到系统上的节点，可能不属于同一组织、彼此无需信任；区块链数据由所有节点共同维护，每个参与维护节点都能复制获得一份完整记录的拷贝。</p>
+<p>跟传统的记账技术相比，其特点应该包括：</p>
+<ol>
+<li>维护一条不断增长的链，只可能添加记录，而发生过的记录都不可篡改；</li>
+<li>去中心化，或者说多中心化，无需集中的控制而能达成共识，实现上尽量分布式；</li>
+<li>通过密码学的机制来确保交易无法抵赖和破坏，并尽量保护用户信息和记录的隐私性。<br>更进一步的，还可以将智能合约跟区块链结合到一起，让其提供除了交易（比特币区块链已经支持简单的脚本计算）功能外更灵活的合约功能，执行更为复杂的操作。这样扩展之后的区块链，已经超越了单纯数据记录的功能了，实际上带有点“普适计算”的意味了。</li>
+</ol>
+<p><img src="/avatar/qukuai12.png" alt="Alt text" title="特点"></p>
+<p>区块链的基本原理理解起来并不难。基本概念包括：</p>
+<ul>
+<li><strong> 交易（Transaction） </strong>：一次操作，导致账本状态的一次改变，如添加一条记录；</li>
+<li><strong> 区块（Block） </strong>：记录一段时间内发生的交易和状态结果，是对当前账本状态的一次共<br>识；</li>
+<li><strong> 链（Chain） </strong>：由一个个区块按照发生顺序串联而成，是整个状态变化的日志记录。<br>如果把区块链作为一个状态机，则每次交易就是试图改变一次状态，而每次共识生成的区块，就是参与者对于区块中所有交易内容导致状态改变的结果进行确认。具体以比特币为例来看如何使用了区块链技术？客户端发起一项交易后，会广播到网络中并等待确认。网络中的节点会将一些等待确认的交易记录打包在一起（此外还要包括此前区块的哈希值等信息），组成一个候选区块。然后，试图找到一个 nonce 串放到区块里，使得候选区块的 hash 结果满足一定条件（比如小于某个值）。一旦算出来这个区块在格式上就合法了，就可以进行全网广播。大家拿到提案区块，进行验证，发现确实符合约定条件了，就承认这个区块是一个合法的新区块，被添加到链上。当然，在实现上还会有很多的细节。比特币的这种基于算力的共识机制被称为 Proof of Work（PoW）。目前，要让 hash 结果满足一定条件并无已知的启发式算法，只能进行暴力尝试。尝试的次数越多，算出来的概率越大。通过调节对 hash 结果的限制，比特币网络控制约 10 分钟平均算出来一个合法区块。算出来的节点将得到区块中所有交易的管理费和协议固定发放的奖励费（目前是 12.5 比特币，每四年减半）。也即俗称的挖矿。</li>
+</ul>
+<h1 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h1><p>根据参与者的不同，可以分为公开（Public）链、联盟（Consortium）链和私有（Private）链。<br>公开链，顾名思义，任何人都可以参与使用和维护，典型的如比特币区块链，信息是完全公开的。<br>如果引入许可机制，包括私有链和联盟链两种。<br>私有链，则是集中管理者进行限制，只能得到内部少数人可以使用，信息不公开。<br>联盟链则介于两者之间，由若干组织一起合作维护一条区块链，该区块链的使用必须是有权限的管理，相关信息会得到保护，典型如银联组织。目前来看，公开链将会更多的吸引社区和媒体的眼球，但更多的商业价值应该在联盟链和私有链上。<br>根据使用目的和场景的不同，又可以分为以数字货币为目的的货币链，以记录产权为目的的产权链，以众筹为目的的众筹链等。</p>
+<h1 id="误区"><a href="#误区" class="headerlink" title="误区"></a>误区</h1><p>目前，对区块链的认识还存在不少误区。<br>首先，区块链不是数据库。虽然区块链也可以用来存储数据，但它要解决的问题是多方的互信问题。单纯从存储数据角度，它的效率可能不高，笔者也不推荐把大量的原始数据放到区块链上。<br>其次，区块链不是要颠覆现有技术。作为基于多项已有技术而出现的新事物，区块链跟现有技术的关系是一脉相承的，在解决多方合作和可信处理上多走了一步，但并不意味着它将彻底颠覆已有的商业模式。很长一段时间里，区块链的适用场景仍需摸索，跟已有系统必然是合作共存的关系。</p>
+<h1 id="关键技术和挑战"><a href="#关键技术和挑战" class="headerlink" title="关键技术和挑战"></a>关键技术和挑战</h1><p>从技术角度讲，区块链涉及到的领域比较杂，包括分布式、存储、密码学、心理学、经济学、博弈论、网络协议等，下面列出了目前认为有待解决或改进的关键技术点。<br>密码学技术<br>怎么防止交易记录被篡改？<br>怎么证明交易方的身份？<br>怎么保护交易双方的隐私？<br>密码学正是要提供解决这些问题的有效手段。传统方案包括 hash 算法，加解密算法，数字证书和签名(盲签名、环签名)等。区块链技术的应用将可能刺激密码学的进一步发展，包括随机数的产生、安全强度、加解密处理的性能等。量子计算等新技术的出现，让 RSA 算法等已经无法提供足够的安全性。<br>这将依赖于数学科学的进一步发展和新一代计算技术的突破。<br>注：SONY PS3 私钥被破解事件 再次证明，即便足够安全的算法，如果没有被恰当的使用，都只是纸上谈兵。</p>
+<h1 id="分布式共识"><a href="#分布式共识" class="headerlink" title="分布式共识"></a>分布式共识</h1><p>这是个古老的话题，已有大量的研究成果（Paxos、拜占庭等）。<br>核心在于如何解决某个变更在网络中是一致的，是被大家都承认的，同时这个信息是被确定的，不可推翻的。该问题在公开匿名场景下和带权限管理的场景下需求差异较大。<br>比特币区块链考虑的是公开匿名场景下的最坏保证。引入了“工作量证明”（Proof of Work）策略来规避少数人恶意破坏数据，并通过概率模型保证最后大家看到的就是合法的最长链。此外，还有以权益为抵押的 PoS、DPoS 和 Casper 等。这些算法在思想上都是基于经济利益的博弈，让恶意破坏的参与者损失经济利益，从而保证大部分人的合作。同时，确认必须经过多个区块的生成之后从概率学上进行保证。<br>更广泛的区块链技术支持更多的共识机制，包括经典的拜占庭算法等，可以解决确定性的问题。</p>
+<p>区块链网络中的块信息需要写到数据库中进行存储。<br>观察区块链的应用，大量的写操作、hash 计算和验证操作，跟传统数据库的行为十分不同。当年，人们观察到互联网应用大量非事务性的查询操作，而设计了非关系型（NoSql）数据库。那么，针对区块链应用的这些特点，是否可以设计出一些特殊的针对性的数据库呢？<br>关键技术和挑战。<br>LevelDB、RocksDB 等键值数据库，具备很高的随机写和顺序读\/写性能，以及相对较差随机读的性能，被广泛应用到了区块链信息存储中。但目前来看，面向区块链的数据库技术仍然是需要突破的技术难点之一。</p>
+<p>一切可计算的问题都能计算，这样的虚拟机或者编程语言就叫图灵完备的。比特币脚本并不支持循环等复杂的流控制，因此它是非图灵完备的。PoW，指比特币协议中的工作量证明机制，即Prof of Work，通过一定的工作量来获得相应的奖励。与PoS（Prof of Stock 权益证明，Proof of Stake，2013 年被提出，最早在 Peercoin 系统中被实现，类似现实生活中的股东机制，拥有股份越多的人越容易获取记账权。PoS 也有一些改进的算法，包括授权股权证明机制（DPOS），即股东们投票选出一个董事会，董事会中成员才有权进行代理记账。）相对应。工作量证明，Proof of Work，通过计算来猜测一个数值（nonce），得以解决规定的 hash 问题（来源于 hashcash）。保证在一段时间内，系统中只能出现少数合法提案。同时，这些少量的合法提案会在网络中进行广播，收到的用户进行验证后会基于它认为的最长链上继续难题的计算。因此，系统中可能出现链的分叉（Fork），但最终会有一条链成为最长的链。hash 问题具有不可逆的特点，因此，目前除了暴力计算外，还没有有效的算法进行解决。反之，如果获得符合要求的 nonce，则说明在概率上是付出了对应的算力。谁的算力多，谁最先解决问题的概率就越大。当掌握超过全网一半算力时，从概率上就能控制网络中链的走向。这也是所谓  51% 攻击  的由来。<br>参与 PoW 计算比赛的人，将付出不小的经济成本（硬件、电力、维护等）。当没有成为首个算出的“幸运儿”时，这些成本都将被沉没掉。这也保障了，如果有人恶意破坏，需要付出大量的经济成本。也有设计试图将后算出结果者的算力按照一定比例折合进下一轮比赛考虑。有一个很直观的例子可以说明为何这种经济博弈模式会确保系统中最长链的唯一：<br>超市付款需要排成一队，可能有人不守规矩要插队。超市管理员会检查队伍，认为最长的一条队伍是合法的，并让不合法的分叉队伍重新排队。只要大部分人不傻，就会自觉在最长的队伍上排队。</p>
+<h1 id="闪电网络"><a href="#闪电网络" class="headerlink" title="闪电网络"></a>闪电网络</h1><p>RSMC 保障了两个人之间的直接交易可以在链下完成，HTLC 保障了任意两个人之间的转账都可以通过一条“支付”通道来完成。整合这两种机制，就可以实现任意两个人之间的交易都可以在链下完成了。在整个交易中，智能合约起到了中介的重要角色，而区块链则确保最终的交易结果被确认。</p>
+<h1 id="侧链"><a href="#侧链" class="headerlink" title="侧链"></a>侧链</h1><p>允许资产在比特币区块链和其它链之间互转。降低核心的区块链上发生交易的次数。<br>也来自比特币社区， 2013 年 12 月提出,2014 年 4 月成立项目。<br>通过简单地复用现有比特币的方式,实现比特币和其他帐簿资产在多个区块链间的转移。<br>Blockstream 基于侧链技术探索更多功能，已发布商业化应用 Liquid，并与普华永道进行相关合作。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2017/02/11/区块链概念（一）/" title= 区块链概念（一） >
+                    <span>Previous Post</span>
+                    <span>区块链概念（一）</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#实际场景"><span class="toc-number">1.</span> <span class="toc-text">实际场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分类"><span class="toc-number">2.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#误区"><span class="toc-number">3.</span> <span class="toc-text">误区</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关键技术和挑战"><span class="toc-number">4.</span> <span class="toc-text">关键技术和挑战</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分布式共识"><span class="toc-number">5.</span> <span class="toc-text">分布式共识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#闪电网络"><span class="toc-number">6.</span> <span class="toc-text">闪电网络</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#侧链"><span class="toc-number">7.</span> <span class="toc-text">侧链</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 3 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

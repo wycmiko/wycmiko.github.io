@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        Test2 · 翁玉川Miko个人博客
+        密码学原理 · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -72,7 +72,7 @@
                 <a href="/" >翁玉川 Miko 个人博客.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">Test2</a>
+                <a href="#" class="post-name">密码学原理</a>
             </div>
     </div>
     
@@ -93,7 +93,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Test2
+            密码学原理
             <!-- 404 -->
             
         </h1>
@@ -111,14 +111,14 @@
             
                 <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = Test2>Test2</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 密码学>密码学</a>
     
 </div>
             
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2017/12/29</span>
+                <span class="post-intro-time">2017/01/21</span>
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
                     <span id="busuanzi_value_page_pv"></span>
@@ -201,19 +201,78 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h2 id="大标题"><a href="#大标题" class="headerlink" title="大标题"></a>大标题</h2><blockquote><p>我是引用内容</p>
-<footer><strong>书名</strong><cite>作者</cite></footer></blockquote>
-<blockquote><p>Every interaction is both precious and an opportunity to delight.</p>
-<footer><strong>Seth Godin</strong><cite><a href="http://sethgodin.typepad.com/seths_blog/2009/07/welcome-to-island-marketing.html" target="_blank" rel="noopener">引用网络文章</a></cite></footer></blockquote>
-<p>代码块-Java：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  MD5加密字符串 返回Base64编码</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> message 要加密的信息</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> Base64编码的MD5字符串</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getMD5Base64</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">    String md5 = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        MessageDigest md = MessageDigest.getInstance(<span class="string">"MD5"</span>); <span class="comment">// 创建一个md5算法对象</span></span><br><span class="line">        <span class="keyword">byte</span>[] messageByte = message.getBytes(<span class="string">"UTF-8"</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] md5Byte = md.digest(messageByte); <span class="comment">// 获得MD5字节数组,16*8=128位</span></span><br><span class="line">        md5 =Base64.getEncoder().encodeToString(md5Byte); <span class="comment">// 转换为16进制字符串</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> md5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> </p>
-<p>代码块-SQL：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> </span><br><span class="line">product_name,</span><br><span class="line">shop_sign,</span><br><span class="line">spec,</span><br><span class="line">create_date <span class="keyword">as</span> bid_code,</span><br><span class="line">pieces <span class="keyword">as</span> pack_qty,</span><br><span class="line">weight,</span><br><span class="line">user_count <span class="keyword">as</span> bid_person_qty,</span><br><span class="line">   starting_price <span class="keyword">as</span> bid_start_price,</span><br><span class="line">max_price <span class="keyword">as</span> trade_price,</span><br><span class="line">   price_range <span class="keyword">as</span> bid_rise_amount</span><br><span class="line">	<span class="keyword">from</span> f_es_needriseprice</span><br></pre></td></tr></table></figure> </p>
-<p>插入图片：<br><img src="http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%9B%BE%E7%89%87%20%E6%B1%BD%E8%BD%A6&step_word=&hs=0&pn=4&spn=0&di=198386880450&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=2&ie=utf-8&oe=utf-8&in=24401&cl=2&lm=-1&st=-1&cs=3743124979%2C3234956668&os=2310444196%2C1923926638&simid=3405206632%2C529328450&adpicid=0&lpn=0&ln=1998&fr=ala&fmq=1402900904181_R&fm=&ic=0&s=&se=1&sme=&tab=&width=&height=&face=0&ist=&jit=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fpic1.16pic.com%2F00%2F07%2F85%2F16pic_785034_b.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3B8mrtv_z%26e3Bv54AzdH3Fri5p5AzdH3Frtv_0bcan9_z%26e3Bip4s&gsm=0" title="[title text [alt text]]"></p>
-<a>text url [external] [title]</a>
-<h3 id="子标题"><a href="#子标题" class="headerlink" title="子标题"></a>子标题</h3><p><img src="http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%9B%BE%E7%89%87%20%E6%B1%BD%E8%BD%A6&step_word=&hs=0&pn=4&spn=0&di=198386880450&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=2&ie=utf-8&oe=utf-8&in=24401&cl=2&lm=-1&st=-1&cs=3743124979%2C3234956668&os=2310444196%2C1923926638&simid=3405206632%2C529328450&adpicid=0&lpn=0&ln=1998&fr=ala&fmq=1402900904181_R&fm=&ic=0&s=&se=1&sme=&tab=&width=&height=&face=0&ist=&jit=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fpic1.16pic.com%2F00%2F07%2F85%2F16pic_785034_b.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3B8mrtv_z%26e3Bv54AzdH3Fri5p5AzdH3Frtv_0bcan9_z%26e3Bip4s&gsm=0"><br>超链接：<a href="/"> Home </a></p>
+        <h1 id="密码学原理"><a href="#密码学原理" class="headerlink" title="密码学原理"></a>密码学原理</h1><h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>对称加密算法用来对敏感数据等信息进行加密，常用的算法包括：<br><strong> DES（Data Encryption Standard） </strong>：数据加密标准，速度较快，适用于加密大量数据的场合。<br><strong> 3DES（Triple DES） </strong>：是基于DES，对一块数据用三个不同的密钥进行三次加密，强度更高。<br><strong> AES（Advanced Encryption Standard） </strong>：高级加密标准，是下一代的加密算法标准，速度快，安全级别高；</p>
+<h3 id="AES与3DES的比较"><a href="#AES与3DES的比较" class="headerlink" title="AES与3DES的比较"></a>AES与3DES的比较</h3><table>
+<thead>
+<tr>
+<th>算法名称</th>
+<th style="text-align:center">算法类型</th>
+<th style="text-align:right">密钥长度</th>
+<th style="text-align:right">速度</th>
+<th style="text-align:right">解密时间（建设机器每秒尝试255个密钥）</th>
+<th style="text-align:right">资源消耗</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AES</td>
+<td style="text-align:center">对称block密码</td>
+<td style="text-align:right">128、192、256位</td>
+<td style="text-align:right">高</td>
+<td style="text-align:right">1490000亿年</td>
+<td style="text-align:right">低</td>
+</tr>
+<tr>
+<td>3DES</td>
+<td style="text-align:center">对称feistel密码</td>
+<td style="text-align:right">112位或168位</td>
+<td style="text-align:right">低</td>
+<td style="text-align:right">46亿年</td>
+<td style="text-align:right">中</td>
+</tr>
+</tbody>
+</table>
+<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p><strong> RSA </strong>：由 RSA 公司发明，是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的；<br><strong> DSA（Digital Signature Algorithm） </strong>：数字签名算法，是一种标准的 DSS（数字签名标准）；<br><strong> ECC（Elliptic Curves Cryptography） </strong>：椭圆曲线密码编码学。</p>
+<p>ECC和RSA相比，在许多方面都有对绝对的优势，主要体现在以下方面：</p>
+<ul>
+<li>抗攻击性强。相同的密钥长度，其抗攻击性要强很多倍。</li>
+<li>计算量小，处理速度快。ECC总的速度比RSA、DSA要快得多。</li>
+<li>存储空间占用小。ECC的密钥尺寸和系统参数与RSA、DSA相比要小得多，意味着它所占的存贮空间要小得多。这对于加密算法在IC卡上的应用具有特别重要的意义。</li>
+<li>带宽要求低。当对长消息进行加解密时，三类密码系统有相同的带宽要求，但应用于短消息时ECC带宽要求却低得多。带宽要求低使ECC在无线网络领域具有广泛的应用前景。</li>
+</ul>
+<h2 id="散列算法"><a href="#散列算法" class="headerlink" title="散列算法"></a>散列算法</h2><p>散列是信息的提炼，通常其长度要比信息小得多，且为一个固定长度。加密性强的散列一定是不可逆的，这就意味着通过散列结果，无法推出任何部分的原始信息。任何输入信息的变化，<br>哪怕仅一位，都将导致散列结果的明显变化，这称之为雪崩效应。散列还应该是防冲突的，即找不出具有相同散列结果的两条信息。具有这些特性的散列结果就可以用于验证信息是否被修改。</p>
+<p>单向散列函数一般用于产生消息摘要，密钥加密等，常见的有：</p>
+<ul>
+<li><strong> MD5 </strong>（Message Digest Algorithm 5）：是RSA数据安全公司开发的一种单向散列算法，非可逆，相同的明文产生相同的密文。</li>
+<li><strong> SHA </strong>（Secure Hash Algorithm）：可以对任意长度的数据运算生成一个160位的数值；</li>
+</ul>
+<h2 id="SHA-1与MD5的比较"><a href="#SHA-1与MD5的比较" class="headerlink" title="SHA-1与MD5的比较"></a>SHA-1与MD5的比较</h2><p>因为二者均由MD4导出，SHA-1和MD5彼此很相似。相应的，他们的强度和其他特性也是相似，但还有以下几点不同：</p>
+<ul>
+<li>对强行供给的安全性：最显著和最重要的区别是SHA-1摘要比MD5摘要长32 位。使用强行技术，产生任何一个报文使其摘要等于给定报摘要的难度对MD5是2128数量级的操作，而对SHA-1则是2160数量级的操作。这样，SHA-1对强行攻击有更大的强度。</li>
+<li>对密码分析的安全性：由于MD5的设计，易受密码分析的攻击，SHA-1显得不易受这样的攻击。</li>
+<li>速度：在相同的硬件上，SHA-1的运行速度比MD5慢。</li>
+</ul>
+<h2 id="对称与非对称算法比较"><a href="#对称与非对称算法比较" class="headerlink" title="对称与非对称算法比较"></a>对称与非对称算法比较</h2><p>以上综述了两种加密方法的原理，总体来说主要有下面几个方面的不同：</p>
+<ul>
+<li>在管理方面：公钥密码算法只需要较少的资源就可以实现目的，在密钥的分配上，两者之间相差一个指数级别（一个是n一个是n2）。所以私钥密码算法不适应广域网的使用，而且更重要的一点是它不支持数字签名。</li>
+<li>在安全方面：由于公钥密码算法基于未解决的数学难题，在破解上几乎不可能。对于私钥密码算法，到了AES虽说从理论来说是不可能破解的，但从计算机的发展角度来看。公钥更具有优越性。</li>
+<li>从速度上来看：AES的软件实现速度已经达到了每秒数兆或数十兆比特。是公钥的100倍，如果用硬件来实现的话这个比值将扩大到1000倍。</li>
+</ul>
+<h1 id="加密算法的选择"><a href="#加密算法的选择" class="headerlink" title="加密算法的选择"></a>加密算法的选择</h1><p>由于非对称加密算法的运行速度比对称加密算法的速度慢很多，当我们需要加密大量的数据时，建议采用对称加密算法，提高加解密速度。<br>对称加密算法不能实现签名，因此签名只能非对称算法。</p>
+<p>由于对称加密算法的密钥管理是一个复杂的过程，密钥的管理直接决定着他的安全性，因此当数据量很小时，我们可以考虑采用非对称加密算法。<br>在实际的操作过程中，我们通常采用的方式是：采用非对称加密算法管理对称算法的密钥，然后用对称加密算法加密数据，这样我们就集成了两类加密算法的优点，既实现了加密速度快的优点，又实现了安全方便管理密钥的优点。<br>那采用多少位的密钥呢？ RSA建议采用1024位的数字，ECC建议采用160位，AES采用128为即可。</p>
+<h1 id="公钥和私钥的概念"><a href="#公钥和私钥的概念" class="headerlink" title="公钥和私钥的概念"></a>公钥和私钥的概念</h1><p>在现代密码体制中加密和解密是采用不同的密钥（公开密钥），也就是公开密钥算法（也叫非对称算法、双钥算法）”，每个通信方均需要两个密钥，即公钥和私钥，<br>这两把密钥可以互为加解密。公钥是公开的，不需要保密，而私钥是由个人自己持有，并且必须妥善保管和注意保密。</p>
+<h1 id="证书的概念"><a href="#证书的概念" class="headerlink" title="证书的概念"></a>证书的概念</h1><p>数字证书则是由证书认证机构（CA）对证书申请者真实身份验证之后，用CA的根证书对申请人的一些基本信息以及申请人的公钥进行签名（相当于加盖发证书机 构的公章）后形成的一个数字文件。<br>A完成签发证书后，会将证书发布在CA的证书库（目录服务器）中，任何人都可以查询和下载，因此数字证书和公钥一样是公开的。实际上，数字证书就是经过CA认证过的公钥。</p>
 
     </article>
     <!-- 前后页  -->
     <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/02/11/区块链概念（一）/" title= 区块链概念（一） >
+                    <span>Next Post</span>
+                    <span>区块链概念（一）</span>
+                </a>
+            </li>
         
         
     </ul>
@@ -282,7 +341,7 @@
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#大标题"><span class="toc-number">1.</span> <span class="toc-text">大标题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#子标题"><span class="toc-number">1.1.</span> <span class="toc-text">子标题</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#密码学原理"><span class="toc-number">1.</span> <span class="toc-text">密码学原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#对称加密算法"><span class="toc-number">1.1.</span> <span class="toc-text">对称加密算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AES与3DES的比较"><span class="toc-number">1.1.1.</span> <span class="toc-text">AES与3DES的比较</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#非对称加密算法"><span class="toc-number">1.2.</span> <span class="toc-text">非对称加密算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列算法"><span class="toc-number">1.3.</span> <span class="toc-text">散列算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SHA-1与MD5的比较"><span class="toc-number">1.4.</span> <span class="toc-text">SHA-1与MD5的比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对称与非对称算法比较"><span class="toc-number">1.5.</span> <span class="toc-text">对称与非对称算法比较</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#加密算法的选择"><span class="toc-number">2.</span> <span class="toc-text">加密算法的选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#公钥和私钥的概念"><span class="toc-number">3.</span> <span class="toc-text">公钥和私钥的概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#证书的概念"><span class="toc-number">4.</span> <span class="toc-text">证书的概念</span></a></li></ol>
     </div>
     
     <div class="back-top">&#xe639;</div>
@@ -307,7 +366,23 @@
     
     
     
-    <div class="total-archive"> 总计 : 1 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 3 </div>
     
     <div class="post-archive">
     
@@ -319,7 +394,17 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/29</span><a class="archive-post-title" href= "/2017/12/29/Test/" >Test2</a>
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
         </li>
     
     </div>
@@ -327,7 +412,9 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">Test2</a></span>
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
