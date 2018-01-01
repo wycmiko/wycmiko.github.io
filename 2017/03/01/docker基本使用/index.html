@@ -256,14 +256,26 @@
 <!-- City版安装代码已完成 -->
     
     
-    <!--PC版-->
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "docker基本使用", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '0afbef4ca3086c8ffbb3',
+            client_secret: 'ccba6049ddbda5b21371507f099baeb2b7ea51ed',
+        },
+    })
+    gitment.render('container')
+
+</script>
 
     <!--PC版-->
 
-    <!-- UY BEGIN -->
-    <div id="uyan_frame"></div>
-    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2154275"></script>
-    <!-- UY END -->
+    <!--PC版-->
 
 
     
@@ -400,6 +412,10 @@
     
     
     
+    
+    
+    
+    
     <div class="total-archive"> 总计 : 6 </div>
     
     <div class="post-archive">
@@ -445,13 +461,13 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
     
