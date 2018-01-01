@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        密码学原理 · 翁玉川Miko个人博客
+        docker基本使用 · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -72,7 +72,7 @@
                 <a href="/" >翁玉川 Miko 个人博客.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">密码学原理</a>
+                <a href="#" class="post-name">docker基本使用</a>
             </div>
     </div>
     
@@ -93,7 +93,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            密码学原理
+            docker基本使用
             <!-- 404 -->
             
         </h1>
@@ -111,14 +111,16 @@
             
                 <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 密码学>密码学</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = docker>docker</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 容器>容器</a>
     
 </div>
             
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2017/01/21</span>
+                <span class="post-intro-time">2017/03/01</span>
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
                     <span id="busuanzi_value_page_pv"></span>
@@ -201,79 +203,44 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h1 id="密码学原理"><a href="#密码学原理" class="headerlink" title="密码学原理"></a>密码学原理</h1><h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>对称加密算法用来对敏感数据等信息进行加密，常用的算法包括：<br><strong> DES（Data Encryption Standard） </strong>：数据加密标准，速度较快，适用于加密大量数据的场合。<br><strong> 3DES（Triple DES） </strong>：是基于DES，对一块数据用三个不同的密钥进行三次加密，强度更高。<br><strong> AES（Advanced Encryption Standard） </strong>：高级加密标准，是下一代的加密算法标准，速度快，安全级别高；</p>
-<h3 id="AES与3DES的比较"><a href="#AES与3DES的比较" class="headerlink" title="AES与3DES的比较"></a>AES与3DES的比较</h3><table>
-<thead>
-<tr>
-<th>算法名称</th>
-<th style="text-align:center">算法类型</th>
-<th style="text-align:right">密钥长度</th>
-<th style="text-align:right">速度</th>
-<th style="text-align:right">解密时间（建设机器每秒尝试255个密钥）</th>
-<th style="text-align:right">资源消耗</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AES</td>
-<td style="text-align:center">对称block密码</td>
-<td style="text-align:right">128、192、256位</td>
-<td style="text-align:right">高</td>
-<td style="text-align:right">1490000亿年</td>
-<td style="text-align:right">低</td>
-</tr>
-<tr>
-<td>3DES</td>
-<td style="text-align:center">对称feistel密码</td>
-<td style="text-align:right">112位或168位</td>
-<td style="text-align:right">低</td>
-<td style="text-align:right">46亿年</td>
-<td style="text-align:right">中</td>
-</tr>
-</tbody>
-</table>
-<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p><strong> RSA </strong>：由 RSA 公司发明，是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的；<br><strong> DSA（Digital Signature Algorithm） </strong>：数字签名算法，是一种标准的 DSS（数字签名标准）；<br><strong> ECC（Elliptic Curves Cryptography） </strong>：椭圆曲线密码编码学。</p>
-<p>ECC和RSA相比，在许多方面都有对绝对的优势，主要体现在以下方面：</p>
-<ul>
-<li>抗攻击性强。相同的密钥长度，其抗攻击性要强很多倍。</li>
-<li>计算量小，处理速度快。ECC总的速度比RSA、DSA要快得多。</li>
-<li>存储空间占用小。ECC的密钥尺寸和系统参数与RSA、DSA相比要小得多，意味着它所占的存贮空间要小得多。这对于加密算法在IC卡上的应用具有特别重要的意义。</li>
-<li>带宽要求低。当对长消息进行加解密时，三类密码系统有相同的带宽要求，但应用于短消息时ECC带宽要求却低得多。带宽要求低使ECC在无线网络领域具有广泛的应用前景。</li>
-</ul>
-<h2 id="散列算法"><a href="#散列算法" class="headerlink" title="散列算法"></a>散列算法</h2><p>散列是信息的提炼，通常其长度要比信息小得多，且为一个固定长度。加密性强的散列一定是不可逆的，这就意味着通过散列结果，无法推出任何部分的原始信息。任何输入信息的变化，<br>哪怕仅一位，都将导致散列结果的明显变化，这称之为雪崩效应。散列还应该是防冲突的，即找不出具有相同散列结果的两条信息。具有这些特性的散列结果就可以用于验证信息是否被修改。</p>
-<p>单向散列函数一般用于产生消息摘要，密钥加密等，常见的有：</p>
-<ul>
-<li><strong> MD5 </strong>（Message Digest Algorithm 5）：是RSA数据安全公司开发的一种单向散列算法，非可逆，相同的明文产生相同的密文。</li>
-<li><strong> SHA </strong>（Secure Hash Algorithm）：可以对任意长度的数据运算生成一个160位的数值；</li>
-</ul>
-<h2 id="SHA-1与MD5的比较"><a href="#SHA-1与MD5的比较" class="headerlink" title="SHA-1与MD5的比较"></a>SHA-1与MD5的比较</h2><p>因为二者均由MD4导出，SHA-1和MD5彼此很相似。相应的，他们的强度和其他特性也是相似，但还有以下几点不同：</p>
-<ul>
-<li>对强行供给的安全性：最显著和最重要的区别是SHA-1摘要比MD5摘要长32 位。使用强行技术，产生任何一个报文使其摘要等于给定报摘要的难度对MD5是2128数量级的操作，而对SHA-1则是2160数量级的操作。这样，SHA-1对强行攻击有更大的强度。</li>
-<li>对密码分析的安全性：由于MD5的设计，易受密码分析的攻击，SHA-1显得不易受这样的攻击。</li>
-<li>速度：在相同的硬件上，SHA-1的运行速度比MD5慢。</li>
-</ul>
-<h2 id="对称与非对称算法比较"><a href="#对称与非对称算法比较" class="headerlink" title="对称与非对称算法比较"></a>对称与非对称算法比较</h2><p>以上综述了两种加密方法的原理，总体来说主要有下面几个方面的不同：</p>
-<ul>
-<li>在管理方面：公钥密码算法只需要较少的资源就可以实现目的，在密钥的分配上，两者之间相差一个指数级别（一个是n一个是n2）。所以私钥密码算法不适应广域网的使用，而且更重要的一点是它不支持数字签名。</li>
-<li>在安全方面：由于公钥密码算法基于未解决的数学难题，在破解上几乎不可能。对于私钥密码算法，到了AES虽说从理论来说是不可能破解的，但从计算机的发展角度来看。公钥更具有优越性。</li>
-<li>从速度上来看：AES的软件实现速度已经达到了每秒数兆或数十兆比特。是公钥的100倍，如果用硬件来实现的话这个比值将扩大到1000倍。</li>
-</ul>
-<h1 id="加密算法的选择"><a href="#加密算法的选择" class="headerlink" title="加密算法的选择"></a>加密算法的选择</h1><p>由于非对称加密算法的运行速度比对称加密算法的速度慢很多，当我们需要加密大量的数据时，建议采用对称加密算法，提高加解密速度。<br>对称加密算法不能实现签名，因此签名只能非对称算法。</p>
-<p>由于对称加密算法的密钥管理是一个复杂的过程，密钥的管理直接决定着他的安全性，因此当数据量很小时，我们可以考虑采用非对称加密算法。<br>在实际的操作过程中，我们通常采用的方式是：采用非对称加密算法管理对称算法的密钥，然后用对称加密算法加密数据，这样我们就集成了两类加密算法的优点，既实现了加密速度快的优点，又实现了安全方便管理密钥的优点。<br>那采用多少位的密钥呢？ RSA建议采用1024位的数字，ECC建议采用160位，AES采用128为即可。</p>
-<h1 id="公钥和私钥的概念"><a href="#公钥和私钥的概念" class="headerlink" title="公钥和私钥的概念"></a>公钥和私钥的概念</h1><p>在现代密码体制中加密和解密是采用不同的密钥（公开密钥），也就是公开密钥算法（也叫非对称算法、双钥算法）”，每个通信方均需要两个密钥，即公钥和私钥，<br>这两把密钥可以互为加解密。公钥是公开的，不需要保密，而私钥是由个人自己持有，并且必须妥善保管和注意保密。</p>
-<h1 id="证书的概念"><a href="#证书的概念" class="headerlink" title="证书的概念"></a>证书的概念</h1><p>数字证书则是由证书认证机构（CA）对证书申请者真实身份验证之后，用CA的根证书对申请人的一些基本信息以及申请人的公钥进行签名（相当于加盖发证书机 构的公章）后形成的一个数字文件。<br>A完成签发证书后，会将证书发布在CA的证书库（目录服务器）中，任何人都可以查询和下载，因此数字证书和公钥一样是公开的。实际上，数字证书就是经过CA认证过的公钥。</p>
+        <h1 id="Docker简介"><a href="#Docker简介" class="headerlink" title="Docker简介"></a>Docker简介</h1><blockquote>
+<p>简介：Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。<br>Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。 </p>
+</blockquote>
+<p>Docker通常用于如下场景：<br>  ● web应用的自动化打包和发布；<br>  ● 自动化测试和持续集成、发布；<br>  ● 在服务型环境中部署和调整数据库或其他的后台应用；<br>  ● 从头编译或者扩展现有的OpenShift或Cloud Foundry平台来搭建自己的PaaS环境。<br>Windows下安装好打开虚拟机为ENNABLED </p>
+<p>安装好后启动 控制台输入<br><code>docker version</code>  查看docker版本号</p>
+<h1 id="docker基本操作"><a href="#docker基本操作" class="headerlink" title="docker基本操作"></a>docker基本操作</h1><h2 id="搜索可用的docker镜像"><a href="#搜索可用的docker镜像" class="headerlink" title="搜索可用的docker镜像"></a>搜索可用的docker镜像</h2><p>使用docker最简单的方式莫过于从现有的容器镜像开始。Docker官方网站专门有一个页面来存储所有可用的镜像，网址是：index.docker.io。你可以通过浏览这个网页来查找你想要使用的镜像，或者使用命令行的工具来检索。</p>
+<p>目标：<br>学会使用命令行的工具来检索名字叫做tutorial的镜像。<br>提示：<br>命令行的格式为：<code>docker search 镜像名字</code><br>正确的命令：<br><code>$docker search tutorial</code></p>
+<h2 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h2><p>学会使用docker命令来下载镜像<br>下载镜像的命令非常简单，使用docker pull命令即可。(译者按：docker命令和git有一些类似的地方）。在docker的镜像索引网站上面，镜像都是按照用户名/镜像名的方式来存储的。有一组比较特殊的镜像，比如ubuntu这类基础镜像，经过官方的验证，值得信任，可以直接用镜像名来检索到。<br>目标：<br>通过docker命令下载tutorial镜像。<br>提示：<br>执行pull命令的时候要写完整的名字，比如”learn/tutorial”。<br>正确的命令：<br><code>$docker pull learn/tutorial</code><br>简介：通过<code>docker run</code>命令可以启动某一个镜像，并运行一个命令。</p>
+<h2 id="输出指令"><a href="#输出指令" class="headerlink" title="输出指令"></a>输出指令</h2><p>在docker容器中运行hello world!<br>docker容器可以理解为在沙盒中运行的进程。这个沙盒包含了该进程运行所必须的资源，包括文件系统、系统类库、shell 环境等等。但这个沙盒默认是不会运行任何程序的。你需要在沙盒中运行一个进程来启动某一个容器。这个进程是该容器的唯一进程，所以当该进程结束的时候，容器也会完全的停止。<br>目标：<br>在我们刚刚下载的镜像中输出”hello word”。为了达到这个目的，我们需要在这个容器中运行”echo”命令，输出”hello word”。<br>提示：<br><code>docker run</code>命令有两个参数，一个是镜像名，一个是要在镜像中运行的命令。<br>正确的命令：<br><code>$docker run learn/tutorial echo &quot;hello word&quot;</code></p>
+<h2 id="安装程序"><a href="#安装程序" class="headerlink" title="安装程序"></a>安装程序</h2><p>简介：在docker容器中安装新的程序。<br>下一步我们要做的事情是在容器里面安装一个简单的程序(ping)。我们之前下载的tutorial镜像是基于ubuntu的，所以你可以使用ubuntu的<code>apt-get</code>命令来安装ping程序：<code>apt-get install -y ping</code>。<br>备注：apt-get 命令执行完毕之后，容器就会停止，但对容器的改动不会丢失。<br>目标：<br>在learn/tutorial镜像里面安装ping程序。<br>提示：<br>在执行<code>apt-get</code> 命令的时候，要带上-y参数。如果不指定-y参数的话，<code>apt-get</code>命令会进入交互模式，需要用户输入命令来进行确认，但在docker环境中是无法响应这种交互的。<br>正确的命令：<br><code>$docker run learn/tutorial apt-get install -y ping</code><br>通过<code>docker commit</code>命令保存对容器的修改<br>保存对容器的修改<br>当你对某一个容器做了修改之后（通过在容器中运行某一个命令），可以把对容器的修改保存下来，这样下次可以从保存后的最新状态运行该容器。docker中保存状态的过程称之为committing，它保存的新旧状态之间的区别，从而产生一个新的版本。<br>目标：<br>首先使用<code>docker ps -l</code>命令获得安装完ping命令之后容器的id。然后把这个镜像保存为learn/ping。</p>
+<p>提示：</p>
+<ol>
+<li>运行<code>docker commit</code>，可以查看该命令的参数列表。</li>
+<li>你需要指定要提交保存容器的ID。(译者按：通过docker ps -l 命令获得)</li>
+<li>无需拷贝完整的id，通常来讲最开始的三至四个字母即可区分。（译者按：非常类似git里面的版本号)<br>正确的命令：<br><code>$docker commit 698(ID) learn/ping</code>（要保存的容器名）</li>
+</ol>
+<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><p>简介：对一个镜像提交修改之后，就可以运行它里面新安装的命令了。<br>ok，到现在为止，你已经建立了一个完整的、自成体系的docker环境，并且安装了ping命令在里面。它可以在任何支持docker环境的系统中运行啦！(译者按：是不是很神奇呢？)让我们来体验一下吧！<br>目标：<br>在新的镜像中运行ping www.google.com命令。<br>提示：<br>一定要使用新的镜像名learn/ping来运行ping命令。(译者按：最开始下载的learn/tutorial镜像中是没有ping命令的)<br>正确的命令：<br><code>$docker run learn/ping ping www.google.com</code></p>
+<h2 id="检查运行中的镜像"><a href="#检查运行中的镜像" class="headerlink" title="检查运行中的镜像"></a>检查运行中的镜像</h2><p>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br><strong> 检查运行中的镜像 </strong><br>现在你已经运行了一个docker容器，让我们来看下正在运行的容器。<br>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br>目标：<br>查找某一个运行中容器的id，然后使用<code>docker inspect</code>命令查看容器的信息。<br>提示：<br>可以使用镜像id的前面部分，不需要完整的id。<br>正确的命令：<br><code>$ docker inspect efe</code></p>
+<h2 id="发布docker镜像"><a href="#发布docker镜像" class="headerlink" title="发布docker镜像"></a>发布docker镜像</h2><p>简介：我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br><strong> 发布docker镜像 </strong><br>现在我们已经验证了新镜像可以正常工作，下一步我们可以将其发布到官方的索引网站。还记得我们最开始下载的learn/tutorial镜像吧，我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br>目标：<br>把learn/ping镜像发布到docker的index网站。<br>提示：</p>
+<ol>
+<li><p><code>docker images</code>命令可以列出所有安装过的镜像。</p>
+</li>
+<li><p><code>docker push</code>命令可以将某一个镜像发布到官方网站。</p>
+</li>
+<li>你只能将镜像发布到自己的空间下面。这个模拟器登录的是learn帐号。<br>预期的命令：<br><code>$ docker push learn/ping</code></li>
+</ol>
 
     </article>
     <!-- 前后页  -->
     <ul class="post-pager">
         
-            <li class="next">
-                <a href= "/2017/02/11/区块链概念（一）/" title= 区块链概念（一） >
-                    <span>Next Post</span>
-                    <span>区块链概念（一）</span>
+        
+            <li class="previous">
+                <a href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" title= 超快速KV NOSQL-LevelDB >
+                    <span>Previous Post</span>
+                    <span>超快速KV NOSQL-LevelDB</span>
                 </a>
             </li>
-        
         
     </ul>
     <!-- 评论插件 -->
@@ -341,7 +308,7 @@
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#密码学原理"><span class="toc-number">1.</span> <span class="toc-text">密码学原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#对称加密算法"><span class="toc-number">1.1.</span> <span class="toc-text">对称加密算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AES与3DES的比较"><span class="toc-number">1.1.1.</span> <span class="toc-text">AES与3DES的比较</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#非对称加密算法"><span class="toc-number">1.2.</span> <span class="toc-text">非对称加密算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列算法"><span class="toc-number">1.3.</span> <span class="toc-text">散列算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SHA-1与MD5的比较"><span class="toc-number">1.4.</span> <span class="toc-text">SHA-1与MD5的比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对称与非对称算法比较"><span class="toc-number">1.5.</span> <span class="toc-text">对称与非对称算法比较</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#加密算法的选择"><span class="toc-number">2.</span> <span class="toc-text">加密算法的选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#公钥和私钥的概念"><span class="toc-number">3.</span> <span class="toc-text">公钥和私钥的概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#证书的概念"><span class="toc-number">4.</span> <span class="toc-text">证书的概念</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker简介"><span class="toc-number">1.</span> <span class="toc-text">Docker简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#docker基本操作"><span class="toc-number">2.</span> <span class="toc-text">docker基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#搜索可用的docker镜像"><span class="toc-number">2.1.</span> <span class="toc-text">搜索可用的docker镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载镜像"><span class="toc-number">2.2.</span> <span class="toc-text">下载镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输出指令"><span class="toc-number">2.3.</span> <span class="toc-text">输出指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装程序"><span class="toc-number">2.4.</span> <span class="toc-text">安装程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运行程序"><span class="toc-number">2.5.</span> <span class="toc-text">运行程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查运行中的镜像"><span class="toc-number">2.6.</span> <span class="toc-text">检查运行中的镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布docker镜像"><span class="toc-number">2.7.</span> <span class="toc-text">发布docker镜像</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top">&#xe639;</div>
