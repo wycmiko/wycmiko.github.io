@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        翁玉川Miko个人博客
+        浅谈Redis部分应用 · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -58,6 +58,8 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
@@ -65,27 +67,73 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅谈Redis部分应用</a>
+            </div>
+    </div>
+    
     <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
 </header>
     <div class="wrapper">
         <div class="site-intro">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
+            浅谈Redis部分应用
+            <!-- 404 -->
+            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Redis>Redis</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Hadoop>Hadoop</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/03/22</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
         
     </div>
 </div>
@@ -153,223 +201,47 @@
             }
         </script>
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/22/浅谈Redis部分应用/" >
-                
-                    <span>浅谈Redis部分应用</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/22/浅谈Redis部分应用/" >
-                <div class="abstract-content">
-                    当前已经进入大数据时代，大数据技术和产品百花齐放，在各自的应用场景发挥重要作用，Redis做为高性能的键值数据库与这些技术有着千丝万缕的联系，本文将介绍如何将Redis与Hadoop、ELK等技术进行结合。
-Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高可用性、可扩展性、高容错、低成本等特性，已经是大数据系统的标配，但是Hadoop中HDFS的存储机制使得它无法面向终端用户(例如利用用户的历史浏览记录为用户推荐新闻、商品等)，所以通常是将离线计算的结果导入到面向用户的存储中(例如Redis、HBase等)。而Hadoop支持自定义OutPutFormat，如...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Redis>Redis</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Hadoop>Hadoop</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/22</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/01/docker基本使用/" >
-                
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>当前已经进入大数据时代，大数据技术和产品百花齐放，在各自的应用场景发挥重要作用，Redis做为高性能的键值数据库与这些技术有着千丝万缕的联系，本文将介绍如何将Redis与Hadoop、ELK等技术进行结合。</p>
+<h1 id="Redis与Hadoop"><a href="#Redis与Hadoop" class="headerlink" title="Redis与Hadoop"></a>Redis与Hadoop</h1><p>Hadoop作为大数据时代的分布式计算平台，由于其高可用性、可扩展性、高容错、低成本等特性，已经是大数据系统的标配，但是Hadoop中HDFS的存储机制使得它无法面向终端用户(例如利用用户的历史浏览记录为用户推荐新闻、商品等)，所以通常是将离线计算的结果导入到面向用户的存储中(例如Redis、HBase等)。<br>而Hadoop支持自定义OutPutFormat，如果需要自定义的输出，只需要继承OutPutFormat，整个流程如下所示，只需要在Reduce端定义RedisOutPutFormat完成映射即可。<br><img src="/avatar/redis1.jpeg" alt="redis" title="redis"><br>当然也有一种不太多见的情况，就是Redis作为输入源，同样Hadoop提供了自定义的InputFormat。<br><img src="/avatar/redis2.jpeg" alt="redis" title="redis"></p>
+<p>在Redis的选用上，可以根据结果的规模决定使用Redis主从版还是集群版本。</p>
+<h1 id="Redis与ELK"><a href="#Redis与ELK" class="headerlink" title="Redis与ELK"></a>Redis与ELK</h1><p><strong> ELK是ElasticSearch、Logstash、Kibana三个开源工具的组合 </strong>，由于其处理方式灵活、配置简单、检索性能高效、前端界面绚丽等特性，在日志处理领域被广泛使用。<br>它的基本工作流如下：<br>  ● LogStashAgent部署在各个目标机器上按照logstash的语法收集对应的数据，并发送的ElasticSearch上。<br>  ● ElasticSearch负责存储和索引LogAgent上的数据<br>  ● Kibana可直接与ElasticSearch交互，负责日志的可视化分析。<br>但是如果LogStashAgent个数太多或者索引数量较多，直接插入ElasticSearch中会使得其压力过大，所以在ElasticSearch和LogStash之间通常会设置一个缓冲，通常会选用Redis，而且ELK默认就支持Redis的集成，整个过程只需要修改配置即可完成，整个流程如下所示：<br><img src="/avatar/redis3.jpeg" alt="redis" title="redis"></p>
+<blockquote>
+<p>图片引用自阿里云</p>
+</blockquote>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2017/03/01/docker基本使用/" title= docker基本使用 >
+                    <span>Previous Post</span>
                     <span>docker基本使用</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/01/docker基本使用/" >
-                <div class="abstract-content">
-                    Docker简介
-简介：Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。 
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
 
-Docker通常用于如下场景：  ● web应用的自动化打包和发布；  ...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = docker>docker</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 容器>容器</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/01</span>
-                </div>
-            </div>
-        </article>
+<!-- City版安装代码已完成 -->
     
     
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
-                
-                    <span>超快速KV NOSQL-LevelDB</span>
-            </a>
-            <a class="content-show-full" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
-                <div class="abstract-content">
-                    LevelDB简介LevelDb就是这两位大神级别的工程师发起的开源项目，简而言之，LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库。正像上面介绍的，这二位是Bigtable的设计和实现者，如果了解Bigtable的话，应该知道在这个影响深远的分布式存储系统中有两个核心的部分：Master Server和Tablet Server。其中Master Server做一些管理数据的存储以及分布式调度工作，实际的分布式数据存储以及读写操作是由Tablet Server完成的，而LevelDb则可以理解为一个简化版的Tablet Server。
-LevelD...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = NoSQL>NoSQL</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = LevelDB>LevelDB</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/25</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/11/区块链概念（二）/" >
-                
-                    <span>区块链概念（二）</span>
-            </a>
-            <a class="content-show-full" href = "/2017/02/11/区块链概念（二）/" >
-                <div class="abstract-content">
-                    上一篇我们介绍了区块链基本概念，作为一种概念金融货币。
-比特币主要是希望解决已有金融货币系统的几个问题：
+    <!--PC版-->
 
-被掌控在发行机构手中；
-自身的价值无法保证；
-无法匿名化交易。
+    <!--PC版-->
 
-实际场景  搞金融的人都能想到，实际上，要设计这么一套系统，最关键的还是一套强大的交易记录系统和中立的货币发行机制。首先，这个系统要能中立、公正、无法被篡改地记录发生过的每一笔交易。对比已有的银行系统，可以看出，现在的银行机制作为第三方，是有代价的提供了这样的服务，即如果交易双方都相信银行的数据库，那么就没问题了。可是如果是世界范围内流通的货币呢？有哪个银行能让大家完全信任它？于是，需要有一套分布式的数据库，在世界范...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 区块链>区块链</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/11</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/11/区块链概念（一）/" >
-                
-                    <span>区块链概念（一）</span>
-            </a>
-            <a class="content-show-full" href = "/2017/02/11/区块链概念（一）/" >
-                <div class="abstract-content">
-                    2008年10月，神秘人“中本聪”（Satoshi Nakamoto）发表论文《比特币：一种点对点的电子现金系统》，根据中本聪的思路设计发布的开源软件以及建构其上的P2P网络。比特币是一种P2P形式的数字货币。点对点的传输意味着一个去中心化的支付系统。2009年1月，比特币网络诞生，中本聪发布了开源的第一版比特币客户端。
-比特币特点：
-加密数字货币，互联网上点到点支付转账，无需中介机构，流通成本
-去中心，无发行机构；比特币通过特定算法的大量计算产生，总量2100万
-交易记录不可更改，网络节点集体维护账本
-防止双重支付
-匿名身份，匿名交易，私密性强
-
-比特币用途：
-投资标的
-支付汇款
-资金...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 区块链>区块链</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/11</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/01/21/密码学原理/" >
-                
-                    <span>密码学原理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/01/21/密码学原理/" >
-                <div class="abstract-content">
-                    密码学原理对称加密算法对称加密算法用来对敏感数据等信息进行加密，常用的算法包括： DES（Data Encryption Standard） ：数据加密标准，速度较快，适用于加密大量数据的场合。 3DES（Triple DES） ：是基于DES，对一块数据用三个不同的密钥进行三次加密，强度更高。 AES（Advanced Encryption Standard） ：高级加密标准，是下一代的加密算法标准，速度快，安全级别高；
-AES与3DES的比较
+    <!-- UY BEGIN -->
+    <div id="uyan_frame"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2154275"></script>
+    <!-- UY END -->
 
 
-算法名称
-算法类型
-密钥长度
-速度
-解密时间（建设机器每秒尝试255个密钥）
-资源消耗
-
-
-
-
-AES
-对称block密码
-128、192...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 密码学>密码学</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/01/21</span>
-                </div>
-            </div>
-        </article>
-    
-    <!-- paginator  -->
-    
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -423,6 +295,13 @@ AES
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis与Hadoop"><span class="toc-number">1.</span> <span class="toc-text">Redis与Hadoop</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis与ELK"><span class="toc-number">2.</span> <span class="toc-text">Redis与ELK</span></a></li></ol>
+    </div>
     
     <div class="back-top">&#xe639;</div>
     <div class="sidebar">
