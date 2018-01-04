@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        浅谈Redis部分应用 · 翁玉川Miko个人博客
+        翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -58,8 +58,6 @@
 </head>
 
     
-        <body class="post-body">
-    
     
 <header class="header">
 
@@ -67,73 +65,27 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
-    <div class="banner">
-            <div class="blog-title">
-                <a href="/" >翁玉川 Miko 个人博客.</a>
-            </div>
-            <div class="post-title">
-                <a href="#" class="post-name">浅谈Redis部分应用</a>
-            </div>
-    </div>
-    
     <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
 </header>
     <div class="wrapper">
         <div class="site-intro">
     
     <!-- 主页  -->
-    
-    
-    <!-- 404页  -->
             
-    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            浅谈Redis部分应用
-            <!-- 404 -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
-            
-            <!-- 404 -->
-            
         </p>
         <!-- 文章页meta -->
-        
-            <!-- 文章页标签  -->
-            
-                <div class= post-intro-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Redis>Redis</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Hadoop>Hadoop</a>
-    
-</div>
-            
-            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
-            <div class="post-intro-meta">
-                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2017/03/22</span>
-                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
-                    <span class="iconfont-archer">&#xe604;</span>
-                    <span id="busuanzi_value_page_pv"></span>
-                </span>
-                <span class="shareWrapper">
-                    <span class="iconfont-archer shareIcon">
-                        &#xe601;
-                    </span>
-                    <span class="bdsharebuttonbox">
-                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
-                    </span>
-                </span>
-            </div>
         
     </div>
 </div>
@@ -201,66 +153,55 @@
             }
         </script>
         <div class="container container-unloaded">
-            <main class="main post-page">
-    <article class="article-entry">
-        <p>当前已经进入大数据时代，大数据技术和产品百花齐放，在各自的应用场景发挥重要作用，Redis做为高性能的键值数据库与这些技术有着千丝万缕的联系，本文将介绍如何将Redis与Hadoop、ELK等技术进行结合。</p>
-<h1 id="Redis与Hadoop"><a href="#Redis与Hadoop" class="headerlink" title="Redis与Hadoop"></a>Redis与Hadoop</h1><p>Hadoop作为大数据时代的分布式计算平台，由于其高可用性、可扩展性、高容错、低成本等特性，已经是大数据系统的标配，但是Hadoop中HDFS的存储机制使得它无法面向终端用户(例如利用用户的历史浏览记录为用户推荐新闻、商品等)，所以通常是将离线计算的结果导入到面向用户的存储中(例如Redis、HBase等)。<br>而Hadoop支持自定义OutPutFormat，如果需要自定义的输出，只需要继承OutPutFormat，整个流程如下所示，只需要在Reduce端定义RedisOutPutFormat完成映射即可。<br><img src="/avatar/redis1.jpeg" alt="redis" title="redis"><br>当然也有一种不太多见的情况，就是Redis作为输入源，同样Hadoop提供了自定义的InputFormat。<br><img src="/avatar/redis2.jpeg" alt="redis" title="redis"></p>
-<p>在Redis的选用上，可以根据结果的规模决定使用Redis主从版还是集群版本。</p>
-<h1 id="Redis与ELK"><a href="#Redis与ELK" class="headerlink" title="Redis与ELK"></a>Redis与ELK</h1><p><strong> ELK是ElasticSearch、Logstash、Kibana三个开源工具的组合 </strong>，由于其处理方式灵活、配置简单、检索性能高效、前端界面绚丽等特性，在日志处理领域被广泛使用。<br>它的基本工作流如下：<br>  ● LogStashAgent部署在各个目标机器上按照logstash的语法收集对应的数据，并发送的ElasticSearch上。<br>  ● ElasticSearch负责存储和索引LogAgent上的数据<br>  ● Kibana可直接与ElasticSearch交互，负责日志的可视化分析。<br>但是如果LogStashAgent个数太多或者索引数量较多，直接插入ElasticSearch中会使得其压力过大，所以在ElasticSearch和LogStash之间通常会设置一个缓冲，通常会选用Redis，而且ELK默认就支持Redis的集成，整个过程只需要修改配置即可完成，整个流程如下所示：<br><img src="/avatar/redis3.jpeg" alt="redis" title="redis"></p>
-<blockquote>
-<p>图片引用自阿里云</p>
-</blockquote>
-
-    </article>
-    <!-- 前后页  -->
-    <ul class="post-pager">
-        
-            <li class="next">
-                <a href= "/2017/03/30/JVM总体梳理/" title= JVM总体梳理 >
-                    <span>Next Post</span>
+            <main class="main index-page">
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/03/30/JVM总体梳理/" >
+                
                     <span>JVM总体梳理</span>
-                </a>
-            </li>
-        
-        
-            <li class="previous">
-                <a href= "/2017/03/01/docker基本使用/" title= docker基本使用 >
-                    <span>Previous Post</span>
-                    <span>docker基本使用</span>
-                </a>
-            </li>
-        
-    </ul>
-    <!-- 评论插件 -->
-    <!-- 来必力City版安装代码 -->
+            </a>
+            <a class="content-show-full" href = "/2017/03/30/JVM总体梳理/" >
+                <div class="abstract-content">
+                    对于Java程序员来讲，spring全家桶几乎可以搞定一切，spring全家桶便是精妙的招式，jvm就是内功心法很重要的一块，线上出现性能问题，jvm调优更是不可回避的问题。因此JVM基础知识对于高级程序员的重要性不必言语，我司在面试高级开发的时候，jvm相关知识也必定是考核的标准之一。本篇文章会根据之前写的jvm系列文章梳理出jvm需要关注的所有考察点。
+jvm 总体梳理jvm体系总体分四大块：
 
-<!-- City版安装代码已完成 -->
+类的加载机制
+jvm内存结构
+GC算法 垃圾回收
+GC分析 命令调优
+
+
+类的加载机制主要关注点：
+
+什么是类的加载
+类的生命周期
+类加载器
+双亲委派模型
+
+什么是类的加载？
+&nbsp;&...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
     
+        <a class="post-tag" href="javascript:void(0);" data-href = JVM虚拟机>JVM虚拟机</a>
     
-<div id="container"></div>
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-    var gitment = new Gitment({
-        // id: "浅谈Redis部分应用", // 可选。默认为 location.href
-        owner: 'wycmiko',
-        repo: 'blogcomment.github.io',
-        oauth: {
-            client_id: '712556ec4c3ca7b31d60',
-            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
-        },
-    })
-    gitment.render('container')
-
-</script>
-
-    <!--PC版-->
-
-    <!--PC版-->
-
-
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/30</span>
+                </div>
+            </div>
+        </article>
     
-    <!-- 评论 -->
+    <!-- paginator  -->
+    
 </main>
             <!-- profile -->
             
@@ -314,13 +255,6 @@
 </footer>
     </div>
     <!-- toc -->
-    
-    <div class="toc-wrapper">
-        <div class="toc-catalog">
-            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
-        </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis与Hadoop"><span class="toc-number">1.</span> <span class="toc-text">Redis与Hadoop</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis与ELK"><span class="toc-number">2.</span> <span class="toc-text">Redis与ELK</span></a></li></ol>
-    </div>
     
     <div class="back-top">&#xe639;</div>
     <div class="sidebar">
