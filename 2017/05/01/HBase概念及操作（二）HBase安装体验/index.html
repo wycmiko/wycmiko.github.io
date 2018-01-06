@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        HBase概念及操作（二）HBase安装体验 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">HBase概念及操作（二）HBase安装体验</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            HBase概念及操作（二）HBase安装体验
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/05/01</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>前面一篇对HBase做了一个基本的概念，本篇将介绍HBase的安装和使用</p>
+</blockquote>
+<h1 id="HBase安装以及体验"><a href="#HBase安装以及体验" class="headerlink" title="HBase安装以及体验"></a>HBase安装以及体验</h1><h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><p>本指南介绍了在单机安装HBase的方法。会引导你通过shell创建一个表，插入一行，然后删除它，最后停止HBase。只要10分钟就可以完成以下的操作。</p>
+<h2 id="下载解压最新版本"><a href="#下载解压最新版本" class="headerlink" title="下载解压最新版本"></a>下载解压最新版本</h2><p>选择一个<a href="http://www.apache.org/dyn/closer.cgi/hbase/" target="_blank">Apache 下载镜像</a>下载 HBase Releases. 点击 stable目录，然后下载后缀为 .tar.gz 的文件; 例如 hbase-0.95-SNAPSHOT.tar.gz.</p>
+<p>我们这里下载的是：<br><img src="/avatar/HBase/HBase6.png" alt=""><br>解压缩，然后进入到那个要解压的目录.<br><code>$ tar xfz hbase-0.95-SNAPSHOT.tar.gz</code><br><code>$ cd hbase-0.95-SNAPSHOT</code></p>
+<p>现在你已经可以启动HBase了。但是你可能需要先编辑 conf/hbase-site.xml 去配置hbase.rootdir，来选择HBase将数据写到哪个目录  这里我们放在tmp目录下.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;hbase.rootdir&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;file:///tmp/hbase&lt;/value&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></p>
+<p>将 DIRECTORY 替换成你期望写文件的目录. 默认 hbase.rootdir 是指向 /tmp/hbase-${user.name} ，也就说你会在重启后丢失数据(重启的时候操作系统会清理/tmp目录)</p>
+<h2 id="启动-HBase"><a href="#启动-HBase" class="headerlink" title="启动 HBase"></a>启动 HBase</h2><p>现在启动HBase:<br><code>$ ./bin/start-hbase.sh</code><br><code>starting Master, logging to logs/hbase-user-master-example.org.out</code><br>现在你运行的是单机模式的Hbaes。所有的服务都运行在一个JVM上，包括HBase和Zookeeper。HBase的日志放在logs目录,当你启动出问题的时候，可以检查这个日志。</p>
+<p><strong> 注意：需要安装JDK6以上的版本并成功配置环境  </strong></p>
+<p><img src="/avatar/HBase/HBase7.png" alt=""></p>
+<h2 id="Shell-练习"><a href="#Shell-练习" class="headerlink" title="Shell 练习"></a>Shell 练习</h2><p>用shell连接你的HBase<br><code>$ ./bin/hbase shell</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HBase Shell; enter &apos;help&lt;RETURN&gt;&apos; for list of supported commands.</span><br><span class="line">Type &quot;exit&lt;RETURN&gt;&quot; to leave the HBase Shell</span><br><span class="line">Version: 0.90.0, r1001068, Fri Sep 24 13:55:42 PDT 2010</span><br></pre></td></tr></table></figure></p>
+<p><code>hbase(main):001:0&gt;</code><br>输入 <code>help</code> 然后 <return> 可以看到一列shell命令。这里的帮助很详细，要注意的是表名，行和列需要加引号。<br>创建一个名为 test 的表，这个表只有一个 列族 为 cf。可以列出所有的表来检查创建情况，然后插入些值。<br><code>hbase(main):003:0&gt; create &#39;test&#39;, &#39;cf&#39;</code><br>打印日志：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 row(s) in 1.2200 seconds</span><br></pre></td></tr></table></figure></return></p>
+<p><code>hbase(main):003:0&gt; list &#39;test&#39;</code></p>
+<p>test<br>1 row(s) in 0.0550 seconds<br>put arg1表名 arg2第一行   arg3 cf的自定义a列族  arg4 为值<br>hbase(main):004:0&gt; put ‘test’, ‘row1’, ‘cf:a’, ‘value1’<br>0 row(s) in 0.0560 seconds<br>hbase(main):005:0&gt; put ‘test’, ‘row2’, ‘cf:b’, ‘value2’<br>0 row(s) in 0.0370 seconds<br>hbase(main):006:0&gt; put ‘test’, ‘row3’, ‘cf:c’, ‘value3’<br>0 row(s) in 0.0450 seconds<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">![](/avatar/HBase/HBase8.png)</span><br><span class="line"></span><br><span class="line">以上我们分别插入了3行。第一个行key为row1, 列为 cf:a， 值是 value1。HBase中的列是由 列族前缀和列的名字组成的，以冒号间隔。例如这一行的列名就是a.</span><br><span class="line">检查插入情况.</span><br><span class="line">** Scan这个表 等同于select *，操作如下 **</span><br><span class="line">`hbase(main):013:0&gt; scan &apos;test&apos;`</span><br><span class="line">输出：</span><br></pre></td></tr></table></figure></p>
+<p>ROW                   COLUMN+CELL<br> row1                 column=cf:a, timestamp=1505461120666, value=zhangsan<br> row2                 column=cf:b, timestamp=1505461220477, value=zhangsan2<br> row3                 column=cf:c, timestamp=1505461309106, value=zhangsan3<br>3 row(s) in 0.0960 seconds<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">** Get一行，操作如下 arg1 表名 arg2 列族 **</span><br><span class="line">`hbase(main):008:0&gt; get &apos;test&apos;, &apos;row1&apos;`</span><br></pre></td></tr></table></figure></p>
+<p>COLUMN      CELL<br>cf:a        timestamp=1288380727188, value=value1<br>1 row(s) in 0.0400 seconds<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">** disable 禁用 再 drop 删除 这张表，可以清除你刚刚的操作 **</span><br></pre></td></tr></table></figure></p>
+<p><code>hbase(main):012:0&gt; disable &#39;test&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 row(s) in 1.0930 seconds</span><br></pre></td></tr></table></figure></p>
+<p><code>hbase(main):013:0&gt; drop &#39;test&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 row(s) in 0.0770 seconds</span><br></pre></td></tr></table></figure></p>
+<p><strong> 关闭shell </strong><br><code>hbase(main):014:0&gt; exit</code></p>
+<h2 id="停止-HBase"><a href="#停止-HBase" class="headerlink" title="停止 HBase"></a>停止 HBase</h2><p>运行停止脚本来停止HBase.<br><code>$ ./bin/stop-hbase.sh</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stopping hbase...............</span><br></pre></td></tr></table></figure></p>
+<h1 id="Hbase完全分布式配置、启动与Shell命令查看"><a href="#Hbase完全分布式配置、启动与Shell命令查看" class="headerlink" title="Hbase完全分布式配置、启动与Shell命令查看"></a>Hbase完全分布式配置、启动与Shell命令查看</h1><p>首先我们先了解下Hbase构成</p>
+<ul>
+<li>依赖ZooKeeper</li>
+<li>分区服务器RegionServer服务器列在conf/regionservers文件中</li>
+<li>集群配制conf/hbase-site.xml和hbase-env.sh</li>
+</ul>
+<p><strong> 1、配置hbase-site.xml  </strong><br>(注意下方的s2 s3 s4 s5等为主机名 Linux主机名配置，<a hre="http://www.linuxidc.com/Linux/2013-12/93596.htm" target="_blank">点这里</a>)<br>hba<code>se.rootdir</code> 配置HBase的根目录 注意这里的ip和端口要和hdfs中的core-site.xml保持完全一致！<br>hba<code>se.cluster</code>.distributed 配置HBase分布式模式为true<br>hba<code>se.zookeeper</code>.quorum 配置HBase的zookeeper节点<br>hba<code>se.master</code> 配置hbase的主机以及端口<br>hba<code>se.zookeeper.property.clientPort</code> 配置<br>hba<code>se.zookeeper.property.dataDir</code> hbase输出路径 tmp不会引起权限问题（任何人可以读写）hdfs://s2:9000 必须和hdfs中的core-site 的 default.fs 保持一致<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">     &lt;property&gt;</span><br><span class="line">    &lt;name&gt;hbase.rootdir&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;hdfs://s2:9000/hbase&lt;/value&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">     &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;</span><br><span class="line">     &lt;value&gt;true&lt;/value&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;s2,s3,s4,s5&lt;/value&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;/usr/soft/zooData&lt;/value&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></p>
+<p><strong> 2、配置区域服务器列表：conf/regionservers 配置regionservers 每一个主机罗列上去 </strong><br>s3<br>s4<br>s5<br><strong> 3、配置hbase备份管理员主机：（这里选一台 s5） </strong><br>备份管理员是要接管管理员的角色的 所以也需要所有的公钥给其它主机（免密登录 这里为了方便还是s2）<br>conf/backup-masters file 文件（表示可以配置多个主机）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">quanquan@s2:/usr/soft/hbase-1.3.1/conf$ touch backup-masters</span><br><span class="line">quanquan@s2:/usr/soft/hbase-1.3.1/conf$ gedit backup-masters </span><br><span class="line">s5</span><br></pre></td></tr></table></figure></p>
+<p><strong> 4、启动Hadoop start-all.sh </strong><br>我们这里采用的是脚本启动 包含格式化名称节点以及创建目录 查看目录等操作<br><strong> 5、启动HBase start-hbase.sh </strong><br>主机节点信息如下： 一个zookeeper的HQuorumPeer节点<br>以及HMaster节点</p>
+<p><img src="/avatar/HBase/HBase9.png" alt=""><br>例如s3节点：<br><img src="/avatar/HBase/HBase10.png" alt=""></p>
+<p><strong> 6、进入shell中去 hbase bin目录下(配置 /etc/enviroment 可以全局使用脚本命令)： </strong><br>./hbase shell<br>输入help可以查看帮助命令<br>help [groupCommand]</p>
+<p>启动成功后可以通过WEB端访问：<br><a href="http://s2:16010/master-status" target="_blank" rel="noopener">http://s2:16010/master-status</a><br><strong> HBase 1.x 版本以后 Web端访问端口改为 16010。 </strong></p>
+<p><strong> 7.集群模式下重现CURD操作 </strong><br><img src="/avatar/HBase/HBase11.png" alt=""></p>
+<p>·新建表和列族<br>hbase(main):006:0&gt; create ‘wyc’,’data’<br>·查询所有表：<br>hbase(main):007:0&gt; list<br>TABLE<br>wyc<br>1 row(s) in 0.0680 seconds<br>·插入数据put<br><code>hbase(main):004:0&gt; put &#39;wyc&#39;,&#39;row1&#39;,&#39;data:a&#39;,&#39;wyc1&#39;</code><br>0 row(s) in 0.1040 seconds</p>
+<p><code>hbase(main):005:0&gt; put &#39;wyc&#39;,&#39;row2&#39;,&#39;data:b&#39;,&#39;wyc2&#39;</code><br>0 row(s) in 0.0210 seconds<br>·scan查询表所有数据<br><code>hbase(main):006:0&gt; scan &#39;wyc&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ROW                   COLUMN+CELL                                               </span><br><span class="line"> row1                 column=data:a, timestamp=1505547073805, value=wyc1        </span><br><span class="line"> row2                 column=data:b, timestamp=1505547085455, value=wyc2        </span><br><span class="line">2 row(s) in 0.2190 seconds</span><br></pre></td></tr></table></figure></p>
+<p>·put修改数据<br><code>hbase(main):010:0&gt; scan &#39;wyc&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ROW                   COLUMN+CELL                                               </span><br><span class="line"> row1                 column=data:a, timestamp=1505547073805, value=wyc1        </span><br><span class="line"> row2                 column=data:b, timestamp=1505547085455, value=wyc2        </span><br><span class="line"> row3                 column=data:1, timestamp=1505547336881, value=wyc3        </span><br><span class="line">3 row(s) in 0.0670 seconds</span><br></pre></td></tr></table></figure></p>
+<p><code>hbase(main):011:0&gt; put &#39;wyc&#39;,&#39;row3&#39;,&#39;data:1&#39;,&#39;23333&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 row(s) in 0.0300 seconds</span><br></pre></td></tr></table></figure></p>
+<p><code>hbase(main):012:0&gt; scan &#39;wyc&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ROW                   COLUMN+CELL                                               </span><br><span class="line"> row1                 column=data:a, timestamp=1505547073805, value=wyc1        </span><br><span class="line"> row2                 column=data:b, timestamp=1505547085455, value=wyc2        </span><br><span class="line"> row3                 column=data:1, timestamp=1505547357952, value=23333       </span><br><span class="line">3 row(s) in 0.0780 seconds</span><br></pre></td></tr></table></figure></p>
+<p>Linux下完全分布式集群的搭建以及测试就介绍到这里，下一篇我们采用JavaAPI来对HBase进行调用。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" title= HBase概念及操作（三）HBase JavaAPI以及Shell命令 >
+                    <span>Next Post</span>
+                    <span>HBase概念及操作（三）HBase JavaAPI以及Shell命令</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" title= HBase概念及操作（一）HBase基本概念及原理 >
+                    <span>Previous Post</span>
+                    <span>HBase概念及操作（一）HBase基本概念及原理</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "HBase概念及操作（二）HBase安装体验", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HBase安装以及体验"><span class="toc-number">1.</span> <span class="toc-text">HBase安装以及体验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#快速开始"><span class="toc-number">1.1.</span> <span class="toc-text">快速开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载解压最新版本"><span class="toc-number">1.2.</span> <span class="toc-text">下载解压最新版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动-HBase"><span class="toc-number">1.3.</span> <span class="toc-text">启动 HBase</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shell-练习"><span class="toc-number">1.4.</span> <span class="toc-text">Shell 练习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#停止-HBase"><span class="toc-number">1.5.</span> <span class="toc-text">停止 HBase</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Hbase完全分布式配置、启动与Shell命令查看"><span class="toc-number">2.</span> <span class="toc-text">Hbase完全分布式配置、启动与Shell命令查看</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 13 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

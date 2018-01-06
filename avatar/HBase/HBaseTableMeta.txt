@@ -1,0 +1,53 @@
+HBase Shell; enter 'help<RETURN>' for list of supported commands.
+Type "exit<RETURN>" to leave the HBase Shell
+Version 1.3.1, r930b9a55528fe45d8edce7af42fef2d35e77677a, Thu Apr  6 19:36:54 PDT 2017
+-- meta分为3个区块 我们根据行可以来区分 整个Meta表有4条记录
+scan 'hbase:meta'
+ROW  COLUMN+CELL
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:regioninfo, timestamp=1505722924351, value={ENCODED => ab1abd27f20f79ca240e5dd9576317d4, NAME => 'f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4.', STARTKEY => '', ENDKEY => '', OFFLINE => true, SPLIT => true}
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:seqnumDuringOpen, timestamp=1505713498937, value=\x00\x00\x00\x00\x00\x00\x00\x02
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:server, timestamp=1505713498937, value=s4:16020
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:serverstartcode, timestamp=1505713498937, value=1505709289741
+ -- 这一列分为了 列A和列B  列A的ENDKEY恰巧等于列B的STARTKEY 所以其接线为\x00b\xA1  开始是开区间 结束是闭区间(]
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:splitA, timestamp=1505722924351, value={ENCODED => df0f53afc6147b591930019e12829183, NAME => 'f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183.', STARTKEY => '', ENDKEY => '\x00\x00b\xA1'}
+ f_newapi_wyc,,1505713498206.ab1abd27f20f79ca240e5dd9576317d4. column=info:splitB, timestamp=1505722924351, value={ENCODED =>  a5306225558077bb392bff8d34c8b329, NAME => 'f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329.', STARTKEY => '\x00\x00b\xA1', ENDKEY => ''}
+ 
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:regioninfo, timestamp=1505722924727, value={ENCODED => df0f53afc6147b591930019e12829183, NAME => 'f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183.', STARTKEY => '', ENDKEY => '\x00\x00b\xA1'}
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:seqnumDuringOpen, timestamp=1505722924727, value=\x00\x00\x00\x00\x00\x00\x00\x0D
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:server, timestamp=1505722924727, value=s4:16020  -- 这里包含了这条信息是存在哪一个节点上的内容
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:serverstartcode, timestamp=1505722924727, value=1505709289741
+ 
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:regioninfo, timestamp=1505722924670, value={ENCODED => a5306225558077bb392bff8d34c8b329, NAME => 'f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329.', STARTKEY => '\x00\x00b\xA1', ENDKEY => ''}
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:seqnumDuringOpen, timestamp=1505722924670, value=\x00\x00\x00\x00\x00\x00\x00\x0E
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:server, timestamp=1505722924670, value=s4:16020
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:serverstartcode, timestamp=1505722924670, value=1505709289741
+ 
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:regioninfo, timestamp=1505709312644, value={ENCODED => feda3d5692ecbd730bb85a5dba3d1ec1, NAME => 'hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1.', STARTKEY => '', ENDKEY => ''}
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:seqnumDuringOpen, timestamp=1505709312644, value=\x00\x00\x00\x00\x00\x00\x00\x02
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:server, timestamp=1505709312644, value=s4:16020
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:serverstartcode, timestamp=1505709312644, value=1505709289741
+4 row(s) in 1.3360 seconds
+
+
+-- 第二次扫描 只剩3行数据
+HBase Shell; enter 'help<RETURN>' for list of supported commands.
+Type "exit<RETURN>" to leave the HBase Shell
+Version 1.3.1, r930b9a55528fe45d8edce7af42fef2d35e77677a, Thu Apr  6 19:36:54 PDT 2017
+
+scan 'hbase:meta'
+ROW  COLUMN+CELL
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:regioninfo, timestamp=1505723111609, value={ENCODED => df0f53afc6147b591930019e12829183, NAME => 'f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183.', STARTKEY => '', ENDKEY => '\x00\x00b\xA1'}
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:seqnumDuringOpen, timestamp=1505723111609, value=\x00\x00\x00\x00\x00\x00\x00\x11
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:server, timestamp=1505723111609, value=s3:16020
+ f_newapi_wyc,,1505722923531.df0f53afc6147b591930019e12829183. column=info:serverstartcode, timestamp=1505723111609, value=1505709287260
+ 
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:regioninfo, timestamp=1505722924670, value={ENCODED => a5306225558077bb392bff8d34c8b329, NAME => 'f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329.', STARTKEY => '\x00\x00b\xA1', ENDKEY => ''}
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:seqnumDuringOpen, timestamp=1505722924670, value=\x00\x00\x00\x00\x00\x00\x00\x0E
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:server, timestamp=1505722924670, value=s4:16020
+ f_newapi_wyc,\x00\x00b\xA1,1505722923531.a5306225558077bb392bff8d34c8b329. column=info:serverstartcode, timestamp=1505722924670, value=1505709289741
+ 
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:regioninfo, timestamp=1505709312644, value={ENCODED => feda3d5692ecbd730bb85a5dba3d1ec1, NAME => 'hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1.', STARTKEY => '', ENDKEY => ''}
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:seqnumDuringOpen, timestamp=1505709312644, value=\x00\x00\x00\x00\x00\x00\x00\x02
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:server, timestamp=1505709312644, value=s4:16020
+ hbase:namespace,,1505709310733.feda3d5692ecbd730bb85a5dba3d1ec1. column=info:serverstartcode, timestamp=1505709312644, value=1505709289741
+3 row(s) in 0.7770 seconds

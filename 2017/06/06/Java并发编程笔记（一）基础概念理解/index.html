@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（一）基础概念理解 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（一）基础概念理解</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（一）基础概念理解
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/06/06</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="走入并行世界"><a href="#走入并行世界" class="headerlink" title="走入并行世界"></a>走入并行世界</h1><p>Linux之父  Linus Torvalds 表示忘掉那该死的并行，除服务端和图像处理之外。（因为图像处理需要极大的计算量，一张1024*768的像素图片需要78万6千多像素 所以设计大量的矩阵计算 需要并行处理提高效率。服务端也一样，就想TB Tmall的双十一。）</p>
+<h2 id="摩尔定律的失效："><a href="#摩尔定律的失效：" class="headerlink" title="摩尔定律的失效："></a>摩尔定律的失效：</h2><p>摩尔定律是由英特尔创始人之一戈登摩尔提出来的，其内容为：集成电路上可容纳的晶体管的数目 约每隔24个月便会增加一倍，经常被引用为18个月，即每隔18-24个月计算机性能就会翻上一番。然而英特尔公司在CPU 4GHz芯片上失败了 ，硬件方面无法实现便使得多核汇聚在一个核上，出现了各式各样的多核处理器。<br>顶级计算机科学技术唐纳德·尔文·克努斯 评价到：这种现象是硬件设计者已经无处可施展，将摩尔定律的失效责任推脱给软件开发者。因此硬件无法实现的功能软件开发者也必然会更加难处理，因此多核CPU的并行计算应运而生。因此我们需要学习如何保障线程的安全性以及相互间的无序性和可见性。</p>
+<h2 id="常见概念："><a href="#常见概念：" class="headerlink" title="常见概念："></a>常见概念：</h2><ul>
+<li><strong> 同步&amp;异步 </strong><br>同步对应阻塞，异步对应非阻塞。例如同步需要等到方法执行完毕才能接着执行，异步更像消息传递，一旦开始就会立即返回。异步方法通常在另一个线程中“真实”地执行。不会阻塞当前线程。</li>
+<li><strong> 并发&amp;并行 </strong><br>并发侧重于多个任务交替执行，很可能是串行的。并行侧重于多个任务真正意义上的同时执行。真实的并行只有可能出现在多核CPU中，单核CPU在某一时刻有且只有一个任务指令能在运行。</li>
+<li><strong> 临界区 </strong><br>临界区用来表示一种公共资源或者共享数据的区域。可以被多个线程使用，但是每一次有且只有一个线程能够使用它。例如一台打印机一次只能打印一份文件，下一份待打印文件必须等待上一份完成了才能继续。这里的打印机就是临界区的意思。<br>在并行的程序中，临界区资源是保护的对象。</li>
+<li><strong> 阻塞和非阻塞 </strong><br>阻塞和非阻塞通常形容线程间的相互影响。比如一个线程占用了临界资源那么其他所有需要这个资源的线程就必须等待，这就是阻塞。非阻塞就是一个线程的操作不会让其他线程挂起或等待，所有线程都尝试不断地执行。</li>
+<li><strong> 死锁DeadLock、饥饿Starvation、活锁Livelock </strong><br>死锁、饥饿和活锁都属于线程活跃性的问题。<br>死锁即线程间相互循环等待对方释放资源造成的永久循环等待的结果。<br>饥饿即某一线程可能因为优先级比较低等原因一直无法获得所需的资源，该资源或是被其他线程不断抢占导致其无法工作。<br>活锁即为两个线程间互相“谦让”资源，出现了资源不断在两个线程间跳动 的情况，二没有一个线程可以同时拿到所有资源正常运行，这种情况即为活锁。</li>
+</ul>
+<h1 id="线程的并发级别"><a href="#线程的并发级别" class="headerlink" title="线程的并发级别"></a>线程的并发级别</h1><p>由于临界区的存在，多线程之间的并发必须受到控制。根据控制并发的策略，我们可以把并发的级别进行分类，大致上可以分为阻塞、无饥饿、无障碍、无锁、无等待几种。</p>
+<h2 id="阻塞-Blocking"><a href="#阻塞-Blocking" class="headerlink" title="阻塞( Blocking )"></a>阻塞( Blocking )</h2><p>一个线程是阻塞的，那么在其他线程释放资源前当前线程无法继续执行。当我们使用synchronized关键字或者重入锁时，我们得到的就是阻塞的线程。<br>无论是synchronized或者重入锁，都会试图在执行后续代码前得到临界区的锁，如果得不到就会被挂起等待。</p>
+<h2 id="无饥饿-Starvation-Free"><a href="#无饥饿-Starvation-Free" class="headerlink" title="无饥饿( Starvation - Free )"></a>无饥饿( Starvation - Free )</h2><p>如果线程间是有优先级的那么CPU调度时候总会倾向于满足高优先级的线程。锁分为公平锁和非公平锁。对于公平锁饥饿是不会产生的，都是按照先来后到的顺序。（大多数情况下锁的申请都是非公平的）对于非公平锁则就可能会导致低优先级的线程产生饥饿状态。</p>
+<h2 id="无障碍（Obstruction-free）"><a href="#无障碍（Obstruction-free）" class="headerlink" title="无障碍（Obstruction-free）"></a>无障碍（Obstruction-free）</h2><p>无障碍是一种最弱的非阻塞调度。两个线程如果是无障碍的执行，那么不会因为临界区的资源问题导致一方被挂起。但是一旦发生冲突就会有一方进行回滚操作，通过一致性标记来进行判断。每次操作之前读取并保存这个标记，操作完成后再次读取观察是否被更改过，如果已经被更改那么表示数据不再安全，执行回滚操作。<br>如果说阻塞的方式为悲观策略，那么非阻塞的策略为乐观策略。前者以保护数据为最高优先级，假设都会有冲突；而后者乐观策略假设多线程之间不会发生冲突或者说概率不大，一旦冲突即回滚。</p>
+<h2 id="无锁-Lock-Free"><a href="#无锁-Lock-Free" class="headerlink" title="无锁(Lock-Free)"></a>无锁(Lock-Free)</h2><p>无锁的并行都是无障碍的。在无锁的情况下允许所有线程都进入临界区访问资源，但是保证一个线程能够按照步骤完成操作并离开临界区。无锁总能保证至少一个能够顺利执行下去。<br>在无锁 操作中可能典型的例子就是包含一个无限循环，每一个线程都会不断地尝试修改共享变量。如果没有冲突则成功否则继续尝试修改。（CAS机制）<br>while(! atomicVar.compareAndSet(localVar,localVar+1)){<br>localVar=atomicVar.get();<br>}</p>
+<h2 id="无等待"><a href="#无等待" class="headerlink" title="无等待"></a>无等待</h2><p>无锁只要求一个线程在有限步骤内完成操作，而无等待进一步扩展，在无锁的基础上让所有线程都必须在有限步骤内完成，这样就不会引起饥饿问题，一种典型 结构即为 R - C - U (Read-copy - update)基本思想是：对数据的读不加限制，所有读线程都是无等待的，对修改加以限制，通过取得原始数据的副本，接着只修改副本数据，修改完成后等待合适的实际写回数据（读写锁，CopyOnWriteArrayList）。</p>
+<h1 id="有关并行的两个重要定律"><a href="#有关并行的两个重要定律" class="headerlink" title="有关并行的两个重要定律"></a>有关并行的两个重要定律</h1><p>我们使用并行程序主要出于两个目的：</p>
+<ul>
+<li>为了更好的性能</li>
+<li>由于业务模型 需要 确实需要多个执行实体</li>
+</ul>
+<p>将串行程序改为并发 一般来说是可以提高整体性能，但是究竟提高了多少还是一个值得研究的问题，目前主要有两个定律对这个问题进行了解答，一个是Amdahl定律，另一个是Gustafson定律。<br><strong> Amadahl定律是计算机科学中非常重要的定律。 </strong>它定义了串行系统并行优化后加速比的计算公式和理论上限。<br>加速比定义： <strong> 加速比 = 优化前系统耗时/优化后系统耗时 </strong><br>加速比越高 优化效果越明显。<br>根据公式可以得出使用多核CPU对系统进行优化，优化的效果取决于CPU的核数以及系统中串行程序的比重，CPU数量越多，串行化比重越低，则优化效果越明显。单纯提高CPU数量而不降低程序的串行化比重是无法提高系统性能的。<br><strong> Gustafson定律 </strong>与之相反，其认为不断地提升CPU核数可以提高性能。其认为如果可被并行的代码比重足够多，那么加速就呈线性增长。</p>
+<h1 id="JMM内存模型"><a href="#JMM内存模型" class="headerlink" title="JMM内存模型"></a>JMM内存模型</h1><p>JMM的关键技术在于多线程的原子性、可见性、和有序性展开讨论。</p>
+<h2 id="1、原子性。"><a href="#1、原子性。" class="headerlink" title="1、原子性。"></a>1、原子性。</h2><p>原子性是指一个线程的操作是不可被中断的，即使在多线程一起执行的时候，一个操作一旦开始就不会被其他线程干扰。<br>例如对32位操作系统的虚拟机使用64位的Long类型执行并发时候写入或读取 那么对线程之间的结果是有干扰的。不难发现计算机会读long类型变量的前32位数字，由于并行的关系数字被写乱了，或者读的时候读串位了。</p>
+<h2 id="2、可见性"><a href="#2、可见性" class="headerlink" title="2、可见性"></a>2、可见性</h2><p>可见性是指当一个线程修改了某一共享变量的值后，其他线程能否能够立即知道这个修改。变量修改问题在其他串行的程序是不存在的，并行程序一个线程修改某一个全局变量 那么其他线程就未必知道了。例如：CPU1和CPU2 共享变量t,其中CPU1 线程对变量进行了优化将其存储在缓存中或者寄存器中，而此时CPU2对该变量值进行修改，然后CPU1从缓存或者寄存器继续中读取旧值，那么就存在可见性问题了。可见性问题是并发程序中需要重点关注的一个问题。</p>
+<h2 id="3、有序性"><a href="#3、有序性" class="headerlink" title="3、有序性"></a>3、有序性</h2><p>有序性问题可能最难理解，对于一个线程而言串行程序运行顺序是从上到下，然而并发时候程序的执行可能会出现乱序。voliatile和synchronized可以保证有序性，voliatile可以禁止指令从排序。有序性问题的原因是因为程序在执行时候，可能会进行指令重排序，重排后的指令与原指令的顺序未必一致。至于指令为何重排？什么时候重排？我们是无法预测的。那么为什么要进行指令重排序？主要是因为性能的考虑。</p>
+<p>主要分为以下几步：<br>· 取指 IF<br>· 译码和取寄存器操作数 ID<br>· 执行或者有效地址计算 EX<br>· 存储器访问MEM<br>· 写回WB</p>
+<p>我们的汇编指令也不是一步就完成的，在CPU实际工作中，它还是需要分为多个步骤依次执行的。当然每个步骤所涉及的硬件也可能不同。比如，取指时会用到PC寄存器和存储器，译码时会用到指令寄存器组，执行时会用到ALU（算术逻辑单元。它是CPU的核心组成部分，主要功能是进行二进制运算），写回时会用到寄存器组。<br>指令1：IF ID EX MEM WB<br>指令2：    IF  ID  EX MEM  WB<br>可以看到当指令一完成了取指IF操作之后指令二就开始执行了，假定一个操作为1ms那么如果依次执行的话需要10ms，而如上所述只需要6ms，如此大的性能提升在国际商业的CPU流水线（10级指令操作以上）优化效果更为明显。<br>有了流水线这个神器，我们CPU才能真正地高效执行，但是别忘了一点，流水线总是害怕中断的。流水线满载时候性能相当不错，但是一旦中断后所有硬件设备都会进入停顿期，再次满载又需要几个周期，因此性能损失会比较大，那么指令重排的目的就在此，目的就是为了尽量少的中断流水线。指令重排序以消除停顿。具体参见书P23-P26。<br><img src="/avatar/并发/binfa.png" alt=""><br><img src="/avatar/并发/binfa2.png" alt=""><br><img src="/avatar/并发/binfa3.png" alt=""><br><img src="/avatar/并发/binfa4.png" alt=""></p>
+<h2 id="哪些指令不能重排序？Happen-Before规则"><a href="#哪些指令不能重排序？Happen-Before规则" class="headerlink" title="哪些指令不能重排序？Happen-Before规则"></a>哪些指令不能重排序？Happen-Before规则</h2><p>如果前一个操作对后一个操作是有影响的，那么这两条操作是禁止重排序的。<br>例如 int a=1;<br>b =  a+1;</p>
+<p>以下是关于一些禁止重排序的基本规则：</p>
+<p>·<strong> 程序顺序规则 </strong>：一个线程内保证语义的串行性<br>·<strong> volatile规则 </strong>：volatile变量的写先于读，因此可保证其可见性。<br>·<strong> 锁规则 </strong>：解锁unlock必然发生在加锁Lock前<br>·<strong> 传递性 </strong>：A happen-before B B happen-Before C  –&gt; A happen-before C<br>·<strong> 线程的start()方法先于它的每一个动作 </strong><br>·<strong> 线程所有操作先于线程的终结（Thread.join()） </strong><br>·<strong> 线程的中断（interupt()）先于被中断线程的代码 </strong><br>·<strong> 对象的构造函数执行先于finalize()方法 </strong></p>
+<h1 id="Java并行程序基础"><a href="#Java并行程序基础" class="headerlink" title="Java并行程序基础"></a>Java并行程序基础</h1><p>线程是进程的一个执行单位，一个进程包含了多个线程。<br>所有线程的状态都在枚举中定义:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> State &#123;</span><br><span class="line">NEW,</span><br><span class="line">RUNNABLE,</span><br><span class="line">BLOCKED,</span><br><span class="line">WAITING,</span><br><span class="line">TIMED_WAITING,</span><br><span class="line">TERMINATED</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>new代表新创的线程，调用start()后直接进入RUNNABLE状态，遇到了synchronized就直接阻塞Blocked，遇到了wait方法或者join方法就等待WAITING，等待被Notify，TIMED_WAITING限时等待，线程执行完毕即为TERMINATED 终止状态。</p>
+<h2 id="线程间的基本操作（通信）："><a href="#线程间的基本操作（通信）：" class="headerlink" title="线程间的基本操作（通信）："></a>线程间的基本操作（通信）：</h2><h3 id="启动线程："><a href="#启动线程：" class="headerlink" title="启动线程："></a>启动线程：</h3><p>不多解释，一个类extends Thread 或者 implements Runnable 重写run方法<br>然后 new Thread(new ClassName()).start() 即启动;</p>
+<h3 id="终止线程："><a href="#终止线程：" class="headerlink" title="终止线程："></a>终止线程：</h3><p>一般来说线程执行完会自动退出，查阅JDK发现stop()方法以及被废弃，原因是stop()方法太过暴力，强制把执行到一半的线程终止，可能会引起数据不一致的问题。那什么是数据不一致呢？如果你想存入一个对象 A –&gt; ID = 1  NAME=小明 B–&gt; ID =2 NAME=小张，在串行程序中没问题但是并行程序中如果使用stop()你正在存储一个对象 刚刚存完了id=1时候停止了线程被迫释放了锁（锁就是用来维护数据一致性的），这时候Name还没存入这个线程就终止了，下一个线程获得了锁读到了 ID=1 NAME=null 的这一错误值。这在生产环境中将是一个对数据库对应数据永久破坏和毁灭性的打击。<br>那么怎么终止线程呢？其实一种方式是只需要定义一个：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> stopFlag = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopMe</span><span class="params">()</span></span>&#123;</span><br><span class="line">stopFlag = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line"><span class="keyword">if</span>(stopMe())&#123;</span><br><span class="line">System.out.println(<span class="string">"线程结束~~"</span>);</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> </p>
+<h3 id="线程中断："><a href="#线程中断：" class="headerlink" title="线程中断："></a>线程中断：</h3><p>在Java中 线程中断是一种重要的线程协作机制，与其停止stop()不如中断。中断就是终止执行的意思，实际上并非如此，你只是调用了一个方法告知某个线程要中断，但是是否中断你是控制不了的。如果你能控制立即中断 那么不就又回到了stop的老问题上了么?</p>
+<p>线程中断有3个方法：<br>1、interrupt() 中断当前线程<br>2、isInterrupted()  判断当前线程是否被中断<br>3、interrupted()   判断线程是否被中断 并清空中断状态<br>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//如果希望在中断后退出 那么就应该加上相应的中断</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InterruptClass1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">			<span class="comment">//判断当前线程如果被中断的话 这种中断方式更为强劲</span></span><br><span class="line">			<span class="keyword">if</span>(Thread.currentThread().isInterrupted())&#123;</span><br><span class="line">				System.out.println(<span class="string">"线程中断！"</span>);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//上面代码用于检测sleep() 和 wait() 方法的状态</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//执行到这里线程会中断 于是我们进入catch块给其重新加上中断标记</span></span><br><span class="line">				System.out.println(<span class="string">"I 'm  sleeping~~"</span>);</span><br><span class="line">				Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				System.out.println(<span class="string">"线程休眠中断！"</span>);</span><br><span class="line">				<span class="comment">/**</span></span><br><span class="line"><span class="comment">				 * Thread.sleep()方法会由于主方法中调用了中断方法interrupt()而导致其抛出异常  同时会清除中断标记，如果不加处理的话这会使得下一次循环</span></span><br><span class="line"><span class="comment">				 开始就无法捕获这个中断  为了保证数据的一致性和完整性 我们要在这里设置中断标志位</span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">			</span><br><span class="line">				Thread.currentThread().interrupt();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="comment">//阻塞 谦让线程  让其他线程去执行</span></span><br><span class="line">			Thread.yield();</span><br><span class="line">			&#125;</span><br><span class="line">		</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"123"</span>);</span><br><span class="line">		<span class="comment">//加载线程</span></span><br><span class="line">		</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> InterruptClass1());</span><br><span class="line">		t1.start();</span><br><span class="line">		Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		<span class="comment">//中断线程t1 让其进入catch块</span></span><br><span class="line">		t1.interrupt();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure> </p>
+<h3 id="通信wait和notify"><a href="#通信wait和notify" class="headerlink" title="通信wait和notify"></a>通信wait和notify</h3><p>wait和notify是Object的方法，如果一个线程调用了wait()方法，那么它就进入了object的等待队列，等待被唤醒，notify()方法唤醒的线程是随机不公平的，并不是先等待先唤醒。notifyAll()方法即为唤醒全部线程。wait()方法必须包裹在synchronized语句块中，无论是wait()或者notify()方法都需要首先获得一个对象的监视器，T1 T2两个线程 T1在执行wait()方法前，首先必须获得Object对象的监视器，然后在wait()方法执行后释放这个监视器，该监视器被T2线程获取 并执行notify()方法后也释放监视器，T1线程此时被唤醒要做的第一件事不是执行后续代码，而是尝试重新获得object监视器。当监视器顺利获得后，T1才可以执行前所持有的那个。如果暂时无法获得，T1还必须得等待这个监视器，等待T2释放监视器后重新获得监视器然后继续执行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 该线程调用wait方法会阻塞 等待被notify()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">//公共对象OBJ</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object obj = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WaitDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="comment">//给该资源加锁 </span></span><br><span class="line">		<span class="keyword">synchronized</span> (obj) &#123;</span><br><span class="line">			System.out.println(System.currentTimeMillis()+<span class="string">": WaitThread Start!!"</span>);</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="comment">//调用wait方法阻塞线程 此时释放锁</span></span><br><span class="line">				obj.wait();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			System.out.println(System.currentTimeMillis()+<span class="string">": WaitThread End!!  获得锁资源 被唤醒"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">NotifyDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">synchronized</span> (obj) &#123;</span><br><span class="line">			System.out.println(System.currentTimeMillis()+<span class="string">"Notify Thread Start!!!!!"</span>);</span><br><span class="line">			<span class="comment">//调用完Notify方法后此时T1并真正被唤醒开始 而是等待该线程释放锁资源</span></span><br><span class="line">			obj.notify();</span><br><span class="line">			System.out.println(System.currentTimeMillis() +<span class="string">"Notify Thread End!!!!!! 5s后释放锁资源"</span>);</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">	<span class="comment">//线程等待与唤醒</span></span><br><span class="line">	Thread wait = <span class="keyword">new</span> Thread(<span class="keyword">new</span> WaitDemo1());</span><br><span class="line">	Thread notify = <span class="keyword">new</span> Thread(<span class="keyword">new</span> NotifyDemo1());</span><br><span class="line">	wait.start();</span><br><span class="line">	notify.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>注：wait()和sleep()的区别：wait方法会释放锁，而sleep不会。</p>
+<h3 id="suspend挂起和resume继续执行"><a href="#suspend挂起和resume继续执行" class="headerlink" title="suspend挂起和resume继续执行"></a>suspend挂起和resume继续执行</h3><p>这两个操作是一对相反的操作，被挂起必须等到resume后才能继续执行。然而这也和stop方法一样被标记为废弃方法，原因是当T1线程调用suspend方法后不会释放锁资源且状态仍然为Runnable状态，其他想访问该资源的线程都必须等待对应的线程执行了resume方法后才能继续，如果resume操作在suspend操作之前执行的话，那么就导致其他线程永久等待锁资源了。这样可能导致系统工作不正常。<br>（使用jstack命令可以查看系统的线程信息）</p>
+<h3 id="等待线程的结束join和谦让yield"><a href="#等待线程的结束join和谦让yield" class="headerlink" title="等待线程的结束join和谦让yield"></a>等待线程的结束join和谦让yield</h3><p>很多时候一个线程的输入依赖另一个线程的输出，此时这个线程就需要等待依赖线程的完毕才可以继续，这时候就需要join()方法来实现了。<br>yield()方法比较有趣，他就像线程执行完了想休息一会，放出cpu的使用权，但是还是会争夺cpu资源，至于接下来是不是他接着执行那就不一定啦。（一般用于不太重要、优先级低、避免占用太多资源的线程）<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多线程实例~</span></span><br><span class="line"><span class="comment"> * 等待当前线程执行完毕join </span></span><br><span class="line"><span class="comment"> * 和 谦让线程yield</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JoinAndYield</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">volatile</span>  <span class="keyword">static</span> <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">JoinClass</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">for</span>(a=<span class="number">0</span>;a&lt;=<span class="number">1000000</span>;a++);</span><br><span class="line"><span class="comment">//			Thread.yield();</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="comment">//</span></span><br><span class="line">		Thread join = <span class="keyword">new</span> Thread(<span class="keyword">new</span> JoinClass());</span><br><span class="line">		join.start();</span><br><span class="line">		<span class="comment">//如果调用了join方法那么主线程会等待它执行完再执行输出语句，不然的话输出语句a的值肯定很小</span></span><br><span class="line">		join.join();</span><br><span class="line">		System.out.println(a);  <span class="comment">//输出100001</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> </p>
+<h3 id="volatile-与-Java内存模型"><a href="#volatile-与-Java内存模型" class="headerlink" title="volatile 与 Java内存模型"></a>volatile 与 Java内存模型</h3><p>Java内存模型 JMM 是围绕着可见性、原子性、有序性三大特点展开的。Java使用特殊的关键字volatile关键字来告诉虚拟机这个变量是可见的，不能随意变动优化指令。<br>多线程环境下用volatile去申明一个变量等于告诉了虚拟机这个变量是会被修改的，它便会用一些特殊的手段保证这个变量的可见性，但是不保证其复杂操作下的原子性。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VoliatleDemo</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">volatile</span>  <span class="keyword">static</span> <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">VolatileClass</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=<span class="number">10000</span>;i++);</span><br><span class="line"><span class="comment">//			Thread.yield();</span></span><br><span class="line">			a++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="comment">//</span></span><br><span class="line">		Thread[] join = <span class="keyword">new</span> Thread[<span class="number">10</span>];</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;join.length;i++)&#123;</span><br><span class="line">			<span class="comment">//启动十个线程</span></span><br><span class="line">			join[i]= <span class="keyword">new</span> Thread(<span class="keyword">new</span> VolatileClass());</span><br><span class="line">			join[i].start();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//主线程等待这10个线程执行</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;join.length;i++)&#123;</span><br><span class="line">			join[i].join();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//期望输出都是10000 但是打印该变量的值 a总是会小于10000 因为不保证其原子性</span></span><br><span class="line">		System.out.println(a);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> </p>
+<p>注意：可以使用虚拟机参数-server切换到server模式</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2017/05/26/缓存那些事儿/" title= 缓存那些事儿 >
+                    <span>Previous Post</span>
+                    <span>缓存那些事儿</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（一）基础概念理解", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#走入并行世界"><span class="toc-number">1.</span> <span class="toc-text">走入并行世界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#摩尔定律的失效："><span class="toc-number">1.1.</span> <span class="toc-text">摩尔定律的失效：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见概念："><span class="toc-number">1.2.</span> <span class="toc-text">常见概念：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#线程的并发级别"><span class="toc-number">2.</span> <span class="toc-text">线程的并发级别</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#阻塞-Blocking"><span class="toc-number">2.1.</span> <span class="toc-text">阻塞( Blocking )</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无饥饿-Starvation-Free"><span class="toc-number">2.2.</span> <span class="toc-text">无饥饿( Starvation - Free )</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无障碍（Obstruction-free）"><span class="toc-number">2.3.</span> <span class="toc-text">无障碍（Obstruction-free）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无锁-Lock-Free"><span class="toc-number">2.4.</span> <span class="toc-text">无锁(Lock-Free)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无等待"><span class="toc-number">2.5.</span> <span class="toc-text">无等待</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#有关并行的两个重要定律"><span class="toc-number">3.</span> <span class="toc-text">有关并行的两个重要定律</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JMM内存模型"><span class="toc-number">4.</span> <span class="toc-text">JMM内存模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、原子性。"><span class="toc-number">4.1.</span> <span class="toc-text">1、原子性。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、可见性"><span class="toc-number">4.2.</span> <span class="toc-text">2、可见性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3、有序性"><span class="toc-number">4.3.</span> <span class="toc-text">3、有序性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#哪些指令不能重排序？Happen-Before规则"><span class="toc-number">4.4.</span> <span class="toc-text">哪些指令不能重排序？Happen-Before规则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java并行程序基础"><span class="toc-number">5.</span> <span class="toc-text">Java并行程序基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程间的基本操作（通信）："><span class="toc-number">5.1.</span> <span class="toc-text">线程间的基本操作（通信）：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#启动线程："><span class="toc-number">5.1.1.</span> <span class="toc-text">启动线程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#终止线程："><span class="toc-number">5.1.2.</span> <span class="toc-text">终止线程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程中断："><span class="toc-number">5.1.3.</span> <span class="toc-text">线程中断：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通信wait和notify"><span class="toc-number">5.1.4.</span> <span class="toc-text">通信wait和notify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#suspend挂起和resume继续执行"><span class="toc-number">5.1.5.</span> <span class="toc-text">suspend挂起和resume继续执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#等待线程的结束join和谦让yield"><span class="toc-number">5.1.6.</span> <span class="toc-text">等待线程的结束join和谦让yield</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#volatile-与-Java内存模型"><span class="toc-number">5.1.7.</span> <span class="toc-text">volatile 与 Java内存模型</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 13 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
