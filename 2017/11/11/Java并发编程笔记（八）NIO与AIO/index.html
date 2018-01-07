@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（八）NIO与AIO · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（八）NIO与AIO</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（八）NIO与AIO
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/11/11</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="NIO简介"><a href="#NIO简介" class="headerlink" title="NIO简介"></a>NIO简介</h1><p>Java NIO(New IO)是一个可以替代标准Java IO API的IO API（从Java 1.4开始)，Java NIO提供了与标准IO不同的IO工作方式。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><strong> Java NIO: Channels and Buffers（通道和缓冲区） </strong><br>标准的IO基于字节流和字符流进行操作的，而NIO是基于通道（Channel）和缓冲区（Buffer）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。<br><strong> Java NIO: Non-blocking IO（非阻塞IO） </strong><br>Java NIO可以让你非阻塞的使用IO，例如：当线程从通道读取数据到缓冲区时，线程还是可以进行其他事情。当数据被写入到缓冲区时，线程可以继续处理它。从缓冲区写入通道也类似。<br><strong> Java NIO: Selectors（选择器） </strong><br>Java NIO引入了选择器的概念，选择器用于监听多个通道的事件（比如：连接打开，数据到达）。因此，单个的线程可以监听多个数据通道。</p>
+<p>Java NIO 由以下几个核心部分组成：<br>  ● Channels<br>  ● Buffers<br>  ● Selectors<br>虽然Java NIO 中除此之外还有很多类和组件，但在我看来，Channel，Buffer 和 Selector 构成了核心的API。其它组件，如Pipe和FileLock，只不过是与三个核心组件共同使用的工具类。因此，在概述中我将集中在这三个组件上。其它组件会在单独的章节中讲到。<br>  ● 既可以从通道中读取数据，又可以写数据到通道。但流的读写通常是单向的。<br>  ● 通道可以异步地读写。<br>  ● 通道中的数据总是要先读到一个Buffer，或者总是要从一个Buffer中写入</p>
+<h2 id="Channel-和-Buffer"><a href="#Channel-和-Buffer" class="headerlink" title="Channel 和 Buffer"></a>Channel 和 Buffer</h2><p>基本上，所有的 IO 在NIO 中都从一个Channel 开始。Channel 有点象流。 数据可以从Channel读到Buffer中，也可以从Buffer 写到Channel中。这里有个图示：<br><img src="/avatar/nio/nio1.png" alt=""><br>Channel和Buffer有好几种类型。下面是JAVA NIO中的一些主要Channel的实现：<br>  ● FileChannel<br>  ● DatagramChannel<br>  ● SocketChannel<br>  ● ServerSocketChannel<br>正如你所看到的，这些通道涵盖了UDP 和 TCP 网络IO，以及文件IO。<br>与这些类一起的有一些有趣的接口，但为简单起见，我尽量在概述中不提到它们。本教程其它章节与它们相关的地方我会进行解释。<br>FileChannel 从文件中读写数据。<br>DatagramChannel 能通过UDP读写网络中的数据。<br>SocketChannel 能通过TCP读写网络中的数据。<br>ServerSocketChannel可以监听新进来的TCP连接，像Web服务器那样。对每一个新进来的连接都会创建一个SocketChannel。<br>以下是Java NIO里关键的Buffer实现：<br>  ● ByteBuffer<br>  ● CharBuffer<br>  ● DoubleBuffer<br>  ● FloatBuffer<br>  ● IntBuffer<br>  ● LongBuffer<br>  ● ShortBuffer<br>这些Buffer覆盖了你能通过IO发送的基本数据类型：byte, short, int, long, float, double 和 char。<br>Java NIO 还有个 MappedByteBuffer，用于表示内存映射文件， 我也不打算在概述中说明。<br>Selector<br>Selector允许单线程处理多个 Channel。如果你的应用打开了多个连接（通道），但每个连接的流量都很低，使用Selector就会很方便。例如，在一个聊天服务器中。<br>这是在一个单线程中使用一个Selector处理3个Channel的图示：<br><img src="/avatar/nio/nio2.png" alt=""><br>要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。</p>
+<h2 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 此类的实例支持对随机访问文件的读取和写入。随机访问文件的行为类似存储在文件系统中的一个大型</span></span><br><span class="line"><span class="comment">		 *  byte 数组。存在指向该隐含数组的光标或索引，称为文件指针；输入操作从文件指针开始读取字节，</span></span><br><span class="line"><span class="comment">		 *  并随着对字节的读取而前移此文件指针。如果随机访问文件以读取/写入模式创建，则输出操作也可用；</span></span><br><span class="line"><span class="comment">		 *  输出操作从文件指针开始写入字节，并随着对字节的写入而前移此文件指针。</span></span><br><span class="line"><span class="comment">		 *  写入隐含数组的当前末尾之后的输出操作导致该数组扩展。该文件指针可以通过 getFilePointer 方法读取，</span></span><br><span class="line"><span class="comment">		 *  并通过 seek 方法设置。 </span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="comment">//构建RandomAccessFile对象 模式为可读写</span></span><br><span class="line">		RandomAccessFile random = <span class="keyword">new</span> RandomAccessFile(<span class="string">"E://NIO-file.txt"</span>, <span class="string">"rw"</span>);</span><br><span class="line">		<span class="comment">//返回与此文件关联的唯一 FileChannel 对象。</span></span><br><span class="line">		FileChannel channel = random.getChannel();</span><br><span class="line">		<span class="comment">//构建字节缓冲区对象 allocate分配一个新的字节缓冲区。</span></span><br><span class="line">		ByteBuffer buf = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">		<span class="comment">//channel读取数据到缓冲区中 如果没达到流的末尾</span></span><br><span class="line">		<span class="keyword">while</span>((channel.read(buf))!=-<span class="number">1</span>)&#123;</span><br><span class="line">			<span class="comment">//反转此缓冲区flip()方法将Buffer从写模式切换到读模式。在读模式下，可以读取之前写入到buffer的所有数据</span></span><br><span class="line">			buf.flip();</span><br><span class="line">			<span class="comment">/**</span></span><br><span class="line"><span class="comment">			 * 告知在当前位置和限制之间是否有元素。 </span></span><br><span class="line"><span class="comment">			返回：</span></span><br><span class="line"><span class="comment">			当且仅当此缓冲区中至少还有一个元素时返回 true</span></span><br><span class="line"><span class="comment">			 */</span></span><br><span class="line">			<span class="keyword">while</span>(buf.hasRemaining())&#123;</span><br><span class="line">				<span class="comment">//相对 get 方法。读取此缓冲区当前位置的字节，然后该位置递增。 </span></span><br><span class="line">				<span class="comment">/**</span></span><br><span class="line"><span class="comment">				 * get(int index)绝对 get 方法。读取指定索引处的字节。 </span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">				System.out.print((<span class="keyword">char</span>)buf.get());</span><br><span class="line">			&#125;</span><br><span class="line">    <span class="comment">//清空缓存</span></span><br><span class="line">			buf.clear();</span><br><span class="line">    <span class="comment">//继续读取</span></span><br><span class="line">			channel.read(buf);</span><br><span class="line">		&#125;</span><br><span class="line">		random.close();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Buffer的基本用法"><a href="#Buffer的基本用法" class="headerlink" title="Buffer的基本用法"></a>Buffer的基本用法</h2><p>使用Buffer读写数据一般遵循以下四个步骤：</p>
+<ol>
+<li>写入数据到Buffer</li>
+<li>调用flip()方法</li>
+<li>从Buffer中读取数据</li>
+<li><p>调用clear()方法或者compact()方法</p>
+<p>当向buffer写入数据时，buffer会记录下写了多少数据。一旦要读取数据，需要通过flip()方法将Buffer从写模式切换到读模式。在读模式下，可以读取之前写入到buffer的所有数据。<br>一旦读完了所有的数据，就需要清空缓冲区，让它可以再次被写入。有两种方式能清空缓冲区：调用clear()或compact()方法。clear()方法会清空整个缓冲区。compact()方法只会清除已经读过的数据。任何未读的数据都被移到缓冲区的起始处，新写入的数据将放到缓冲区未读数据的后面。</p>
+</li>
+</ol>
+<h3 id="Buffer的capacity-position和limit"><a href="#Buffer的capacity-position和limit" class="headerlink" title="Buffer的capacity,position和limit"></a>Buffer的capacity,position和limit</h3><p>缓冲区本质上是一块可以写入数据，然后可以从中读取数据的内存。这块内存被包装成NIO Buffer对象，并提供了一组方法，用来方便的访问该块内存。<br>为了理解Buffer的工作原理，需要熟悉它的三个属性：<br>  ● capacity<br>  ● position<br>  ● limit</p>
+<p>position和limit的含义取决于Buffer处在读模式还是写模式。不管Buffer处在什么模式，capacity的含义总是一样的。<br>这里有一个关于capacity，position和limit在读写模式中的说明，详细的解释在插图后面。<br><img src="/avatar/nio/nio3.png" alt=""></p>
+<p><strong> capacity </strong><br>作为一个内存块，Buffer有一个固定的大小值，也叫“capacity”.你只能往里写capacity个byte、long，char等类型。一旦Buffer满了，需要将其清空（通过读数据或者清除数据）才能继续写数据往里写数据。<br><strong> position </strong><br>当你写数据到Buffer中时，position表示当前的位置。初始的position值为0.当一个byte、long等数据写到Buffer后， position会向前移动到下一个可插入数据的Buffer单元。position最大可为capacity – 1.<br>当读取数据时，也是从某个特定位置读。当将Buffer从写模式切换到读模式，position会被重置为0. 当从Buffer的position处读取数据时，position向前移动到下一个可读的位置。<br><strong> limit </strong><br>在写模式下，Buffer的limit表示你最多能往Buffer里写多少数据。 写模式下，limit等于Buffer的capacity。<br>当切换Buffer到读模式时， limit表示你最多能读到多少数据。因此，当切换Buffer到读模式时，limit会被设置成写模式下的position值。换句话说，你能读到之前写入的所有数据（limit被设置成已写数据的数量，这个值在写模式下就是position）</p>
+<h3 id="Buffer的类型"><a href="#Buffer的类型" class="headerlink" title="Buffer的类型"></a>Buffer的类型</h3><p>Java NIO 有以下Buffer类型<br>  ● ByteBuffer<br>  ● MappedByteBuffer<br>  ● CharBuffer<br>  ● DoubleBuffer<br>  ● FloatBuffer<br>  ● IntBuffer<br>  ● LongBuffer<br>  ● ShortBuffer</p>
+<p>如你所见，这些Buffer类型代表了不同的数据类型。换句话说，就是可以通过char，short，int，long，float 或 double类型来操作缓冲区中的字节。</p>
+<h3 id="Buffer的分配"><a href="#Buffer的分配" class="headerlink" title="Buffer的分配"></a>Buffer的分配</h3><p>要想获得一个Buffer对象首先要进行分配。 每一个Buffer类都有一个allocate方法。下面是一个分配48字节capacity的ByteBuffer的例子。<br><code>ByteBuffer buf = ByteBuffer.allocate(48);</code><br>这是分配一个可存储1024个字符的CharBuffer：<br><code>CharBuffer buf = CharBuffer.allocate(1024);</code></p>
+<h3 id="向Buffer中写数据"><a href="#向Buffer中写数据" class="headerlink" title="向Buffer中写数据"></a>向Buffer中写数据</h3><p>写数据到Buffer有两种方式：<br>  ● 从Channel写到Buffer。<br>  ● 通过Buffer的put()方法写到Buffer里。<br>从Channel写到Buffer的例子<br><code>int bytesRead = inChannel.read(buf); //read into buffer.</code><br>通过put方法写Buffer的例子：<br><code>buf.put(127);</code><br>put方法有很多版本，允许你以不同的方式把数据写入到Buffer中。例如， 写到一个指定的位置，或者把一个字节数组写入到Buffer。 更多Buffer实现的细节参考JavaDoc。</p>
+<p><strong> flip()方法 </strong><br>flip方法将Buffer从写模式切换到读模式。调用flip()方法会将position设回0，并将limit设置成之前position的值。换句话说，position现在用于标记读的位置，limit表示之前写进了多少个byte、char等 —— 现在能读取多少个byte、char等。</p>
+<h3 id="从Buffer中读取数据"><a href="#从Buffer中读取数据" class="headerlink" title="从Buffer中读取数据"></a>从Buffer中读取数据</h3><p>从Buffer中读取数据有两种方式：</p>
+<ol>
+<li>从Buffer读取数据到Channel。</li>
+<li>使用get()方法从Buffer中读取数据。</li>
+</ol>
+<p>从Buffer读取数据到Channel的例子：<br><code>int bytesWritten = inChannel.write(buf);</code><br>使用get()方法从Buffer中读取数据的例子<br><code>byte aByte = buf.get();</code><br>get方法有很多版本，允许你以不同的方式从Buffer中读取数据。例如，从指定position读取，或者从Buffer中读取数据到字节数组。更多Buffer实现的细节参考JavaDoc。<br><strong> rewind()方法 </strong><br>Buffer.rewind()将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍然表示能从Buffer中读取多少个元素（byte、char等）。<br><strong> clear()与compact()方法 </strong><br>一旦读完Buffer中的数据，需要让Buffer准备好再次被写入。可以通过clear()或compact()方法来完成。<br>如果调用的是clear()方法，position将被设回0，limit被设置成 capacity的值。换句话说，Buffer 被清空了。Buffer中的数据并未清除，只是这些标记告诉我们可以从哪里开始往Buffer里写数据。<br>如果Buffer中有一些未读的数据，调用clear()方法，数据将“被遗忘”，意味着不再有任何标记会告诉你哪些数据被读过，哪些还没有。<br>如果Buffer中仍有未读的数据，且后续还需要这些数据，但是此时想要先先写些数据，那么使用compact()方法。<br>compact()方法将所有未读的数据拷贝到Buffer起始处。然后将position设到最后一个未读元素正后面。limit属性依然像clear()方法一样，设置成capacity。现在Buffer准备好写数据了，但是不会覆盖未读的数据。</p>
+<p><strong> mark()与reset()方法 </strong><br>通过调用Buffer.mark()方法，可以标记Buffer中的一个特定position。之后可以通过调用Buffer.reset()方法恢复到这个position。<br>buffer.mark();<br>buffer.reset();  //set position back to mark.</p>
+<p><strong> equals()与compareTo()方法方法 </strong></p>
+<p>可以使用equals()和compareTo()方法两个Buffer。</p>
+<p><strong> equals()方法 </strong><br>当满足下列条件时，表示两个Buffer相等：</p>
+<ol>
+<li>有相同的类型（byte、char、int等）。</li>
+<li>Buffer中剩余的byte、char等的个数相等。</li>
+<li>Buffer中所有剩余的byte、char等都相同。</li>
+</ol>
+<p>如你所见，equals只是比较Buffer的一部分，不是每一个在它里面的元素都比较。实际上，它只比较Buffer中的剩余元素。</p>
+<p><strong> compareTo()方法方法 </strong></p>
+<p>compareTo()方法比较两个Buffer的剩余元素(byte、char等)， 如果满足下列条件，则认为一个Buffer“小于”另一个Buffer：</p>
+<ol>
+<li>第一个不相等的元素小于另一个Buffer中对应的元素 。</li>
+<li>所有元素都相等，但第一个Buffer比另一个先耗尽(第一个Buffer的元素个数比另一个少)。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;</span><br><span class="line">		String str = <span class="string">"宝武集团"</span>;</span><br><span class="line">		<span class="comment">//构建一个1024个容量的字符缓冲对象</span></span><br><span class="line">		CharBuffer charBuffer = CharBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">		CharBuffer charBuffer2 = CharBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">		<span class="comment">//向buf中写数据 写模式limit 等于 capacity  position随着写入数据的增加而不断移动 最大为capacity-1</span></span><br><span class="line">		charBuffer.put(str);</span><br><span class="line">		charBuffer2.put(str);</span><br><span class="line">		<span class="comment">//写模式切换到读模式 limit变为最多读到多少数据  position回到起点</span></span><br><span class="line">		charBuffer.flip();</span><br><span class="line">		<span class="comment">//循环从buf里读出数据</span></span><br><span class="line"><span class="comment">//		while(charBuffer.hasRemaining())&#123;</span></span><br><span class="line">		<span class="keyword">char</span> c = charBuffer.get();</span><br><span class="line">		System.out.println(c);  <span class="comment">//宝</span></span><br><span class="line">		c = charBuffer.get();</span><br><span class="line">		System.out.println(c);  <span class="comment">//武</span></span><br><span class="line">		charBuffer.rewind();    <span class="comment">//position置为零</span></span><br><span class="line">		c = charBuffer.get();</span><br><span class="line">		System.out.println(c);  <span class="comment">//</span></span><br><span class="line">		System.out.println(<span class="string">"两个buffer比较："</span>+charBuffer.compareTo(charBuffer2)+<span class="string">" :"</span>+charBuffer.equals(charBuffer2));</span><br><span class="line">		</span><br><span class="line"><span class="comment">//		&#125;</span></span><br><span class="line">		charBuffer.clear();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="普通IO和NIO的区别"><a href="#普通IO和NIO的区别" class="headerlink" title="普通IO和NIO的区别"></a>普通IO和NIO的区别</h1><table>
+<thead>
+<tr>
+<th>IO</th>
+<th>NIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>面向流</td>
+<td>面向缓冲</td>
+</tr>
+<tr>
+<td>阻塞IO</td>
+<td>（非）阻塞IO</td>
+</tr>
+<tr>
+<td>无</td>
+<td>选择器</td>
+</tr>
+</tbody>
+</table>
+<h2 id="面向流与面向缓冲"><a href="#面向流与面向缓冲" class="headerlink" title="面向流与面向缓冲"></a>面向流与面向缓冲</h2><p>Java NIO和IO之间第一个最大的区别是，IO是面向流的，NIO是面向缓冲区的。 Java IO面向流意味着每次从流中读一个或多个字节，直至读取所有字节，它们没有被缓存在任何地方。此外，它不能前后移动流中的数据。如果需要前后移动从流中读取的数据，需要先将它缓存到一个缓冲区。 Java NIO的缓冲导向方法略有不同。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动。这就增加了处理过程中的灵活性。但是，还需要检查是否该缓冲区中包含所有您需要处理的数据。而且，需确保当更多的数据读入缓冲区时，不要覆盖缓冲区里尚未处理的数据。</p>
+<h2 id="阻塞与非阻塞IO"><a href="#阻塞与非阻塞IO" class="headerlink" title="阻塞与非阻塞IO"></a>阻塞与非阻塞IO</h2><p>Java IO的各种流是阻塞的。这意味着，当一个线程调用read() 或 write()时，该线程被阻塞，直到有一些数据被读取，或数据完全写入。该线程在此期间不能再干任何事情了。 Java NIO的非阻塞模式，使一个线程从某通道发送请求读取数据，但是它仅能得到目前可用的数据，如果目前没有数据可用时，就什么都不会获取。而不是保持线程阻塞，所以直至数据变的可以读取之前，该线程可以继续做其他的事情。 非阻塞写也是如此。一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。 线程通常将非阻塞IO的空闲时间用于在其它通道上执行IO操作，所以一个单独的线程现在可以管理多个输入和输出通道（channel）。</p>
+<h2 id="选择器（Selectors）"><a href="#选择器（Selectors）" class="headerlink" title="选择器（Selectors）"></a>选择器（Selectors）</h2><p>Java NIO的选择器允许一个单独的线程来监视多个输入通道，你可以注册多个通道使用一个选择器，然后使用一个单独的线程来“选择”通道：这些通道里已经有可以处理的输入，或者选择已准备写入的通道。这种选择机制，使得一个单独的线程很容易来管理多个通道。<br>NIO和IO如何影响应用程序的设计<br>无论您选择IO或NIO工具箱，可能会影响您应用程序设计的以下几个方面：</p>
+<ol>
+<li>对NIO或IO类的API调用。</li>
+<li>数据处理。</li>
+<li>用来处理数据的线程数。</li>
+</ol>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" title= Java并发编程笔记（九）NIO与AIO2 >
+                    <span>Next Post</span>
+                    <span>Java并发编程笔记（九）NIO与AIO2</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" title= Java并发编程笔记（七）并行模式与算法2 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（七）并行模式与算法2</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（八）NIO与AIO", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NIO简介"><span class="toc-number">1.</span> <span class="toc-text">NIO简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-number">1.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Channel-和-Buffer"><span class="toc-number">1.2.</span> <span class="toc-text">Channel 和 Buffer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实例"><span class="toc-number">1.3.</span> <span class="toc-text">代码实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Buffer的基本用法"><span class="toc-number">1.4.</span> <span class="toc-text">Buffer的基本用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Buffer的capacity-position和limit"><span class="toc-number">1.4.1.</span> <span class="toc-text">Buffer的capacity,position和limit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Buffer的类型"><span class="toc-number">1.4.2.</span> <span class="toc-text">Buffer的类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Buffer的分配"><span class="toc-number">1.4.3.</span> <span class="toc-text">Buffer的分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#向Buffer中写数据"><span class="toc-number">1.4.4.</span> <span class="toc-text">向Buffer中写数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从Buffer中读取数据"><span class="toc-number">1.4.5.</span> <span class="toc-text">从Buffer中读取数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#普通IO和NIO的区别"><span class="toc-number">2.</span> <span class="toc-text">普通IO和NIO的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#面向流与面向缓冲"><span class="toc-number">2.1.</span> <span class="toc-text">面向流与面向缓冲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#阻塞与非阻塞IO"><span class="toc-number">2.2.</span> <span class="toc-text">阻塞与非阻塞IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#选择器（Selectors）"><span class="toc-number">2.3.</span> <span class="toc-text">选择器（Selectors）</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 21 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

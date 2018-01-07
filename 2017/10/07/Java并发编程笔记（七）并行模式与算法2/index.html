@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（七）并行模式与算法2 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（七）并行模式与算法2</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（七）并行模式与算法2
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/10/07</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="改进的插入排序：希尔排序"><a href="#改进的插入排序：希尔排序" class="headerlink" title="改进的插入排序：希尔排序"></a>改进的插入排序：希尔排序</h1><p>插入排序是一种很常用的排序算法，它的基本思想是：一个未排序的数组（当然也可以是链表）可以分为2个部分，前半部分是已经排序的，后半部分是未排序的，在进行排序时候只需要在未排序的部分中选择一个元素将其插入到前面有序的数组中即可，最终未排序的元素越来越少直至为0，初始时可以假设已排序部分就是第一个元素。<br>插入排序算法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 插入排序展示</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">insertSort</span><span class="params">(<span class="keyword">int</span> arr[])</span></span>&#123;</span><br><span class="line">		</span><br><span class="line">		Objects.requireNonNull(arr,<span class="string">"数组不能为空！"</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">int</span> len = arr.length;</span><br><span class="line">		<span class="keyword">int</span> i,j,key;</span><br><span class="line">		<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;len;i++)&#123;</span><br><span class="line">			<span class="comment">//key为要插入的值 (未排序序列的第一个值)</span></span><br><span class="line">			key = arr[i];</span><br><span class="line">			j=i-<span class="number">1</span>;</span><br><span class="line">			<span class="comment">//在已排序队列中找到这个元素的插入位置</span></span><br><span class="line">			<span class="keyword">while</span>(j &gt;=<span class="number">0</span> &amp;&amp; arr[j]&gt;key)&#123;</span><br><span class="line">				arr[j+<span class="number">1</span>]= arr[j];</span><br><span class="line">				j--;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//插入元素</span></span><br><span class="line">			<span class="comment">//插入到合适的位置</span></span><br><span class="line">			arr[j+<span class="number">1</span>]=key;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//使用java8 的流式编程遍历</span></span><br><span class="line">		System.out.println(<span class="string">"插入排序遍历："</span>);</span><br><span class="line">		Arrays.stream(arr).forEach(System.out::print);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>串行简单的插入排序是很难并行化的，因为这一次的数据插入依赖于上次一得到的有序数列。因此多个步骤之间无法并行。希尔排序是将整个数组间隔H分割为若干个子数组，子数组相互穿插在一起，每一次排序分别对每一个子数组进行排序。每组排序后递减H的值进行下轮更精确的排序直到H为1，此时就等价于插入排序。希尔排序的一个主要优点是即使一个最小元素在末尾由于每次移动以h为间隔进行 因此数组末尾的小元素可以在很少的交换次数下被置换到最接近元素最终位置的地方。<br>下面为希尔排序的串行实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//以下为串行的希尔排序的实现</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">shellSortSingle</span><span class="params">(<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">		<span class="comment">//定义跨度h</span></span><br><span class="line">		<span class="keyword">int</span> h=<span class="number">1</span>;</span><br><span class="line">		<span class="comment">//获取一个合适的跨度值</span></span><br><span class="line">		<span class="keyword">if</span>(h &lt;= arr.length/<span class="number">3</span>)&#123;</span><br><span class="line">			h = h*<span class="number">3</span>+<span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">while</span>(h&gt;<span class="number">0</span>)&#123;</span><br><span class="line">			<span class="comment">//下面进行跨度为h的插入排序</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=h;i&lt;arr.length;i++)&#123;</span><br><span class="line">				<span class="keyword">if</span>(arr[i] &lt; arr[i-h])&#123;</span><br><span class="line">					<span class="keyword">int</span> temp = arr[i];</span><br><span class="line">					<span class="keyword">int</span> j = i-h;</span><br><span class="line">					<span class="keyword">while</span>(j&gt;=<span class="number">0</span> &amp;&amp; arr[j] &gt; temp)&#123;</span><br><span class="line">						arr[j+h] = arr[j];</span><br><span class="line">						j-=h;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="comment">//插入合适的位置</span></span><br><span class="line">					arr[j+h]=temp;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="comment">//计算出下一个h的值 直到h为1  退化为插入排序</span></span><br><span class="line">				h = (h-<span class="number">1</span>)/<span class="number">3</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.print(<span class="string">"希尔排序结果为："</span>);</span><br><span class="line">		Arrays.stream(arr).forEach(System.out::println);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>很显然，希尔排序针对不同的子数组进行排序，这样的话各个子数组之间是完全独立的，易于改写成并行程序：<br>并发希尔排序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcurrShellSort</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span></span><br><span class="line"><span class="class">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> h=<span class="number">0</span>;</span><br><span class="line">		CountDownLatch l ;</span><br><span class="line">		<span class="keyword">static</span> <span class="keyword">int</span>[] arr;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">ConcurrShellSort</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> h, CountDownLatch l)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.i = i;</span><br><span class="line">			<span class="keyword">this</span>.h = h;</span><br><span class="line">			<span class="keyword">this</span>.l = l;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(arr[i]&lt;arr[i-h])&#123;</span><br><span class="line">				<span class="keyword">int</span> temp = arr[i];</span><br><span class="line">				<span class="keyword">int</span> j = i -h;</span><br><span class="line">				<span class="keyword">while</span>( j&gt;=<span class="number">0</span> &amp;&amp; arr[j]&gt;temp)&#123;</span><br><span class="line">					arr[j+h]=arr[j];</span><br><span class="line">					j -= h;</span><br><span class="line">				&#125;</span><br><span class="line">				arr[j+h] = temp;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//一个线程执行完计数器减少1</span></span><br><span class="line">			l.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>main方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> h=<span class="number">1</span>;</span><br><span class="line">		ConcurrShellSort.arr = arr;</span><br><span class="line">		CountDownLatch latch=<span class="keyword">null</span>;</span><br><span class="line">		ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">while</span> (h&lt;= ConcurrShellSort.arr.length /<span class="number">3</span>)&#123;</span><br><span class="line">			 h = h*<span class="number">3</span> +<span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">while</span>(h&gt;<span class="number">0</span>)&#123;</span><br><span class="line">			System.out.println(<span class="string">"h= "</span>+h);</span><br><span class="line">			<span class="keyword">if</span>(h&gt;=<span class="number">4</span>) latch = <span class="keyword">new</span> CountDownLatch(ConcurrShellSort.arr.length-<span class="number">1</span>);</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i = h ; i&lt;ConcurrShellSort.arr.length;i++)&#123;</span><br><span class="line">				<span class="comment">//控制线程数量 如果h大于4就并行 小于4串行执行</span></span><br><span class="line">				<span class="keyword">if</span>(h&gt;=<span class="number">4</span>)&#123;</span><br><span class="line">					pool.execute(<span class="keyword">new</span> ConcurrShellSort(i, h, latch));</span><br><span class="line">					System.out.println(Arrays.toString(ConcurrShellSort.arr));</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					<span class="comment">//执行串行的插入排序</span></span><br><span class="line">					<span class="keyword">if</span>(ConcurrShellSort.arr[i]&gt;ConcurrShellSort.arr[i-h])&#123;</span><br><span class="line">						<span class="keyword">int</span> temp = ConcurrShellSort.arr[i];</span><br><span class="line">						<span class="keyword">int</span> j= i-h;</span><br><span class="line">						<span class="keyword">while</span>(j&gt;=<span class="number">0</span> &amp;&amp; ConcurrShellSort.arr[j]&gt;temp)&#123;</span><br><span class="line">							ConcurrShellSort.arr[j+h]=ConcurrShellSort.arr[j];</span><br><span class="line">							j-=h;</span><br><span class="line">						&#125;</span><br><span class="line">						ConcurrShellSort.arr[j+h]=temp;</span><br><span class="line">					&#125;</span><br><span class="line">					System.out.println(Arrays.toString(ConcurrShellSort.arr));</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//等待下一个线程完成</span></span><br><span class="line">			latch.await();	</span><br><span class="line">			<span class="comment">//计算下一个h的值</span></span><br><span class="line">			h  = (h-<span class="number">1</span>)/<span class="number">3</span>;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="并行算法：矩阵乘法"><a href="#并行算法：矩阵乘法" class="headerlink" title="并行算法：矩阵乘法"></a>并行算法：矩阵乘法</h1><p>Linus认为并行程序最有用的地方就是服务端和图像处理方面，那么矩阵乘法是非常有用的，包括在神经网络、模式识别等领域有着广泛的作用。这里介绍矩阵乘法的并行化实现。<br>在矩阵乘法中，第一个矩阵的列数 必须和 第二个矩阵的行数相同，例如矩阵A和矩阵B相乘，矩阵A为4行2列，矩阵B为2行四列，它们相乘后得到的是4行4列的矩阵，新矩阵每一个元素为矩阵A和B对应的行列乘积求和。如果需要并行计算，一种简单的策略就是对A矩阵进行垂直分割，得到子矩阵B1和B2，此时我们只需要分别计算这些子矩阵的乘积将结果进行拼接，就能得到原始矩阵A和B的乘积。如图展示了这种并行计算的策略<br><img src="/avatar/并发/bingfa6.png" alt=""><br>当然还可以拆分的更小，看需求。<br>矩阵乘法性质：<br><img src="/avatar/并发/bingfa7.png" alt=""><br>Java中我们使用开源ForkJoin框架来实现矩阵乘法并行的想法，为了方便矩阵计算我们使用jMatrices开源软件，作为矩阵的计算工具，其中 使用的主要API如下：<br><img src="/avatar/并发/bingfa8.png" alt=""></p>
+<p>具体操作可参阅官方文档，这里简单介绍不再赘述。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" title= Java并发编程笔记（八）NIO与AIO >
+                    <span>Next Post</span>
+                    <span>Java并发编程笔记（八）NIO与AIO</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" title= Java并发编程笔记（六）并行模式与算法 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（六）并行模式与算法</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（七）并行模式与算法2", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#改进的插入排序：希尔排序"><span class="toc-number">1.</span> <span class="toc-text">改进的插入排序：希尔排序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并行算法：矩阵乘法"><span class="toc-number">2.</span> <span class="toc-text">并行算法：矩阵乘法</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 21 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

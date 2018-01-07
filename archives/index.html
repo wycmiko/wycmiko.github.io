@@ -158,11 +158,166 @@
     
     
         <article class="index-post">
-            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
+            <a class="abstract-title" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
+                
+                    <span>Java并发编程笔记（九）NIO与AIO2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
+                <div class="abstract-content">
+                    读完了再通知我 AIOAIO即为Asynchronized。异步IO， NIO只是newIO不是异步的，只是同步可以设置为非阻塞模式 ，真正异步的是AIO。AIO将Future模式运用的十分广泛，它不是等待IO准备好后再通知线程。而是等待IO操作完成后再通知线程，实现异步IO。
+AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketChannel。
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/12/14</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
+                
+                    <span>Java并发编程笔记（八）NIO与AIO</span>
+            </a>
+            <a class="content-show-full" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
+                <div class="abstract-content">
+                    NIO简介Java NIO(New IO)是一个可以替代标准Java IO API的IO API（从Java 1.4开始)，Java NIO提供了与标准IO不同的IO工作方式。
+基本概念 Java NIO: Channels and Buffers（通道和缓冲区） 标准的IO基于字节流和字符流进行操作的，而NIO是基于通道（Channel）和缓冲区（Buffer）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。 Java NIO: Non-blocking IO（非阻塞IO） Java NIO可以让你非阻塞的使用IO，例如：当线程从通道读取数据到缓冲区时，线程还是可以进...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/11/11</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >
+                
+                    <span>Java并发编程笔记（七）并行模式与算法2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >
+                <div class="abstract-content">
+                    改进的插入排序：希尔排序插入排序是一种很常用的排序算法，它的基本思想是：一个未排序的数组（当然也可以是链表）可以分为2个部分，前半部分是已经排序的，后半部分是未排序的，在进行排序时候只需要在未排序的部分中选择一个元素将其插入到前面有序的数组中即可，最终未排序的元素越来越少直至为0，初始时可以假设已排序部分就是第一个元素。插入排序算法如下：1234567891011121314151617181920212223242526/**	 * 插入排序展示	 */	public static void insertSort(int arr[])&#123;				Objects.requireN...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/10/07</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >
+                
+                    <span>Java并发编程笔记（六）并行模式与算法</span>
+            </a>
+            <a class="content-show-full" href = "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >
+                <div class="abstract-content">
+                    单例模式除了懒汉式、饿汉式外、线程安全可以创建一个静态内部类来维护单例。1234567891011public class SingletonDemo&#123; private SingletonDemo()&#123;&#125;//私有静态内部类来维护单例private static class LoadInstance()&#123;private static SingletonDemo single = new SingletonDemo();&#125;//公共方法供外部访问public static SingletonDemo getInstance()&#123;ret...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/09/07</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
+                
+                    <span>Java并发编程笔记（五）锁的优化及其注意事项2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
+                <div class="abstract-content">
+                    让普通变量也享受原子操作：AtomicIntegerFieldUpdater/Long/Reference普通变量通过该类也可以享受原子操作CAS的线程安全特性。使用如下：public static final AtomicIntegerFieldUpdater&lt;T&gt; field = AtomicIntegerFieldUpdater.newUpdater(T.class,&quot;FieldName&quot;);来进行构造，也可以使用cas的incrementAndGet()方法进行自增等操作。但是使用该类需要注意以下几点：1、Updater只能修改其可见范围，例如必须...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >
                 
                     <span>Java并发编程笔记（四）锁的优化及其注意事项</span>
             </a>
-            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
+            <a class="content-show-full" href = "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >
                 <div class="abstract-content">
                     我们采用并行算法的目的是为了提升效率，但事实上使用多线程的方式会额外地增加系统开销，如果在单核CPU上并行CPU的效率一般低于串行的，因此合理地使用并发才能将CPU性能发挥到极致。
 有助于提高锁性能的几点建议减少锁持有时间如果每个程序都占用锁时间很长。那么将是是一笔非常大的开销，只在必要时候进行同步就能明显减少开销，提高系统吞吐量。（减少锁的占有时间也有效地降低锁冲突的可能性 进而提升系统的并发能力）
@@ -180,7 +335,7 @@
                 
                 <!-- date  -->
                 <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/07</span>
                 </div>
             </div>
         </article>
@@ -302,188 +457,10 @@
             </div>
         </article>
     
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                
-                    <span>HBase概念及操作（四）内部表原理以及拆分操作</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                <div class="abstract-content">
-                    
-上一篇介绍了JavaAPI以及基本Shell指令，这一篇我们将介绍HBase内部表原理以及拆分操作
-
-hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出scan扫描hbase名称空间下的meta表，返回列加Cell。rowKey为唯一的，info为列族，：regioninfo为列名。123456timestamp这个时刻该行的的cell的值格式（都是key=&gt;value对 &apos;,&apos;分割） 或者单独的一个值，val=xxx ：value=&#123;EN 3498206.ab1abd27f20f CO...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/16</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >
-                
-                    <span>HBase概念及操作（三）HBase JavaAPI以及Shell命令</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >
-                <div class="abstract-content">
-                    
-上一篇我们提到了HBase的安装和基本操作，这一节我们将介绍一下HBaseJavaAPI的使用。
-
-我们知道Hbase是存储于HDFS之上的，在rootDir这里可以查看到其路径s2:50070/ 浏览文件系统可以查看到hbase这个目录，点进去可以看到两个内置的名称空间 default和hbase。
-
-创建Maven项目 HbaseDemo.配置pom:123456789101112131415161718192021222324252627282930313233343536373839404142  &lt;dependencies&gt;  &lt;!-- 引入之前项目的 Ha...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/06</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >
-                
-                    <span>HBase概念及操作（二）HBase安装体验</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >
-                <div class="abstract-content">
-                    
-前面一篇对HBase做了一个基本的概念，本篇将介绍HBase的安装和使用
-
-HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方法。会引导你通过shell创建一个表，插入一行，然后删除它，最后停止HBase。只要10分钟就可以完成以下的操作。
-下载解压最新版本选择一个Apache 下载镜像下载 HBase Releases. 点击 stable目录，然后下载后缀为 .tar.gz 的文件; 例如 hbase-0.95-SNAPSHOT.tar.gz.
-我们这里下载的是：解压缩，然后进入到那个要解压的目录.$ tar xfz hbase-0.95-SNAPSHOT.tar....
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >
-                
-                    <span>HBase概念及操作（一）HBase基本概念及原理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >
-                <div class="abstract-content">
-                    Hbase简介HBase是一个开源的非关系型分布式数据库（NoSQL），它参考了谷歌的BigTable建模，实现的编程语言为 Java。它是Apache软件基金会的Hadoop项目的一部分，运行于HDFS文件系统之上，为 Hadoop 提供类似于BigTable 规模的服务。因此，它可以容错地存储海量稀疏的数据。hbase是bigtable的开源山寨版本。是建立的hdfs之上，提供高可靠性、高性能、列存储、可伸缩、实时读写的数据库系统。它介于nosql和RDBMS之间，仅能通过主键(row key)和主键的range来检索数据，仅支持单行事务(可通过hive支持来实现多表join等复杂操...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/04/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/30/JVM总体梳理/" >
-                
-                    <span>JVM总体梳理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/30/JVM总体梳理/" >
-                <div class="abstract-content">
-                    对于Java程序员来讲，spring全家桶几乎可以搞定一切，spring全家桶便是精妙的招式，jvm就是内功心法很重要的一块，线上出现性能问题，jvm调优更是不可回避的问题。因此JVM基础知识对于高级程序员的重要性不必言语，我司在面试高级开发的时候，jvm相关知识也必定是考核的标准之一。本篇文章会根据之前写的jvm系列文章梳理出jvm需要关注的所有考察点。
-jvm 总体梳理jvm体系总体分四大块：
-
-类的加载机制
-jvm内存结构
-GC算法 垃圾回收
-GC分析 命令调优
-
-
-类的加载机制主要关注点：
-
-什么是类的加载
-类的生命周期
-类加载器
-双亲委派模型
-
-什么是类的加载？
-&nbsp;&...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = JVM虚拟机>JVM虚拟机</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/30</span>
-                </div>
-            </div>
-        </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/">#NEXT</a>
+        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">#NEXT</a>
     </nav>
     
 </main>
@@ -729,7 +706,92 @@ GC分析 命令调优
     
     
     
-    <div class="total-archive"> 总计 : 16 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 21 </div>
     
     <div class="post-archive">
     
@@ -741,7 +803,32 @@ GC分析 命令调优
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
         </li>
     
     
@@ -824,13 +911,19 @@ GC分析 命令调优
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
@@ -844,13 +937,13 @@ GC分析 命令调优
     
         <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">

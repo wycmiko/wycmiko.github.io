@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（六）并行模式与算法 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（六）并行模式与算法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（六）并行模式与算法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/09/07</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><p>除了懒汉式、饿汉式外、线程安全可以创建一个静态内部类来维护单例。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonDemo</span></span>&#123;</span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="title">SingletonDemo</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"><span class="comment">//私有静态内部类来维护单例</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> class <span class="title">LoadInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> SingletonDemo single = <span class="keyword">new</span> SingletonDemo();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//公共方法供外部访问</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonDemo <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="keyword">return</span> LoadInstance.single;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>利用虚拟机类的初始化机制创建单例，只能对loadInstance进行初始化。</p>
+<h1 id="不变模式"><a href="#不变模式" class="headerlink" title="不变模式"></a>不变模式</h1><p>Java中不变模式总是多线程友好的，它的核心思想是尽可能地去除这些同步操作，提高并行程序性能，可以使用一种不可改变的对象，依靠对象的不变性，确保其在没有同步操作的多线程环境下依然保持多线程状态的一致性和正确性。这就是不变模式。<br>一个对象一旦被创建，它的内部状态将永远不会改变，需要注意的是它比只读属性具有更强的一致性和不变性，只读属性自身对自身状态可以修改。因此不变模式主要满足以下两个条件：</p>
+<ul>
+<li>当对象创建后 ，其内部状态和数据不再发生任何变化</li>
+<li>对象需要被共享，被多线程频繁访问</li>
+</ul>
+<p>在Java中需要满足:</p>
+<ul>
+<li>去除setter方法以及可以修改的方法</li>
+<li>将所有属性设置为final 类也是</li>
+<li>确保没有子类可以重载（final class）</li>
+<li>有一个可以创建完整对象的构造函数</li>
+</ul>
+<p>在不变模式中，根据里氏代换原则，父类是不变的对象子类也必须是不变的对象，但是我们无法控制这一点因此设为final的。JDK中不变模式应用最广泛的是java.lang.String类以及基本类型的包装类，所有实例方法均不需要进行同步操作。不变模式通过回避问题来达到多线程 线程安全的一个操作。</p>
+<h1 id="生产者-消费者模式"><a href="#生产者-消费者模式" class="headerlink" title="生产者-消费者模式"></a>生产者-消费者模式</h1><p>该模式是一种多线程经典的设计模式，通常有若干个生产者线程来负责提交用户请求，若干个消费者线程来处理用户请求，生产者和消费者之间通过共享缓冲区进行通信，（旨在避免生产者消费者直接通信 解耦二者关系），由于缓冲区的存在，就允许生产者和消费者在某一局部内速度高于消费者，允许生产者和消费者在执行速度上存在时间差。<br>内存缓冲区类似阻塞队列BlockingQueue，无锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多线程</span></span><br><span class="line"><span class="comment"> * 生产者-生产者模型  </span></span><br><span class="line"><span class="comment"> * 用于处理用户提交的请求</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">	<span class="comment">//设置一致性标记</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> isRunning = <span class="keyword">true</span>;</span><br><span class="line">	<span class="comment">//定义缓冲区资源</span></span><br><span class="line">	<span class="keyword">private</span> BlockingQueue&lt;PCData&gt; queue ;</span><br><span class="line">	<span class="comment">//定义原子操作数</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger count = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//构造函数传入阻塞队列</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Producer</span><span class="params">(BlockingQueue&lt;PCData&gt; queue)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.queue=queue;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		PCData pc = <span class="keyword">null</span>;</span><br><span class="line">		Random r = <span class="keyword">new</span> Random();</span><br><span class="line">		System.out.println(<span class="string">"Start producer id="</span>+Thread.currentThread().getId());</span><br><span class="line">		<span class="keyword">while</span>(isRunning)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">				pc = <span class="keyword">new</span> PCData(count.incrementAndGet()+<span class="number">10</span>);  <span class="comment">//构造任务数据</span></span><br><span class="line">				System.out.println(<span class="string">"data"</span>+pc+<span class="string">"is into the queue"</span>);</span><br><span class="line">				<span class="comment">//如果队列放不下的话            （会执行入队操作）</span></span><br><span class="line">				<span class="keyword">if</span>(!queue.offer(pc, <span class="number">2</span>, TimeUnit.SECONDS))&#123;</span><br><span class="line">					System.out.println(<span class="string">"failed to put data :"</span>+pc);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">				<span class="comment">//设置中断标记</span></span><br><span class="line">				Thread.currentThread().interrupt();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">stopThread</span><span class="params">()</span></span>&#123;</span><br><span class="line">		isRunning=<span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消费者：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多线程</span></span><br><span class="line"><span class="comment"> * 生产者-消费者模型</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> BlockingQueue&lt;PCData&gt; queue ;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Consumer</span><span class="params">(BlockingQueue&lt;PCData&gt; queue)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.queue = queue;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		System.out.println(Thread.currentThread().getId()+<span class="string">"Begin to Consumer!!"</span>);</span><br><span class="line">		Random r = <span class="keyword">new</span> Random();</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				PCData take = queue.take();</span><br><span class="line">				<span class="keyword">if</span>(take!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					<span class="keyword">double</span> result = take.getData()/<span class="number">10</span>+r.nextDouble();</span><br><span class="line">					System.out.println(<span class="string">"消费者获得数据后执行除法结果为："</span>+result);</span><br><span class="line">					Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"阻塞队列中暂无数据"</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">				Thread.currentThread().interrupt();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>数据共享对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 数据模型</span></span><br><span class="line"><span class="comment"> * 为了应证不变模式 因此使用 不可变对象 PCData</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PCData</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> data;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PCData</span><span class="params">(<span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		data = d;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PCData</span><span class="params">(String data)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.data = Integer.valueOf(data);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> data;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"PCData [data="</span> + data + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>生产者消费者执行类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 生产者消费者模式</span></span><br><span class="line"><span class="comment"> * 执行类</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		BlockingQueue&lt;PCData&gt; queue = <span class="keyword">new</span> LinkedBlockingQueue&lt;PCData&gt;();</span><br><span class="line">		<span class="comment">//启动线程池</span></span><br><span class="line">		ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="comment">//构建生产者模型与消费者模型</span></span><br><span class="line">		Producer pro1  = <span class="keyword">new</span> Producer(queue);</span><br><span class="line">		Producer pro2= <span class="keyword">new</span> Producer(queue);</span><br><span class="line">		</span><br><span class="line">		Consumer con1 = <span class="keyword">new</span> Consumer(queue);</span><br><span class="line">		Consumer con2= <span class="keyword">new</span> Consumer(queue);</span><br><span class="line">		Consumer con3 = <span class="keyword">new</span> Consumer(queue);</span><br><span class="line">		pool.execute(pro1);</span><br><span class="line">		pool.execute(pro2);</span><br><span class="line">		pool.execute(con1);</span><br><span class="line">		pool.execute(con2);</span><br><span class="line">		pool.execute(con3);</span><br><span class="line">		Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		System.out.println(<span class="string">"现在停止生产者"</span>);</span><br><span class="line">		pro1.stopThread();</span><br><span class="line">		pro2.stopThread();</span><br><span class="line">		Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">		pool.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>生产者消费者模型很好地对生产者和消费者线程进行解耦，通过一个共享的缓冲区进行数据交换，允许生产者和消费者线程在性能上的执行差异，从一定程度上缓解了性能瓶颈对系统的影响。</p>
+<h1 id="高性能的生产者-消费者：无锁的实现"><a href="#高性能的生产者-消费者：无锁的实现" class="headerlink" title="高性能的生产者-消费者：无锁的实现"></a>高性能的生产者-消费者：无锁的实现</h1><p>BlockingQueue不适合高并发场合，因为其内部通过锁实现的阻塞队列，所以我们可以将其更改为无锁的阻塞队列 内部都是通过CAS操作完成的ConcurrentLinkedQueue,但是使用CAS编程是比较困难的，但有一个好消息是目前有一个现成的Disruptor框架，它已经帮助我们实现了这一功能。</p>
+<h1 id="无锁的缓存框架-Disruptor"><a href="#无锁的缓存框架-Disruptor" class="headerlink" title="无锁的缓存框架 Disruptor"></a>无锁的缓存框架 Disruptor</h1><p>Disruptor是由LMAX公司开发的一款高效的无锁队列。它使用无锁的方式实现了一个环形队列，非常适用于实现生产者-消费者模式。比如事件和消息的发布，在Disruptor中别出心裁地使用了环形队列来代替普通线形队列，这个环形队列内部实现为一个普通的数组。环形队列避免了头部指针和尾部指针的操作，只要有一个cursor指针即可控制入队出队操作，但是要指定队列大小，要求我们大小必须为2的整数次方，这样通过sequence &amp; (sequence -1) 与操作的二进制数是一个全1的数字，不会有任何一位是浪费的。这种固定大小的环形队列的另外一个好处就是可以做到完全的内存复用。在系统运行过程中不会有心的空间需要分配或者老的空间回收，极大减少分配空间和回收空间带来的额外开销。<br>1、导入Maven Disruptor 3.x版本<br>2、直接使用 按照如下步骤<br>消费者类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Disruptor 无锁缓存框架  </span></span><br><span class="line"><span class="comment"> * 消费者类 </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">implements</span> <span class="title">WorkHandler</span>&lt;<span class="title">PCData</span>&gt; </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 消费者直接实现WorkHandler接口</span></span><br><span class="line"><span class="comment">	 * 数据的读取已由框架进行封装</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(PCData event)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Consumer :"</span>+Thread.currentThread().getId()+<span class="string">" 取到数据平方值是:"</span>+event.getData()*event.getData());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实例工厂类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * PCData工厂类 用于协助Disruptor框架系统初始化时 构造所有的缓冲区中的对象实例</span></span><br><span class="line"><span class="comment"> * 需要实现Disruptor工厂接口</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PCDataFactory</span>  <span class="keyword">implements</span> <span class="title">EventFactory</span>&lt;<span class="title">PCData</span>&gt;</span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> PCData <span class="title">newInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> PCData();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>共享实体类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Disruptor共享数据模型</span></span><br><span class="line"><span class="comment"> *  PCData</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PCData</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span>  <span class="keyword">long</span> data;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PCData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setData</span><span class="params">(<span class="keyword">long</span> data)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.data = data;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> data;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"PCData [data="</span> + data + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>生产者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Disruptor 无锁缓存框架  </span></span><br><span class="line"><span class="comment"> * 生产者类</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Producer</span> </span>&#123;</span><br><span class="line">	<span class="comment">//定义环形缓冲区</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> RingBuffer&lt;PCData&gt; ringBuff;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Producer</span><span class="params">(RingBuffer&lt;PCData&gt; buff)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.ringBuff = buff;</span><br><span class="line">	&#125;	</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//数据入缓冲区 bytebuffer 可以用来包装任意类型</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pushData</span><span class="params">(ByteBuffer buff)</span></span>&#123;</span><br><span class="line">		<span class="comment">//通过next方法获取下一个可用的序列号</span></span><br><span class="line">		<span class="keyword">long</span> sequence = ringBuff.next();</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">		<span class="comment">//取得一个可用的空闲 PCData</span></span><br><span class="line">		PCData pcData = ringBuff.get(sequence);</span><br><span class="line">		<span class="comment">//获取buff中数据并设置进空闲对象</span></span><br><span class="line">		pcData.setData(buff.getLong(<span class="number">0</span>));</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="comment">//发布到缓冲区 只有发布才能在消费者处看见</span></span><br><span class="line">			ringBuff.publish(sequence);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Disruptor 构造类执行</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">		PCDataFactory fac = <span class="keyword">new</span> PCDataFactory();</span><br><span class="line">		<span class="keyword">int</span> ringBufferSize = <span class="number">1024</span>;</span><br><span class="line">		<span class="comment">//构建Disruptor对象 指明创建实例的工厂 以及固定环形链表的大小 线程池 以及生产者类型和阻塞策略</span></span><br><span class="line">		Disruptor&lt;PCData&gt; disruptor = <span class="keyword">new</span> Disruptor&lt;PCData&gt;(fac, ringBufferSize, pool,ProducerType.MULTI,<span class="keyword">new</span> BlockingWaitStrategy());</span><br><span class="line">		<span class="comment">//构建4个消费者线程 并启动</span></span><br><span class="line">		disruptor.handleEventsWithWorkerPool(</span><br><span class="line">				<span class="keyword">new</span> Consumer(),</span><br><span class="line">				<span class="keyword">new</span> Consumer(),</span><br><span class="line">				<span class="keyword">new</span> Consumer()</span><br><span class="line">				,<span class="keyword">new</span> Consumer());</span><br><span class="line">		disruptor.start();</span><br><span class="line">		<span class="comment">//构建环形数据缓冲区</span></span><br><span class="line">		RingBuffer&lt;PCData&gt; ringBuffer = disruptor.getRingBuffer();</span><br><span class="line">		<span class="comment">//构建可以存入任意类型的指定大小的byte buffer</span></span><br><span class="line">		ByteBuffer buf = ByteBuffer.allocate(<span class="number">8</span>);</span><br><span class="line">		<span class="comment">//构建生产者对象</span></span><br><span class="line">		Producer pro = <span class="keyword">new</span> Producer(ringBuffer);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">long</span> l=<span class="number">0</span>;l&lt;=<span class="number">10</span>;l++)&#123;</span><br><span class="line">			System.out.println(<span class="string">"放入的数据为："</span>+l);</span><br><span class="line">			<span class="comment">//循环往bytebuff中写入</span></span><br><span class="line">			buf.putLong(<span class="number">0</span>, l);</span><br><span class="line">			<span class="comment">//放入生产者方法 4个消费者循环去读（CAS环形链表）</span></span><br><span class="line">			pro.pushData(buf);</span><br><span class="line">			Thread.sleep(<span class="number">4000</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="提高消费者响应时间：选择合适的策略"><a href="#提高消费者响应时间：选择合适的策略" class="headerlink" title="提高消费者响应时间：选择合适的策略"></a>提高消费者响应时间：选择合适的策略</h2><p>当新数据在Disruptor的环形缓冲区产生时,消费者如何知道这些新数据呢？通过几种策略对waitStrategy接口进行封装。</p>
+<ul>
+<li>BlockingWaitStrategy:这是默认的策略，和阻塞队列非常的类似，它们使用锁和条件（Condition）进行数据的监控和线程的唤醒。因为涉及到线程的切换，BlockingWaitStrategy策略是最节省CPU的，高并发下性能是糟糕的。</li>
+<li>SleepingWaitStrategy:这个策略也是对CPU使用率非常保守的，它会在循环中不断等待数据，它会先自旋等待如果不成功则使用Thread.yield()让出CPU，并最终使用LockSupport.parkNanos(1)进行休眠，这样降低对CPU的占用，适用于数据处理可能会产生比较高的平均延时，好处是对生产者影响最小，典型应用为异步日志。</li>
+<li>YieldingWaitStrategy:这个策略适用于低延时的场合，消费者线程会不断地循环监控缓冲区变化，在循环内部通过Thread.yield()方法谦让出CPU给别的线程执行，（相当于死循环式地执行），但是这里启动四个消费者线程，你的CPU必须要双核四线程了，否则整个应用都会受影响。</li>
+<li>BusySpinWaitStrategy:这个是最疯狂的等待策略了。它就是一个死循环，消费者线程会尽最大努力疯狂监控缓冲区的变化。因此它会吃掉你所有CPU资源。你只有在对延时非常苛刻的场景中使用它，你开启了一个死循环监控，因此你的物理CPU数量必须要大于消费者线程数。</li>
+</ul>
+<h1 id="CPU-Cache的优化：解决伪共享问题"><a href="#CPU-Cache的优化：解决伪共享问题" class="headerlink" title="CPU Cache的优化：解决伪共享问题"></a>CPU Cache的优化：解决伪共享问题</h1><p>为了提高CPU的速度，CPU有一个高速缓存Cache 在高速缓存中，读写数据最小单位为缓存行，它是从主存复制到缓存的最小单位，一般为32字节到128字节。两个不同变量放入同一个缓存行可能会导致后者使得前者缓存行失效 导致Cache无法命中，所以在X变量的前后插入都先占据一定的位置（padding）这样当内存被读入缓存 只有x一个变量是实际有效的，避免多线程同时修改不同变量导致全体变量的缓存失效的情况。<br><code>this.entries = new Object[sequencer.getBufferSize() + 2* BUFFER_PAD ]</code></p>
+<h1 id="Future模式"><a href="#Future模式" class="headerlink" title="Future模式"></a>Future模式</h1><p>Future模式是多线程开发中一种常见的设计模式，它的核心思想就是异步调用。当我们需要调用一个函数的方法时，其执行的很慢 我们可以让它在后台慢慢执行，我们先去处理其他事在真正需要数据的场合再进行获取。对于Future模式会返回给你一个契约，最后凭借契约去获取你需要的值。JDK内部已经为我们提供了一套Future模式的完整实现FutureTask。Callable接口有一个方法call(),它会返回给需要构造的实际数据，这个接口的泛型通常指定自己需要构建的业务对象，下面展示JDK Future模式下的使用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Future模式  </span></span><br><span class="line"><span class="comment"> * 异步调用构造对象</span></span><br><span class="line"><span class="comment"> * 使用JDK的Future模式 本类要实现Callable接口</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RealData</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String data;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">RealData</span><span class="params">(String data)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.data = data;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//这里模拟对象的构造过程</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=<span class="number">100</span>;i++)&#123;</span><br><span class="line">			Thread.sleep(<span class="number">100</span>);</span><br><span class="line">			sb.append(data+<span class="string">" 编号:"</span>+i);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>FutureMain执行类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Future模式执行类</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureMain</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException </span>&#123;</span><br><span class="line">		<span class="comment">//构建FutureTask类 表示这个任务是有返回值的</span></span><br><span class="line">		FutureTask&lt;String&gt; task = <span class="keyword">new</span> FutureTask&lt;&gt;(<span class="keyword">new</span> RealData(<span class="string">"RealData"</span>));</span><br><span class="line">		ExecutorService pool = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">		pool.submit(task);</span><br><span class="line">		System.out.println(<span class="string">"请求获取数据"</span>);</span><br><span class="line">		Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 关于Future 模式的 FutureTask类的几个方法如下：</span></span><br><span class="line"><span class="comment">		 * boolean cancel(flag)是否取消任务</span></span><br><span class="line"><span class="comment">		 * boolean isCancelled()  是否已取消</span></span><br><span class="line"><span class="comment">		 * boolean isDone() 是否已完成</span></span><br><span class="line"><span class="comment">		 * get() 获取对象</span></span><br><span class="line"><span class="comment">		 * get(long timeOut,TimeUnit) 等待指定的时间获取对象</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span>(task.isDone()) &#123;System.out.println(<span class="string">"数据成功获取到："</span>);&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"数据还在构造Ing"</span>);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">//会一直阻塞直至任务完成</span></span><br><span class="line">		System.out.println(<span class="string">"RealData="</span>+task.get());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="并行流水线"><a href="#并行流水线" class="headerlink" title="并行流水线"></a>并行流水线</h1><p>一些涉及数据计算的流程是无法完美并行的，例如（A+B）*B/2 如果不计算出（A+B）是无法得到后续操作的。所以我们可以借鉴流水线的思想。上述过程可以转变为</p>
+<pre><code>P1：C=A+B
+P2：D=C*B
+P3：D=D/2
+</code></pre><p>上述的P1、P2、P3均在单独线程中计算，并且每个线程只负责自己的 工作。P3就是最终的结果。为了实现我们需要定义一个信息交换的载体。<br>公共数据类（几个未知变量定义几个）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * PipelineMsg  并行流水线</span></span><br><span class="line"><span class="comment"> * 实现 （B+C）*B/2 的分工合作的结果</span></span><br><span class="line"><span class="comment"> * 为了实现这个功能 我们需要定义一个在线程间</span></span><br><span class="line"><span class="comment"> * 携带结果的共享信息类</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PipelineMsg</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">double</span> i;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">double</span> j;</span><br><span class="line">	<span class="comment">//用于描述两个变量的信息</span></span><br><span class="line">	<span class="keyword">public</span> String orgStr = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>第一条流水线为加法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 并行流水线 加法操作</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Plus</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> BlockingQueue&lt;PipelineMsg&gt; bq = <span class="keyword">new</span> LinkedBlockingQueue&lt;PipelineMsg&gt;();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">			PipelineMsg take;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				take = bq.take();</span><br><span class="line">				take.j=take.i+take.j;    <span class="comment">//模拟B=（A+B）</span></span><br><span class="line">				Mutilply.bq.add(take);   <span class="comment">//流水线添加到下一个执行流程队列中</span></span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>第二条流水线为乘法 ：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mutilply</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> BlockingQueue&lt;PipelineMsg&gt; bq = <span class="keyword">new</span> LinkedBlockingQueue&lt;PipelineMsg&gt;();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				PipelineMsg take = bq.take();</span><br><span class="line">				take.i=take.j*take.i;     <span class="comment">//模拟 (a+b)*a</span></span><br><span class="line">				Divide.bq.add(take);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>第三条流水线为除法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 最终流水线-除法</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Divide</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> BlockingQueue&lt;PipelineMsg&gt; bq = <span class="keyword">new</span> LinkedBlockingQueue&lt;PipelineMsg&gt;();</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				PipelineMsg take = bq.take();</span><br><span class="line">				take.i=take.i/<span class="number">2</span>;		<span class="comment">//模拟 /2</span></span><br><span class="line">				System.out.println(<span class="string">"The pipeline final result is "</span>+take.orgStr+<span class="string">"="</span>+ take.i);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>测试应用类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 并行流水线执行类</span></span><br><span class="line"><span class="comment"> * 模拟（A+B）*A/2</span></span><br><span class="line"><span class="comment"> * 分为 B=A+B</span></span><br><span class="line"><span class="comment"> * 	C=B*A</span></span><br><span class="line"><span class="comment"> * D=C/2</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">			 <span class="comment">//启动流水线线程</span></span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> Plus()).start();</span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> Mutilply()).start();</span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> Divide()).start();</span><br><span class="line">			<span class="comment">//启动10000个线程执行流水线</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=<span class="number">100</span>;i++)&#123;</span><br><span class="line">				<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;=<span class="number">100</span>;j++)&#123;</span><br><span class="line">					PipelineMsg msg = <span class="keyword">new</span> PipelineMsg();</span><br><span class="line">					msg.i=i;</span><br><span class="line">					msg.j=j;</span><br><span class="line">					msg.orgStr=<span class="string">"("</span>+i+<span class="string">"+"</span>+j+<span class="string">")*"</span>+i+<span class="string">"/2"</span>;</span><br><span class="line">					<span class="comment">//放入第一条流水线</span></span><br><span class="line">					Plus.bq.add(msg);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在多核或者分布式的场合这种设计思路可以有效地将依赖关系的操作分配在不同线程中进行计算，尽可能地利用多核优势。</p>
+<h1 id="并行搜索"><a href="#并行搜索" class="headerlink" title="并行搜索"></a>并行搜索</h1><p>搜索几乎是每一个软件都不可缺少的部分，对于有序数据通常采用二分法查找，对无序数据只能挨个查找。多线程一种简单策略就是对数组按照线程数对数组进行分割，每个线程各自搜索，当其中有一个搜索到数据后，立即返回结果即可。</p>
+<h1 id="并行排序"><a href="#并行排序" class="headerlink" title="并行排序"></a>并行排序</h1><p>串行排序改为并行排序算法的话并非易事，我们这里介绍几种简单的 也足以让人脑洞大开的平行排序算法。</p>
+<h2 id="分离数据相关性：奇偶交换排序"><a href="#分离数据相关性：奇偶交换排序" class="headerlink" title="分离数据相关性：奇偶交换排序"></a>分离数据相关性：奇偶交换排序</h2><p>在介绍奇偶排序前 先介绍一下冒泡排序：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//先介绍一下冒泡排序 </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bubbleSort</span><span class="params">(<span class="keyword">int</span> arr[])</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=arr.length-<span class="number">1</span>;i&gt;<span class="number">0</span>;i--)&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(arr[j]&gt;arr[j+<span class="number">1</span>])&#123;</span><br><span class="line">				<span class="keyword">int</span> temp = arr[j];</span><br><span class="line">				arr[j]=arr[j+<span class="number">1</span>];</span><br><span class="line">				arr[j+<span class="number">1</span>]=temp;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	System.out.print(<span class="string">"BubbleSort Result is : "</span>);</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> a :arr)&#123;</span><br><span class="line">		System.out.print(a+<span class="string">"、"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>奇偶交换排序它将排序过程分为两个阶段，奇交换和偶交换。 奇交换它总是比较奇数索引已及其相邻的后续元素，而偶交换则是比较偶数索引以及其相邻的后续元素，并且奇交换和偶交换会成对出现，这样才能保证比较和交换涉及到数组的每一个元素。由此分离的思想 ，所有比较和交换是没有数据相关性的，这种就可以并行化了。</p>
+<p>下面是奇偶交换排序的串行实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">oddEvenSort</span><span class="params">(<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> exeFlag=<span class="number">1</span>,start=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span>(exeFlag==<span class="number">1</span>||start==<span class="number">1</span>)&#123;</span><br><span class="line">			<span class="comment">//执行标记设为0 start标记用于表示奇交换还是偶交换  </span></span><br><span class="line">			<span class="comment">//如果上一次比较发生了数据交换 或者当前进行的是奇交换 那么就继续循环 </span></span><br><span class="line">			<span class="comment">//直到程序不再交换 并且发生了偶交换为止</span></span><br><span class="line">			exeFlag=<span class="number">0</span>;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;arr.length-<span class="number">1</span>;i+=<span class="number">2</span>)&#123;</span><br><span class="line">				<span class="keyword">if</span>(arr[i]&gt;arr[i+<span class="number">1</span>])&#123;</span><br><span class="line">					<span class="keyword">int</span> temp =arr[i];</span><br><span class="line">					arr[i]=arr[i+<span class="number">1</span>];</span><br><span class="line">					arr[i+<span class="number">1</span>]=temp;</span><br><span class="line">					<span class="comment">//执行标记设为1</span></span><br><span class="line">exeFlag=<span class="number">1</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//如果偶排序进行完了 那么进行奇排序</span></span><br><span class="line">			<span class="keyword">if</span>(start==<span class="number">0</span>)</span><br><span class="line">				start=<span class="number">1</span>;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				<span class="comment">//奇排序进行完了 就GG</span></span><br><span class="line">				start=<span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.print(<span class="string">"\n奇偶排序：  "</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> a :arr)&#123;</span><br><span class="line">			System.out.print(a+<span class="string">"、"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上述代码可以使用CountDownLatch方法进行计数器减少操作。等待一个线程执行完任务计数器减少1。</p>
+<p>并行模式的奇偶交换排序:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//无锁实现的integer 保证多线程操作下变量的原子性</span></span><br><span class="line">	<span class="keyword">static</span> AtomicInteger exechFlag =<span class="keyword">new</span> AtomicInteger(<span class="number">1</span>);</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcurrentOddEventSort</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="comment">//定义角标和批倒计时器命令</span></span><br><span class="line">		<span class="keyword">int</span> i;</span><br><span class="line">		CountDownLatch latch;</span><br><span class="line">		<span class="keyword">static</span> <span class="keyword">int</span> arr[];</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">ConcurrentOddEventSort</span><span class="params">(<span class="keyword">int</span> i, CountDownLatch latch)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.i = i;</span><br><span class="line">			<span class="keyword">this</span>.latch = latch;	</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">if</span>(arr[i]&gt;arr[i+<span class="number">1</span>])&#123;</span><br><span class="line">				<span class="keyword">int</span> temp = arr[i];</span><br><span class="line">				arr[i]=arr[i+<span class="number">1</span>];</span><br><span class="line">				arr[i+<span class="number">1</span>]=temp;</span><br><span class="line">				exechFlag.set(<span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//一个线程执行完计数器减少1 </span></span><br><span class="line">			latch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><br>Main方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//奇偶交换排序 并行：</span></span><br><span class="line">		<span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">		ConcurrentOddEventSort.arr=arr1;</span><br><span class="line">		ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">while</span>(exechFlag.get()==<span class="number">1</span>||start==<span class="number">1</span>)&#123;</span><br><span class="line">			exechFlag.set(<span class="number">0</span>);</span><br><span class="line">			<span class="comment">//偶数的数组长度 当start为1 时  只有 len/2-1个线程</span></span><br><span class="line">			CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(ConcurrentOddEventSort.arr.length/<span class="number">2</span>-(ConcurrentOddEventSort.arr.length%<span class="number">2</span>==<span class="number">0</span>?start:<span class="number">0</span>));</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;ConcurrentOddEventSort.arr.length;i++)&#123;</span><br><span class="line">				<span class="comment">//提交线程</span></span><br><span class="line">				pool.submit(<span class="keyword">new</span> ConcurrentOddEventSort(i, latch));</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//等待所有线程执行完</span></span><br><span class="line">			latch.await();</span><br><span class="line">			<span class="keyword">if</span>(start==<span class="number">0</span>)start=<span class="number">1</span>;</span><br><span class="line">			<span class="keyword">else</span> start=<span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.print(<span class="string">"\n并发下的排序数组："</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> a :ConcurrentOddEventSort.arr)&#123;</span><br><span class="line">			System.out.print(a+<span class="string">"、"</span>);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" title= Java并发编程笔记（七）并行模式与算法2 >
+                    <span>Next Post</span>
+                    <span>Java并发编程笔记（七）并行模式与算法2</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" title= Java并发编程笔记（五）锁的优化及其注意事项2 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（五）锁的优化及其注意事项2</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（六）并行模式与算法", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#单例模式"><span class="toc-number">1.</span> <span class="toc-text">单例模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#不变模式"><span class="toc-number">2.</span> <span class="toc-text">不变模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#生产者-消费者模式"><span class="toc-number">3.</span> <span class="toc-text">生产者-消费者模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高性能的生产者-消费者：无锁的实现"><span class="toc-number">4.</span> <span class="toc-text">高性能的生产者-消费者：无锁的实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#无锁的缓存框架-Disruptor"><span class="toc-number">5.</span> <span class="toc-text">无锁的缓存框架 Disruptor</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#提高消费者响应时间：选择合适的策略"><span class="toc-number">5.1.</span> <span class="toc-text">提高消费者响应时间：选择合适的策略</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CPU-Cache的优化：解决伪共享问题"><span class="toc-number">6.</span> <span class="toc-text">CPU Cache的优化：解决伪共享问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Future模式"><span class="toc-number">7.</span> <span class="toc-text">Future模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并行流水线"><span class="toc-number">8.</span> <span class="toc-text">并行流水线</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并行搜索"><span class="toc-number">9.</span> <span class="toc-text">并行搜索</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并行排序"><span class="toc-number">10.</span> <span class="toc-text">并行排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分离数据相关性：奇偶交换排序"><span class="toc-number">10.1.</span> <span class="toc-text">分离数据相关性：奇偶交换排序</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 21 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
