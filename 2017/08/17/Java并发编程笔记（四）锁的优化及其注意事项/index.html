@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（四）锁的优化及其注意事项 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（四）锁的优化及其注意事项</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（四）锁的优化及其注意事项
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/08/17</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>我们采用并行算法的目的是为了提升效率，但事实上使用多线程的方式会额外地增加系统开销，如果在单核CPU上并行CPU的效率一般低于串行的，因此合理地使用并发才能将CPU性能发挥到极致。</p>
+<h1 id="有助于提高锁性能的几点建议"><a href="#有助于提高锁性能的几点建议" class="headerlink" title="有助于提高锁性能的几点建议"></a>有助于提高锁性能的几点建议</h1><h2 id="减少锁持有时间"><a href="#减少锁持有时间" class="headerlink" title="减少锁持有时间"></a>减少锁持有时间</h2><p>如果每个程序都占用锁时间很长。那么将是是一笔非常大的开销，只在必要时候进行同步就能明显减少开销，提高系统吞吐量。（减少锁的占有时间也有效地降低锁冲突的可能性 进而提升系统的并发能力）</p>
+<h2 id="减小锁粒度"><a href="#减小锁粒度" class="headerlink" title="减小锁粒度"></a>减小锁粒度</h2><p>减小锁的粒度也是一种削弱多线程锁竞争 的有效手段。前面所介绍的HashMap，如果你直接在类上加synchronized锁 那么无疑是线程安全的，但是这也锁粒度太大，所以性能很低，这时候的ConcurrentHashMap引入了分段锁（这也就使得性能很高）。<br>ConcurrentHashMap被进一步细分为16个小段，根据hashcode值得到该表项应该放入哪个小段中，然后对该段进行加锁，完成put操作（如果幸运的话可以并行16个线程）。在多线程环境中如果多个线程同时put操作，只要被加入的表项不是存放同一个段中，都可以真正并行。减少锁粒度会面临一个新的问题，但是在访问全局的信息里，ConcurrentHashMap就需要获取每一段的锁然后进行处理了，例如获取size()方法 会先进行无锁的方式求和如果失败就进行有锁方式的累加，最后返回结果，这样在高并发场合ConcurrentHashMap的效率低于同步的HashMap;因此 如果在使用全局信息不频繁的情况下 使用ConcurrentHashMap这类减小所粒度的类并发效率才会好。</p>
+<h2 id="读写分离来替换独占锁"><a href="#读写分离来替换独占锁" class="headerlink" title="读写分离来替换独占锁"></a>读写分离来替换独占锁</h2><p>理论上读是不修改数据的，所以读多写少并发场合可以使用读写锁来进行控制，有效提升系统的并发能力。</p>
+<h2 id="锁分离"><a href="#锁分离" class="headerlink" title="锁分离"></a>锁分离</h2><p>如果将读写锁的思想进一步的衍生，那么就有锁分离思想。利用类似的分离思想也可以对独占锁进行分离。LinkedBlockingQueue take()方法和Put()方法都是操作修改但是由于是基于链表的，所以分别作用于队列的底端和顶端 理论上来说二者不冲突。<br>在JDK中并未用这两种方式，取而代之的是使用两把不同的重入锁（削弱了锁竞争的可能性）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="comment">/** Lock held by take, poll, etc */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ReentrantLock takeLock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** Wait queue for waiting takes */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Condition notEmpty = takeLock.newCondition();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** Lock held by put, offer, etc */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ReentrantLock putLock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/** Wait queue for waiting puts */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Condition notFull = putLock.newCondition();</span><br></pre></td></tr></table></figure>
+<p>put()方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(E e)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (e == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">       <span class="comment">// Note: convention in all put/take/etc is to preset local var</span></span><br><span class="line">       <span class="comment">// holding count negative to indicate failure unless set.</span></span><br><span class="line">       <span class="keyword">int</span> c = -<span class="number">1</span>;</span><br><span class="line">       Node&lt;E&gt; node = <span class="keyword">new</span> Node&lt;E&gt;(e);</span><br><span class="line">       <span class="keyword">final</span> ReentrantLock putLock = <span class="keyword">this</span>.putLock;</span><br><span class="line">       <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</span><br><span class="line">       putLock.lockInterruptibly();</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="comment">/*</span></span><br><span class="line"><span class="comment">            * Note that count is used in wait guard even though it is</span></span><br><span class="line"><span class="comment">            * not protected by lock. This works because count can</span></span><br><span class="line"><span class="comment">            * only decrease at this point (all other puts are shut</span></span><br><span class="line"><span class="comment">            * out by lock), and we (or some other waiting put) are</span></span><br><span class="line"><span class="comment">            * signalled if it ever changes from capacity. Similarly</span></span><br><span class="line"><span class="comment">            * for all other uses of count in other wait guards.</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">           <span class="keyword">while</span> (count.get() == capacity) &#123;   	<span class="comment">//如果当前没有可用数据就等待</span></span><br><span class="line">               notFull.await();					<span class="comment">//等待有数据了被唤醒</span></span><br><span class="line">           &#125;</span><br><span class="line">           enqueue(node);				<span class="comment">//插入数据</span></span><br><span class="line">           c = count.getAndIncrement();			<span class="comment">//更新总数 c是count+1前的值</span></span><br><span class="line">           <span class="keyword">if</span> (c + <span class="number">1</span> &lt; capacity)			<span class="comment">//有足够的空间通知其他线程</span></span><br><span class="line">               notFull.signal();</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           putLock.unlock();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (c == <span class="number">0</span>)</span><br><span class="line">           signalNotEmpty();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><br>take()方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">      E x;</span><br><span class="line">      <span class="keyword">int</span> c = -<span class="number">1</span>;</span><br><span class="line">      <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</span><br><span class="line">      <span class="keyword">final</span> ReentrantLock takeLock = <span class="keyword">this</span>.takeLock;</span><br><span class="line">      takeLock.lockInterruptibly();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">while</span> (count.get() == <span class="number">0</span>) &#123;		<span class="comment">//如果当前没可用的等待put方法唤醒</span></span><br><span class="line">              notEmpty.await();</span><br><span class="line">          &#125;</span><br><span class="line">          x = dequeue();				<span class="comment">//取得第一个数据 然后数量-1，原子操作因为会和put同时访问count</span></span><br><span class="line">          c = count.getAndDecrement();</span><br><span class="line">          <span class="keyword">if</span> (c &gt; <span class="number">1</span>)				<span class="comment">//通知其他take操作</span></span><br><span class="line">              notEmpty.signal();</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          takeLock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (c == capacity)</span><br><span class="line">          signalNotFull();      <span class="comment">//通知Put操作 已有足够空间</span></span><br><span class="line">      <span class="keyword">return</span> x;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><br>以上通过两把锁takeLock和putLock实现了真正的锁分离，从而实现了并发操作。</p>
+<h2 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h2><p>这一点和之前的减少锁的持有时间是相互违背的，因为如果同时大量反复地请求和释放同一把锁时，这是不利于性能的，虚拟机会对锁进行粗化，就是把所有简短且频繁的锁操作整合成一个大锁操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">synchronized(obj)&#123;</span><br><span class="line">//doSth .. </span><br><span class="line">&#125;</span><br><span class="line">//不需要并发代码</span><br><span class="line">synchronized(obj)&#123;</span><br><span class="line">//doSth</span><br><span class="line">&#125;</span><br><span class="line">以上代码被锁粗化成：</span><br><span class="line">sychronized(obj)&#123;</span><br><span class="line">//doSth</span><br><span class="line">//不需要并发代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="虚拟机对锁优化所做的努力"><a href="#虚拟机对锁优化所做的努力" class="headerlink" title="虚拟机对锁优化所做的努力"></a>虚拟机对锁优化所做的努力</h1><p>这里介绍JDK 虚拟机为提高并发性能而绞尽脑汁的几种“锁”优化策略：</p>
+<h2 id="锁偏向"><a href="#锁偏向" class="headerlink" title="锁偏向"></a>锁偏向</h2><p>如果不是特别高并发场合，每次请求都是同一个线程，那么锁就可以进入偏向模式，该模式下当一个线程再次请求锁可以直接获得无须阻塞同步，这样就节省了大量关锁和申请的时耗，对于锁竞争激烈的场合这还是不适用的，这个通过适用虚拟机参数<br><code>-XX:+UseBiasedLocking</code> 可以开启偏向锁。</p>
+<h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><p>如果偏向锁失败，虚拟机并不会立即挂起线程，虚拟机还会使用此种优化手段，就是利用对象头部作为指针指向一个持有锁的线程堆栈内部，判断一个线程是否持有对象锁，如果线程获取轻量级锁成功可以顺利进入临界区。如果轻量级加锁失败，则表示被其他线程先争取到了锁，那么当前线程锁请求就会膨胀为重量级锁。</p>
+<h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>在上述的锁膨胀后，虚拟机不会立刻在系统层面挂起该线程。还会进行最后的尝试。如果一个线程暂时无法获得锁且在短时间内可以获得 那么挂起是一种得不偿失的手段了。因此 虚拟机会让线程做几个空循环（自旋的含义） 若干次循环后如果可以获得锁那么就顺利地进入临界区。如果还不能获得锁 才会真实地将线程在操作系统层面挂起。</p>
+<h2 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h2><p>锁消除是一种更彻底地锁优化，Java虚拟机在JIT编译时，通过对上下文的扫描，去除不可能存在共享资源竞争，通过锁消除可以去除毫无意义的锁竞争。<br>例如在方法中定义局部变量Vector,由于局部变量是在线程栈上分配的，属于线程私有数据。因此不可能被其他线程访问，这种情况下内部所有锁是无必要的，虚拟机会去除。<br><strong> 锁消除涉及的一项关键技术就是逃逸分析 </strong>。 所谓逃逸分析就是观察某一变量是否会逃出特定的作用域，就像上述如果是定义一个方法的Vector v,最后返回的不是v 而是其他对象， 那么说明这个对象没有逃离出方法的这个作用域，那么就可以被锁消除优化了，如果是直接返回的return v的话 那么就代表v逃逸出当前函数 有可能呢被其它线程访问，虚拟机就不会进行锁消除操作了。<br>逃逸分析必须在-server模式下运行，<br>可以使用<code>-XX:+DoEscapeAnalysis</code> 参数打开逃逸分析<br>使用<code>-XX:+EliminateLocks</code> 参数可以打开锁消除。</p>
+<h1 id="人手一支笔ThreadLocal"><a href="#人手一支笔ThreadLocal" class="headerlink" title="人手一支笔ThreadLocal"></a>人手一支笔ThreadLocal</h1><p>ThreadLocal相当于100个人同时写文档，Threadlocal就充当100支笔，使得变量在多线程下可以同时操作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ThreadLocal 多线程提供每个线程一个操作副本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreaadLocalDemo</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TLSDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="comment">//保证多线程环境下格式化日期不会有错误</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;SimpleDateFormat&gt; tls = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">TLSDemo1</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.name=name;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="comment">//如果该线程的key为null 就设置一个 如果已经持有就使用 </span></span><br><span class="line">			<span class="comment">//需要注意的是为每个线程分配一个对象工作不是由ThreadLocal来保证的，是由我们在应用层面来保证的</span></span><br><span class="line">			<span class="keyword">if</span>(tls.get()==<span class="keyword">null</span>)&#123;</span><br><span class="line">				tls.set(<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>));</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="comment">//如果该线程有实例就直接使用</span></span><br><span class="line">				Date date = tls.get().parse(<span class="string">"2017-07-30 09:23:22"</span>);</span><br><span class="line">				System.out.println(name+<span class="string">" 转换的时间为："</span>+date);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//线程池构建100个线程</span></span><br><span class="line">		</span><br><span class="line">		ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)&#123;</span><br><span class="line">			<span class="comment">//使用TLS机制为每个变量创建一个副本 不会冲突</span></span><br><span class="line">			pool.submit(<span class="keyword">new</span> TLSDemo1(<span class="string">"Thread"</span>+i));</span><br><span class="line">		&#125;</span><br><span class="line">		pool.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在来分析一波他的set方法源码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">            map.set(<span class="keyword">this</span>, value);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>可以看出 ，它通过当前线程来去获取一个ThreadLocalMap,并把值设入ThreadLocalMap当中，而ThreadLocal你可以理解为一个hashmap,一个内部成员，写入ThreadLocalMap的key正是当前的ThreadLocal对象，value就是我们需要的值。<br>get()方法自然而然也就是把值都取出来：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     Thread t = Thread.currentThread();</span><br><span class="line">     ThreadLocalMap map = getMap(t);</span><br><span class="line">     <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">         ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">         <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">             <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">             T result = (T)e.value;</span><br><span class="line">             <span class="keyword">return</span> result;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> setInitialValue();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><br>首先get方法也是通过当前线程去获取一个ThreadLocalMap对象，然后通过该key去获取value。<br>由此我们可以引出一个问题，这些变量都是维护在Thread类内部的（ThreadLocalMap）定义所在类，这也就意味着只要线程不退出，对象的引用就一直存在。当线程退出时，Thread类会进行一些清理工作，其中就包括 清理ThreadLocalMap:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">当线程退出时 由系统进行回调 资源清理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">exit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (group != <span class="keyword">null</span>) &#123;</span><br><span class="line">            group.threadTerminated(<span class="keyword">this</span>);</span><br><span class="line">            group = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*加速资源清理 */</span></span><br><span class="line">        target = <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">/* Speed the release of some of these resources */</span></span><br><span class="line">        threadLocals = <span class="keyword">null</span>;</span><br><span class="line">        inheritableThreadLocals = <span class="keyword">null</span>;</span><br><span class="line">        inheritedAccessControlContext = <span class="keyword">null</span>;</span><br><span class="line">        blocker = <span class="keyword">null</span>;</span><br><span class="line">        uncaughtExceptionHandler = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>因此 如果我们使用线程池（例如固定大小的线程池） 线程未必会退出，如果这样你将一些很大的对象放入ThreadLocal内（实际放入ThreadLocalMap内），可能会使系统出现内存泄漏的可能。（意思就是如果设置了对象不使用它 该对象也无法被回收）。此时你就要使用ThreadLocal.remove()方法将这个变量移除，就像关闭流和数据库连接一样，如果你不需要对象了就应该告诉虚拟机请回收防止内存泄漏。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ThreadLocalMap m = getMap(Thread.currentThread());</span><br><span class="line">    <span class="keyword">if</span> (m != <span class="keyword">null</span>)</span><br><span class="line">        m.remove(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>threadLocals = null;会加速垃圾回收（把对象设置为null即为弱引用，如果被垃圾回收器发现会立即回收），ThreadLocalMap是一个类似Hashmap。更精确地说 它是类似WeakHashMap。ThreadLocalMap实现使用了弱引用 WeakReference<threadlocal><br>        static class Entry extends WeakReference<threadlocal<?>&gt; {<br>            /<em>* The value associated with this ThreadLocal. </em>/<br>            Object value;</threadlocal<?></threadlocal></p>
+<pre><code>    Entry(ThreadLocal&lt;?&gt; k, Object v) {
+        super(k);
+        value = v;
+    }
+}
+</code></pre><p>这里的参数k就是Map的key,v就是Map的Value，k也相当于是ThreadLocal的实例，实际上它并不是真的持有ThreadLocal的实例(而是弱引用ThreadLocal)，当ThreadLocal的强引用失去时候，这个key他就会变为null被回收。</p>
+<h2 id="ThreadLoca对性能有何帮助"><a href="#ThreadLoca对性能有何帮助" class="headerlink" title="ThreadLoca对性能有何帮助"></a>ThreadLoca对性能有何帮助</h2><p>如果共享对象对于竞争的处理容易引起性能损失我们还是应该考虑使用ThreadLocal为每个线程分配单独的对象，例如多线程下产生随机数。</p>
+<h3 id="无锁"><a href="#无锁" class="headerlink" title="无锁"></a>无锁</h3><p>锁是一种悲观策略，执行的悲观算法，它总是假设每次访问临界区资源都会冲突，因此每次操作都小心翼翼。而无锁就像是乐观算法，通过CAS机制来假设每次都不会冲突，如果检测到冲突就重试当前操作直到没有冲突为止。</p>
+<h3 id="与众不同的并发策略：比较交换（CAS）"><a href="#与众不同的并发策略：比较交换（CAS）" class="headerlink" title="与众不同的并发策略：比较交换（CAS）"></a>与众不同的并发策略：比较交换（CAS）</h3><p>这种无锁无阻塞的方式天生没有死锁现象，也不会有争夺锁资源的高开销，也没有线程间频繁调度带来的开销，使用比较交换由于其非阻塞带来如上的优点，使其要比基于锁的方式拥有更优越的性能。但是程序CAS看起来更复杂一点。<br>CAS算法为CAS(E,V,P) E代表要更新的变量，V代表期望值，P代表要更新成这个值，当且仅当E的值和V期望值相等 才将E设置为P，否则就代表其他线程修改过了，重新尝试或者放弃操作。这也是采用乐观算法来假设都不冲突 不阻塞地进行CAS操作，当然并发下修改同一个值的话也只有一个会操作成功 其余线程均会失败。硬件层面，大多数的现代处理器都已经支持原子化的CAS指令。JDK5.0以后这种操作在虚拟机可以说是无处不在。</p>
+<h3 id="无锁的线程安全整数-AtomicInteger"><a href="#无锁的线程安全整数-AtomicInteger" class="headerlink" title="无锁的线程安全整数:AtomicInteger"></a>无锁的线程安全整数:AtomicInteger</h3><p>为了让Java程序员能够受益于CAS等CPU指令，JDK并发包中的atomic包包含了直接使用CAS操作的线程安全类型；<br>AtomicInteger一些方法：<br><code>public final int get()    //获取当前值</code><br><code>public final void set(int newValue) //设置当前值</code><br><code>public final int getAndSet(int newValue) //设置新值并返回旧值</code><br><code>public final boolean compareAndSet(int expect,int u) //如果当前值为期望值expect则设置为u</code><br><code>public final int getAndIncrement/Decrement()   //当前值加减一 并返回旧值</code><br><code>public final int increament/decrement AndGet() //当前值加减一 并返回新值</code><br><code>public final int getAndAdd(int delta)  //返回旧值  新加指定delta数值</code><br><code>public final int addAndGet(int delta)  //返回新值，添加指定delta数值</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//就内部实现来说 AtomicInteger 中保存一个核心字段：</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</span><br><span class="line">它代表了AtomicInteger当前实际取值</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> valueOffset;  它则代表了对象中的偏移量。</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Atomic原子操作类</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="comment">//构建CAS的线程安全原子操作类AtomicInteger i</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span>  AtomicInteger i  = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">10</span>;j++)&#123;</span><br><span class="line">				<span class="comment">//自增返回旧值</span></span><br><span class="line">				i.getAndIncrement();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>main方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建十个线程 操作原子变量i</span></span><br><span class="line">		ExecutorService pool2 = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">			pool2.submit(<span class="keyword">new</span> AtomicDemo());</span><br><span class="line">		&#125;</span><br><span class="line">		pool2.shutdown();</span><br><span class="line">		System.out.println(<span class="string">"Atomic操作后的结果为："</span>+AtomicDemo.i);   <span class="comment">//输出100  无冲突</span></span><br></pre></td></tr></table></figure><br>这种自增方法内部都是无限循环加上CAS操作的，此外AtomicReference表示对象引用，等待还有类似的类。</p>
+<h1 id="Java中的指针：Unsafe类"><a href="#Java中的指针：Unsafe类" class="headerlink" title="Java中的指针：Unsafe类"></a>Java中的指针：Unsafe类</h1><p>sun/misc/Unsafe包下的类，它是一个特殊的类，从名字来看它和C/C++的指针一样，是不安全的，所以Java移除指针的原因在此，如果指针指错了位置，你很有可能会覆盖别人的内存，导致系统崩盘。这个类里封装了一些native的 CAS 方法，以前的的ConcurrentLinkedQueue 中Node的一些CAS操作也都是使用Unsafe类来实现的。<br>Unsafe类它是JDK一个内部专属类，不允许我们使用，其帮助Java实现了许多底层原理。</p>
+<p>注意：根据Java类加载器的原理，应用程序的类由 App Loader加载<br>系统核心类 如rt.jar 由 BootStrap类加载器加载（该加载器没有java对象，因此当一个类加载器返回为Null时，这说明它是由BootStrap加载的，这个类也极有可能是rt.jar中的类了）。</p>
+<h1 id="无锁的对象引用-AtomicReference"><a href="#无锁的对象引用-AtomicReference" class="headerlink" title="无锁的对象引用 AtomicReference"></a>无锁的对象引用 AtomicReference<t></t></h1><p>与AtomicInteger不同之处在于 它是操作对象引用的，这里会引出一个原子操作的逻辑问题。<br>CAS操作是保证我的值和期望值相等就进行修改，但是如果该值被修改了一次以后又修改回原值，那么就无法捕捉到了，如果需求是要和变化过程有关那么AtomicReference就无能为力了。有一种应用场景是：如果一张蛋糕卡卡内金额小于20元 那么就充值10元，每个用户只能充值一次，如果是高并发应用场合的话一个用户恰巧19元充值了10元 然后此刻它又消费了10元小于20元，那么这时候系统又会再次充值10元。即存在漏洞，<br>那么就要引出AtomicStampedReference 来很好地解决这个问题了。</p>
+<h1 id="带时间戳的对象引用AtomicStampedReference"><a href="#带时间戳的对象引用AtomicStampedReference" class="headerlink" title="带时间戳的对象引用AtomicStampedReference"></a>带时间戳的对象引用AtomicStampedReference</h1><p>AtomicStampedReference与AtomicReference不同的是这类内部不仅维护了对象值，还维护了一个时间戳（可以表示一个状态），该对象数值更新以后 对应的时间戳状态也进行更新。因此使用此类时可以判断 只有当指定值和时间戳都满足期望值，写入才会成功。因此对象被反复读写 写回原值，只要时间戳发生变化 就能防止不恰当的写入操作。<br><code>AtomicStampedReference(V initialRef, int initialStamp)</code>创建一个新的 AtomicStampedReference与给定的初始值。<br><code>compareAndSet(V expectedReference, V newReference, int expectedStamp, int newStamp)</code> 以上参数依次为：     期望值，写入新值，期望时间戳，新时间戳<br><code>getReference()</code>返回引用的当前值。<br><code>getStamp()</code>返回当前时间戳。<br><code>set(V newReference, int newStamp)</code>设置引用和时间戳的值。<br>下面展示一个 顾客消费 店家充值的例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 原子性CAS 带有时间戳的引用类测试例子</span></span><br><span class="line"><span class="comment"> * 模拟顾客卡内20元以下 商家充值20元   一个顾客只能充值一次</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicStampReferenceDemo</span> </span>&#123;</span><br><span class="line">	<span class="comment">//构建待有时间戳的原子引用对象 arg1 引用类型 arg2时间戳</span></span><br><span class="line">	<span class="keyword">public</span>  <span class="keyword">static</span> AtomicStampedReference&lt;Integer&gt; ato = <span class="keyword">new</span> AtomicStampedReference&lt;Integer&gt;(<span class="number">19</span>, <span class="number">0</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//启动5个线程 模拟同步更新后台数据库 为用户充值</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</span><br><span class="line">		<span class="comment">//商家充值线程</span></span><br><span class="line">			<span class="keyword">new</span> Thread()&#123;<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				<span class="comment">//获取时间戳和余额</span></span><br><span class="line">				<span class="keyword">final</span> <span class="keyword">int</span> time = ato.getStamp();   <span class="comment">//等价于获取value</span></span><br><span class="line">				<span class="comment">//循环判断</span></span><br><span class="line">				<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">					<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">						<span class="keyword">int</span> money = ato.getReference();  </span><br><span class="line">						<span class="keyword">if</span>(money&lt;<span class="number">20</span>)&#123;</span><br><span class="line">							<span class="comment">//如果赠与成功  修改时间戳 避免二次赠与</span></span><br><span class="line">							<span class="keyword">if</span>(ato.compareAndSet(money, money+<span class="number">20</span>, time, time+<span class="number">1</span>))&#123;</span><br><span class="line">								System.out.println(<span class="string">"余额小于20， 充值成功，现有余额："</span>+ato.getReference());</span><br><span class="line">								<span class="keyword">break</span>;</span><br><span class="line">							&#125;;</span><br><span class="line">						&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">							System.out.println(<span class="string">"余额大于20  不充值！"</span>);</span><br><span class="line">							<span class="keyword">break</span>;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;.start();</span><br><span class="line"><span class="comment">//顾客消费模型线程</span></span><br><span class="line">		<span class="keyword">new</span> Thread()&#123;<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++)&#123;</span><br><span class="line">				<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">					<span class="keyword">int</span> time = ato.getStamp();</span><br><span class="line">					<span class="keyword">int</span> money = ato.getReference();</span><br><span class="line">				<span class="keyword">if</span>(money &gt;<span class="number">10</span>)&#123;</span><br><span class="line">					System.out.println(<span class="string">"大于10元"</span>);</span><br><span class="line">					<span class="comment">//如果消费成功修改时间戳 使其不会重复</span></span><br><span class="line">					<span class="keyword">if</span>(ato.compareAndSet(money, money-<span class="number">10</span>, time, time+<span class="number">1</span>))&#123;</span><br><span class="line">						System.out.println(<span class="string">"消费10元，余额"</span>+ato.getReference());</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"余额不足10元无法消费"</span>);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">				&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">					e.printStackTrace();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;&#125;.start();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="数组也能无锁：AtomicIntegerArray"><a href="#数组也能无锁：AtomicIntegerArray" class="headerlink" title="数组也能无锁：AtomicIntegerArray"></a>数组也能无锁：AtomicIntegerArray</h1><p>数组是一种特殊的数据结构，使用Unsafe类 通过CAS方式控制数组多线程下的安全性，这里以AtomicIntegerArray为例。<br><code>compareAndSet(int i, int expect, int update)</code>如果当前值 ==为预期值，则将位置 i处的元素设置为给定的更新值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 无锁原子数组操作类</span></span><br><span class="line"><span class="comment"> * CAS操作</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicArrayDemo</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> AtomicIntegerArray arr1 =  <span class="keyword">new</span> AtomicIntegerArray(<span class="number">10</span>);</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">10000</span>;j++)&#123;</span><br><span class="line">				<span class="comment">//将第i个元素下标+1  对10个数组元素进行累加操作 每个元素各加1000次</span></span><br><span class="line">				arr1.getAndIncrement(j%arr1.length());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"><span class="comment">//			ExecutorService pool = Executors.newCachedThreadPool();</span></span><br><span class="line">			Thread[] tls = <span class="keyword">new</span> Thread[<span class="number">10</span>];</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">				<span class="comment">//启动十个线程]</span></span><br><span class="line">				tls[i]=<span class="keyword">new</span> Thread(<span class="keyword">new</span> AtomicIntegerDemo1());</span><br><span class="line">				tls[i].start();</span><br><span class="line">			&#125;</span><br><span class="line"><span class="comment">//			pool.shutdown();</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">				tls[i].join();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">				<span class="comment">//获取多线程执行后的数组10个元素 全部为100000   这代表线程是安全的</span></span><br><span class="line">				System.out.println(<span class="string">"数组的值arr["</span>+i+<span class="string">"]="</span>+AtomicIntegerDemo1.arr1.get(i));</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" title= Java并发编程笔记（三）JDK并发包详解2 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（三）JDK并发包详解2</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（四）锁的优化及其注意事项", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#有助于提高锁性能的几点建议"><span class="toc-number">1.</span> <span class="toc-text">有助于提高锁性能的几点建议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#减少锁持有时间"><span class="toc-number">1.1.</span> <span class="toc-text">减少锁持有时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#减小锁粒度"><span class="toc-number">1.2.</span> <span class="toc-text">减小锁粒度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读写分离来替换独占锁"><span class="toc-number">1.3.</span> <span class="toc-text">读写分离来替换独占锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁分离"><span class="toc-number">1.4.</span> <span class="toc-text">锁分离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁粗化"><span class="toc-number">1.5.</span> <span class="toc-text">锁粗化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟机对锁优化所做的努力"><span class="toc-number">2.</span> <span class="toc-text">虚拟机对锁优化所做的努力</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#锁偏向"><span class="toc-number">2.1.</span> <span class="toc-text">锁偏向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#轻量级锁"><span class="toc-number">2.2.</span> <span class="toc-text">轻量级锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自旋锁"><span class="toc-number">2.3.</span> <span class="toc-text">自旋锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁消除"><span class="toc-number">2.4.</span> <span class="toc-text">锁消除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#人手一支笔ThreadLocal"><span class="toc-number">3.</span> <span class="toc-text">人手一支笔ThreadLocal</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadLoca对性能有何帮助"><span class="toc-number">3.1.</span> <span class="toc-text">ThreadLoca对性能有何帮助</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#无锁"><span class="toc-number">3.1.1.</span> <span class="toc-text">无锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#与众不同的并发策略：比较交换（CAS）"><span class="toc-number">3.1.2.</span> <span class="toc-text">与众不同的并发策略：比较交换（CAS）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无锁的线程安全整数-AtomicInteger"><span class="toc-number">3.1.3.</span> <span class="toc-text">无锁的线程安全整数:AtomicInteger</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java中的指针：Unsafe类"><span class="toc-number">4.</span> <span class="toc-text">Java中的指针：Unsafe类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#无锁的对象引用-AtomicReference"><span class="toc-number">5.</span> <span class="toc-text">无锁的对象引用 AtomicReference</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#带时间戳的对象引用AtomicStampedReference"><span class="toc-number">6.</span> <span class="toc-text">带时间戳的对象引用AtomicStampedReference</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数组也能无锁：AtomicIntegerArray"><span class="toc-number">7.</span> <span class="toc-text">数组也能无锁：AtomicIntegerArray</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 16 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

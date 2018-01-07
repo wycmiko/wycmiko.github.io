@@ -158,6 +158,94 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
+                
+                    <span>Java并发编程笔记（四）锁的优化及其注意事项</span>
+            </a>
+            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
+                <div class="abstract-content">
+                    我们采用并行算法的目的是为了提升效率，但事实上使用多线程的方式会额外地增加系统开销，如果在单核CPU上并行CPU的效率一般低于串行的，因此合理地使用并发才能将CPU性能发挥到极致。
+有助于提高锁性能的几点建议减少锁持有时间如果每个程序都占用锁时间很长。那么将是是一笔非常大的开销，只在必要时候进行同步就能明显减少开销，提高系统吞吐量。（减少锁的占有时间也有效地降低锁冲突的可能性 进而提升系统的并发能力）
+减小锁粒度减小锁的粒度也是一种削弱多线程锁竞争 的有效手段。前面所介绍的HashMap，如果你直接在类上加synchronized锁 那么无疑是线程安全的，但是这也锁粒度太大，所以性能很低...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
+                
+                    <span>Java并发编程笔记（三）JDK并发包详解2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
+                <div class="abstract-content">
+                    线程复用：线程池一个系统中，如果盲目大量地创建线程对系统是有伤害的。大量的线程回收也会给GC增加很大的压力，延长GC的停顿时间，同数据库连接池一样，为了避免创建和销毁线程的高开销，对线程进行复用，需要时从线程池中获取线程，用完还给线程池，让线程池 空闲线程 和 工作线程 处于一个动态平衡之中。
+不要重复发明轮子：JDK对线程池的支持为了更好地控制多线程，JDK提供了一套Executor框架，帮助开发人员进行线程控制，其本质就是线程池。包含了许许多多的方法，以上成员均在java.util.concurrent包中，都是jdk并发包的核心类。其中ThreadPoolExecutor表示一个线...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/07/01</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >
+                
+                    <span>Java并发编程笔记（二）JDK并发包详解1</span>
+            </a>
+            <a class="content-show-full" href = "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >
+                <div class="abstract-content">
+                    synchronized的功能扩展：重入锁重入锁完全可以替代Synchronized关键字,在java5以前重入锁的性能远远好于synchronized关键字，但从jdk6开始，synchronized上做足了优化，使得两者性能差距并不大。重入锁使用java.util.concurrent.locks.ReentrantLock类来实现。重入锁的基本示例如下：
+123456789101112131415161718192021222324252627282930313233343536373839404142package thread.test.concurrent;import ja...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/06/27</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >
                 
                     <span>Java并发编程笔记（一）基础概念理解</span>
@@ -398,7 +486,38 @@
     
     
     
-    <div class="total-archive"> 总计 : 13 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 16 </div>
     
     <div class="post-archive">
     
@@ -407,6 +526,21 @@
     
     <div class="archive-year"> 2017 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -478,9 +612,9 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     

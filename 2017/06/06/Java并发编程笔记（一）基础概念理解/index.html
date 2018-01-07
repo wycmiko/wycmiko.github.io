@@ -214,7 +214,7 @@
 <h2 id="阻塞-Blocking"><a href="#阻塞-Blocking" class="headerlink" title="阻塞( Blocking )"></a>阻塞( Blocking )</h2><p>一个线程是阻塞的，那么在其他线程释放资源前当前线程无法继续执行。当我们使用synchronized关键字或者重入锁时，我们得到的就是阻塞的线程。<br>无论是synchronized或者重入锁，都会试图在执行后续代码前得到临界区的锁，如果得不到就会被挂起等待。</p>
 <h2 id="无饥饿-Starvation-Free"><a href="#无饥饿-Starvation-Free" class="headerlink" title="无饥饿( Starvation - Free )"></a>无饥饿( Starvation - Free )</h2><p>如果线程间是有优先级的那么CPU调度时候总会倾向于满足高优先级的线程。锁分为公平锁和非公平锁。对于公平锁饥饿是不会产生的，都是按照先来后到的顺序。（大多数情况下锁的申请都是非公平的）对于非公平锁则就可能会导致低优先级的线程产生饥饿状态。</p>
 <h2 id="无障碍（Obstruction-free）"><a href="#无障碍（Obstruction-free）" class="headerlink" title="无障碍（Obstruction-free）"></a>无障碍（Obstruction-free）</h2><p>无障碍是一种最弱的非阻塞调度。两个线程如果是无障碍的执行，那么不会因为临界区的资源问题导致一方被挂起。但是一旦发生冲突就会有一方进行回滚操作，通过一致性标记来进行判断。每次操作之前读取并保存这个标记，操作完成后再次读取观察是否被更改过，如果已经被更改那么表示数据不再安全，执行回滚操作。<br>如果说阻塞的方式为悲观策略，那么非阻塞的策略为乐观策略。前者以保护数据为最高优先级，假设都会有冲突；而后者乐观策略假设多线程之间不会发生冲突或者说概率不大，一旦冲突即回滚。</p>
-<h2 id="无锁-Lock-Free"><a href="#无锁-Lock-Free" class="headerlink" title="无锁(Lock-Free)"></a>无锁(Lock-Free)</h2><p>无锁的并行都是无障碍的。在无锁的情况下允许所有线程都进入临界区访问资源，但是保证一个线程能够按照步骤完成操作并离开临界区。无锁总能保证至少一个能够顺利执行下去。<br>在无锁 操作中可能典型的例子就是包含一个无限循环，每一个线程都会不断地尝试修改共享变量。如果没有冲突则成功否则继续尝试修改。（CAS机制）<br>while(! atomicVar.compareAndSet(localVar,localVar+1)){<br>localVar=atomicVar.get();<br>}</p>
+<h2 id="无锁-Lock-Free"><a href="#无锁-Lock-Free" class="headerlink" title="无锁(Lock-Free)"></a>无锁(Lock-Free)</h2><p>无锁的并行都是无障碍的。在无锁的情况下允许所有线程都进入临界区访问资源，但是保证一个线程能够按照步骤完成操作并离开临界区。无锁总能保证至少一个能够顺利执行下去。<br>在无锁 操作中可能典型的例子就是包含一个无限循环，每一个线程都会不断地尝试修改共享变量。如果没有冲突则成功否则继续尝试修改。（CAS机制）<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(! atomicVar.compareAndSet(localVar,localVar+<span class="number">1</span>))&#123;</span><br><span class="line">localVar=atomicVar.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="无等待"><a href="#无等待" class="headerlink" title="无等待"></a>无等待</h2><p>无锁只要求一个线程在有限步骤内完成操作，而无等待进一步扩展，在无锁的基础上让所有线程都必须在有限步骤内完成，这样就不会引起饥饿问题，一种典型 结构即为 R - C - U (Read-copy - update)基本思想是：对数据的读不加限制，所有读线程都是无等待的，对修改加以限制，通过取得原始数据的副本，接着只修改副本数据，修改完成后等待合适的实际写回数据（读写锁，CopyOnWriteArrayList）。</p>
 <h1 id="有关并行的两个重要定律"><a href="#有关并行的两个重要定律" class="headerlink" title="有关并行的两个重要定律"></a>有关并行的两个重要定律</h1><p>我们使用并行程序主要出于两个目的：</p>
 <ul>
@@ -225,7 +225,7 @@
 <h1 id="JMM内存模型"><a href="#JMM内存模型" class="headerlink" title="JMM内存模型"></a>JMM内存模型</h1><p>JMM的关键技术在于多线程的原子性、可见性、和有序性展开讨论。</p>
 <h2 id="1、原子性。"><a href="#1、原子性。" class="headerlink" title="1、原子性。"></a>1、原子性。</h2><p>原子性是指一个线程的操作是不可被中断的，即使在多线程一起执行的时候，一个操作一旦开始就不会被其他线程干扰。<br>例如对32位操作系统的虚拟机使用64位的Long类型执行并发时候写入或读取 那么对线程之间的结果是有干扰的。不难发现计算机会读long类型变量的前32位数字，由于并行的关系数字被写乱了，或者读的时候读串位了。</p>
 <h2 id="2、可见性"><a href="#2、可见性" class="headerlink" title="2、可见性"></a>2、可见性</h2><p>可见性是指当一个线程修改了某一共享变量的值后，其他线程能否能够立即知道这个修改。变量修改问题在其他串行的程序是不存在的，并行程序一个线程修改某一个全局变量 那么其他线程就未必知道了。例如：CPU1和CPU2 共享变量t,其中CPU1 线程对变量进行了优化将其存储在缓存中或者寄存器中，而此时CPU2对该变量值进行修改，然后CPU1从缓存或者寄存器继续中读取旧值，那么就存在可见性问题了。可见性问题是并发程序中需要重点关注的一个问题。</p>
-<h2 id="3、有序性"><a href="#3、有序性" class="headerlink" title="3、有序性"></a>3、有序性</h2><p>有序性问题可能最难理解，对于一个线程而言串行程序运行顺序是从上到下，然而并发时候程序的执行可能会出现乱序。voliatile和synchronized可以保证有序性，voliatile可以禁止指令从排序。有序性问题的原因是因为程序在执行时候，可能会进行指令重排序，重排后的指令与原指令的顺序未必一致。至于指令为何重排？什么时候重排？我们是无法预测的。那么为什么要进行指令重排序？主要是因为性能的考虑。</p>
+<h2 id="3、有序性"><a href="#3、有序性" class="headerlink" title="3、有序性"></a>3、有序性</h2><p>有序性问题可能最难理解，对于一个线程而言串行程序运行顺序是从上到下，然而并发时候程序的执行可能会出现乱序。voliatile和synchronized可以保证有序性，voliatile可以禁止指令重排序。有序性问题的原因是因为程序在执行时候，可能会进行指令重排序，重排后的指令与原指令的顺序未必一致。至于指令为何重排？什么时候重排？我们是无法预测的。那么为什么要进行指令重排序？主要是因为性能的考虑。</p>
 <p>主要分为以下几步：<br>· 取指 IF<br>· 译码和取寄存器操作数 ID<br>· 执行或者有效地址计算 EX<br>· 存储器访问MEM<br>· 写回WB</p>
 <p>我们的汇编指令也不是一步就完成的，在CPU实际工作中，它还是需要分为多个步骤依次执行的。当然每个步骤所涉及的硬件也可能不同。比如，取指时会用到PC寄存器和存储器，译码时会用到指令寄存器组，执行时会用到ALU（算术逻辑单元。它是CPU的核心组成部分，主要功能是进行二进制运算），写回时会用到寄存器组。<br>指令1：IF ID EX MEM WB<br>指令2：    IF  ID  EX MEM  WB<br>可以看到当指令一完成了取指IF操作之后指令二就开始执行了，假定一个操作为1ms那么如果依次执行的话需要10ms，而如上所述只需要6ms，如此大的性能提升在国际商业的CPU流水线（10级指令操作以上）优化效果更为明显。<br>有了流水线这个神器，我们CPU才能真正地高效执行，但是别忘了一点，流水线总是害怕中断的。流水线满载时候性能相当不错，但是一旦中断后所有硬件设备都会进入停顿期，再次满载又需要几个周期，因此性能损失会比较大，那么指令重排的目的就在此，目的就是为了尽量少的中断流水线。指令重排序以消除停顿。具体参见书P23-P26。<br><img src="/avatar/并发/binfa.png" alt=""><br><img src="/avatar/并发/binfa2.png" alt=""><br><img src="/avatar/并发/binfa3.png" alt=""><br><img src="/avatar/并发/binfa4.png" alt=""></p>
 <h2 id="哪些指令不能重排序？Happen-Before规则"><a href="#哪些指令不能重排序？Happen-Before规则" class="headerlink" title="哪些指令不能重排序？Happen-Before规则"></a>哪些指令不能重排序？Happen-Before规则</h2><p>如果前一个操作对后一个操作是有影响的，那么这两条操作是禁止重排序的。<br>例如 int a=1;<br>b =  a+1;</p>
@@ -245,6 +245,13 @@
     </article>
     <!-- 前后页  -->
     <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" title= Java并发编程笔记（二）JDK并发包详解1 >
+                    <span>Next Post</span>
+                    <span>Java并发编程笔记（二）JDK并发包详解1</span>
+                </a>
+            </li>
         
         
             <li class="previous">
@@ -504,7 +511,38 @@
     
     
     
-    <div class="total-archive"> 总计 : 13 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 16 </div>
     
     <div class="post-archive">
     
@@ -513,6 +551,21 @@
     
     <div class="archive-year"> 2017 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -584,9 +637,9 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     

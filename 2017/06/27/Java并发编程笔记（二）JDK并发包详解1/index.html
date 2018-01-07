@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java并发编程笔记（二）JDK并发包详解1 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java并发编程笔记（二）JDK并发包详解1</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java并发编程笔记（二）JDK并发包详解1
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/06/27</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="synchronized的功能扩展：重入锁"><a href="#synchronized的功能扩展：重入锁" class="headerlink" title="synchronized的功能扩展：重入锁"></a>synchronized的功能扩展：重入锁</h1><p>重入锁完全可以替代Synchronized关键字,在java5以前重入锁的性能远远好于synchronized关键字，但从jdk6开始，synchronized上做足了优化，使得两者性能差距并不大。<br>重入锁使用java.util.concurrent.locks.ReentrantLock类来实现。重入锁的基本示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> thread.test.concurrent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantLock;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 重入锁Demo案例</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentrantLockDemo</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//描述的是一个简单的重入锁案例</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentrantLockDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//构造重入锁实例</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="comment">//锁住临界区资源</span></span><br><span class="line">			lock.lock();</span><br><span class="line">			<span class="keyword">try</span>&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;=<span class="number">200000</span>;j++)&#123;</span><br><span class="line">				i++;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//finally语句块用于解锁 必须记得释放锁 不然其他资源就无法访问该临界区了</span></span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				lock.unlock();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ReentrantLockDemo1());</span><br><span class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ReentrantLockDemo1());</span><br><span class="line">		t1.start();t2.start();</span><br><span class="line">		t1.join();t2.join();</span><br><span class="line">		System.out.println(<span class="string">"期望值i=400002，实际值 i="</span>+ReentrantLockDemo1.i);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码可以看出，与synchronized具有更高的灵活性以及显式地操作临界区资源过程，开发人员手动指定何处加减锁。为什么角重入锁呢？因为一个资源区可以多次加锁，同时也要解除等量的锁：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">		//锁住临界区资源</span><br><span class="line">		lock.lock();</span><br><span class="line">		//锁两次</span><br><span class="line">		lock.lock();</span><br><span class="line">		//。。。。</span><br><span class="line">finally&#123;</span><br><span class="line">		lock.unlock();</span><br><span class="line">		//上面锁住了两次 这里也要释放2次</span><br><span class="line">		lock.unlock();</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一个线程两次获得同一把锁这是允许的，释放也记得释放相同次数的锁。<br>除了灵活性之外，重入锁还具有更高级的功能：</p>
+<h2 id="重入锁的中断响应"><a href="#重入锁的中断响应" class="headerlink" title="重入锁的中断响应"></a>重入锁的中断响应</h2><p>重入锁具有非常有必要的中断功能，例如一个线程正在等待锁，你可以根据需要取消对锁的请求。代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentrantLockDemo2</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//两个线程分别占用一个去请求另外一个</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock lock1 = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock lock2 = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//设置参数判断用于造成死锁</span></span><br><span class="line">		<span class="keyword">int</span> lock;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span>  <span class="title">ReentrantLockDemo2</span><span class="params">(<span class="keyword">int</span> lock)</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">			<span class="keyword">this</span>.lock=lock;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(lock==<span class="number">1</span>)&#123;</span><br><span class="line">				<span class="comment">//线程一占领锁一  并打断后申请锁2</span></span><br><span class="line">				<span class="comment">//lockInterruptibly方法 这是一个锁申请动作，申请过程中可被响应打断</span></span><br><span class="line">					lock1.lockInterruptibly();</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						Thread.sleep(<span class="number">500</span>);</span><br><span class="line">					&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">						<span class="comment">//如果1被打断就申请二</span></span><br><span class="line">						lock2.lockInterruptibly();</span><br><span class="line">					&#125;</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="comment">//线程二申请锁二  打断后申请锁1</span></span><br><span class="line">				<span class="comment">//lockInterruptibly 这是一个锁申请动作，申请过程中可被响应打断</span></span><br><span class="line">					lock2.lockInterruptibly();</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						Thread.sleep(<span class="number">500</span>);</span><br><span class="line">					&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">						<span class="comment">//如果2被打断就申请一</span></span><br><span class="line">						lock1.lockInterruptibly();</span><br><span class="line">					&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				<span class="comment">//finally语句块isHeldByCurrentThread方法用于判断锁是否被当前线程持有 是的话就解除锁资源退出</span></span><br><span class="line">				<span class="keyword">if</span>(lock1.isHeldByCurrentThread()) lock1.unlock();</span><br><span class="line">				<span class="keyword">if</span>(lock2.isHeldByCurrentThread()) lock2.unlock();</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"线程退出"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><br>主方法main method:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构造两个线程造成死锁效应</span></span><br><span class="line">Thread t3 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ReentrantLockDemo2(<span class="number">1</span>),<span class="string">"t1线程"</span>);</span><br><span class="line">Thread t4 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ReentrantLockDemo2(<span class="number">2</span>),<span class="string">"t2线程"</span>);</span><br><span class="line">t3.start();t4.start();</span><br><span class="line"><span class="comment">//以上两个线程以及死锁 主线程休息5s后执行操作解除死锁</span></span><br><span class="line">System.out.println(<span class="string">"主线程休眠5s"</span>);</span><br><span class="line">Thread.sleep(<span class="number">5000</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 中断t4 这样就放弃了对lock1的申请 同时释放已经获得的lock2 </span></span><br><span class="line"><span class="comment"> * 这个操作可以让t3线程顺利地获得lock2而继续执行下去</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">t4.interrupt();</span><br></pre></td></tr></table></figure></p>
+<h2 id="锁申请等待限时"><a href="#锁申请等待限时" class="headerlink" title="锁申请等待限时"></a>锁申请等待限时</h2><p>为了避免死锁或者饥饿现象，可以规定一个线程请求一个锁资源的等待时间，使用 <code>tryLock(时间值,时间单位)</code> 方法进行一次限时的等待。<br><code>tryLock()</code>方法可以不带时间参数运行，这种情况下不会线程等待时长直接尝试获取，如果获取到就返回true否则false;<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 重入锁ReentrantLock:</span></span><br><span class="line"><span class="comment">	 * 限时等待tryLock(time,timeUnit)</span></span><br><span class="line"><span class="comment">	 * 或者无等待申请 tryLock()</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeLock</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock timeLock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="comment">//如果5s内获取到锁的话</span></span><br><span class="line">				<span class="keyword">if</span>(timeLock.tryLock(<span class="number">5</span>,TimeUnit.SECONDS))&#123;</span><br><span class="line">					<span class="comment">//占用8s 大于申请的 5s</span></span><br><span class="line">					System.out.println(Thread.currentThread().getName()+<span class="string">"霸占锁8秒"</span>);</span><br><span class="line">					Thread.sleep(<span class="number">8000</span>);</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					System.out.println(Thread.currentThread().getName()+<span class="string">"5s内锁申请不到，失败！"</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				<span class="comment">//释放资源</span></span><br><span class="line">				<span class="keyword">if</span>(timeLock.isHeldByCurrentThread()) timeLock.unlock();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><br>main方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//tryLock有时间的尝试请求资源</span></span><br><span class="line">	Thread timeT1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> TimeLock(),<span class="string">"time线程1"</span>);</span><br><span class="line">	Thread timeT2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> TimeLock(),<span class="string">"time线程2"</span>);</span><br><span class="line">	timeT1.start();timeT2.start();</span><br></pre></td></tr></table></figure><br>tryLock()方法不会等待，使用while(true)可以不停地尝试获取线程加锁</p>
+<h2 id="公平锁与非公平锁"><a href="#公平锁与非公平锁" class="headerlink" title="公平锁与非公平锁"></a>公平锁与非公平锁</h2><p><code>ReentrantLock lock = new ReentrantLock(boolean fair);</code><br>如上的代码我们可知，重入锁是提供公平锁的操作模式的，当构造函数参数为true时，锁是公平的。而传统的synchronized生成的锁都是非公平的，公平锁的一大特点就是：不会产生饥饿现象，按照申请时间的先后顺序分配。由于公平锁维护的是一个有序的队列，所以维护成本高，性能相对低下，因此锁是非公平的，如无特殊需求不需要使用公平锁。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 重入锁之 </span></span><br><span class="line"><span class="comment"> * --公平锁</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FairLock</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock lock = <span class="keyword">new</span> ReentrantLock(<span class="keyword">true</span>);</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">		lock.lock();</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"当前线程"</span>+Thread.currentThread().getName()+<span class="string">"获取了公平锁"</span>);</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>main方法:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line"><span class="comment">//公平锁 非公平锁测试</span></span><br><span class="line">Thread fair = <span class="keyword">new</span> Thread(<span class="keyword">new</span> FairLock(),<span class="string">"fair1"</span>);</span><br><span class="line">Thread fair2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> FairLock(),<span class="string">"fair2"</span>);</span><br><span class="line">fair.start();</span><br><span class="line">fair2.start();</span><br></pre></td></tr></table></figure><br>输出结果（基本都是交替输出，这就是公平锁的输出结果）：</p>
+<p><img src="/avatar/并发/bingfa5.png" alt=""><br><strong> ReentrantLock的几个重要方法如下： </strong><br>1、lock() 获得锁 如果锁被占有 则等待<br>2、tryLock() 获得锁不等待直接返回   tryLock(time,timeUnit) 等待指定的时间<br>3、lockInterruptibly()  获得锁，但优先响应中断。<br>4、unLock()  释放锁<br>5、isHeldByCurrentThread() 判断该锁是否被当前线程持有</p>
+<p><strong> 就重入锁的实现来看，主要集中在Java层面，包含3个要素： </strong><br>1、原子性。原子状态使用CAS操作来存储当前线程的状态，判断锁是否已经被别的线程持有。<br>2、等待队列。所有没请求到锁的线程会进入等待队列进行等待，待有线程释放锁后就从等待队列唤起一个线程。<br>3、阻塞源于park()和unpark()，用来挂起和恢复线程 详见线程阻塞工具类LockSupport。</p>
+<h2 id="重入锁的搭档Condition"><a href="#重入锁的搭档Condition" class="headerlink" title="重入锁的搭档Condition"></a>重入锁的搭档Condition</h2><p>我们知道synchornized关键字和object的<code>wait()</code>,<code>notify()</code>,<code>notifyAll()</code>是搭档，那么重入锁和Condition也是很好的搭档。通过Lock接口调用<code>lock.newCondition()</code>构造Condition的时候就可以绑定重入锁对象了，利用Condition对象我们就可以让线程在合适的时间内等待或者被唤醒。<br><strong> 重入锁的搭档Condition  常见方法如下 </strong>：</p>
+<p><code>void await()</code>   当前等待并释放锁<br><code>void awaitUninterrupptible()</code>  与await()相同，但是不会在等待过程中响应中断。<br><code>long awaitNanos()</code><br><code>boolean await(long time,TimeUnit)</code>  等待指定时间<br><code>boolean awaitUntil(Date deadline)</code>   等待直到某一时间点<br><code>void signal()</code>     唤醒一个等待中的线程<br><code>void signalAll()</code> 唤醒所有等待线程<br>实例代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Condition测试</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConditionDemo</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">	<span class="comment">//Condition是与ReentrantLock好搭档 用于线程间的通信</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConditionTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">		<span class="comment">//构建非公平锁</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> ReentrantLock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		<span class="comment">//构建Condition实例</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> Condition condition = lock.newCondition();</span><br><span class="line">		<span class="comment">//测试condition</span></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			lock.lock();</span><br><span class="line">			<span class="keyword">try</span>&#123;</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"阻塞等待"</span>);</span><br><span class="line">				<span class="comment">//类似于objec.wait() 此操作也会释放锁</span></span><br><span class="line">				condition.await();</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"恢复执行"</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				<span class="keyword">if</span>(lock.isHeldByCurrentThread()) lock.unlock();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ConditionTest(),<span class="string">"ConditionThread"</span>);</span><br><span class="line">		t1.start();</span><br><span class="line">		Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">		<span class="comment">//让主线程获得锁并唤醒</span></span><br><span class="line">		ConditionTest.lock.lock();</span><br><span class="line">		<span class="comment">//唤醒等待队列的线程</span></span><br><span class="line">		ConditionTest.condition.signal();</span><br><span class="line">		<span class="comment">//主线程释放锁资源还给t1线程继续执行</span></span><br><span class="line">		ConditionTest.lock.unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在JDK内部，重入锁和Condition被广泛使用，例如ArrayBlockingQueue 它的take()方法和put()方法都使用了。</p>
+<h1 id="允许多个线程同时访问（控制线程访问个数）信号量Semaphore"><a href="#允许多个线程同时访问（控制线程访问个数）信号量Semaphore" class="headerlink" title="允许多个线程同时访问（控制线程访问个数）信号量Semaphore"></a>允许多个线程同时访问（控制线程访问个数）信号量Semaphore</h1><p>信号量Semaphore为多线程协同操作提供了更强大的控制方法。广义而言信号量是对锁的扩展，无论是内部锁synchronized或者重入锁ReentrantLock。<br>信号量主要提供了以下两个构造函数<br><code>public Semaphore(int permits)</code>   允许访问的线程个数<br><code>public Semaphore(int permits,boolean fair)</code>   arg2指定是否公平<br>其主要方法为:<br><code>public void acquire()    //请求获得一个许可 如无则等待</code><br><code>public void acquireUninterruptibly() //类似 但是不相应中断</code><br><code>public boolean tryAcquire()    //同理不等待 直接返回true false</code><br><code>public boolean tryAcquire(long time,TimeUnit)  //等待指定时间</code><br><code>public void release()//释放一个许可</code><br>代码实例如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Semaphore信号量控制</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SemaphoreDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="comment">//构造五个信号量用于接受5个线程</span></span><br><span class="line">	<span class="keyword">final</span> Semaphore SEM = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//申请一个许可 获取到就执行 没获取到就等待 </span></span><br><span class="line">			SEM.acquire();</span><br><span class="line">			<span class="comment">//每一秒执行5个线程 5个一组地进来</span></span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			System.out.println(Thread.currentThread().getId()+<span class="string">"get there~!"</span>);</span><br><span class="line">			<span class="comment">//释放一个许可</span></span><br><span class="line">			SEM.release();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>main方法:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//信号量测试 </span></span><br><span class="line"><span class="comment">//创建一个固定大小为20的线程池</span></span><br><span class="line">ExecutorService pool = Executors.newFixedThreadPool(<span class="number">20</span>);</span><br><span class="line">SemaphoreDemo semaphoreDemo = <span class="keyword">new</span> SemaphoreDemo();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">20</span>;i++)&#123;</span><br><span class="line">	<span class="comment">//线程池执行二十个线程</span></span><br><span class="line">	pool.submit(semaphoreDemo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="ReadWriteLock读写锁"><a href="#ReadWriteLock读写锁" class="headerlink" title="ReadWriteLock读写锁"></a>ReadWriteLock读写锁</h1><p>由于重入锁或者 内部锁读与写之间都是串行执行的，这会造成非常多的不必要的开销，因为读线程是不改变变量值的，当B1线程在读 B2线程想要读就得等待，这种开销是完全没必要的。 所以JDK5提供了读写分离的读写锁，实现了真正的读与读之间并发执行。<br>特点：</p>
+<ul>
+<li>读与读不互斥：互不影响</li>
+<li>读与写之间互斥：读阻塞写 ，写阻塞读</li>
+<li>写与写互斥：相互阻塞</li>
+</ul>
+<p>读写锁适用于系统中读多写少的并发场景。<br>读写锁实例代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 读写锁测试</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadWriteLockDemo</span> </span>&#123;</span><br><span class="line">		<span class="comment">//普通重入锁</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">		<span class="comment">//读写锁</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> ReentrantReadWriteLock reentrantReadWriteLock= <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line">		<span class="comment">//读锁</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> Lock readLock =reentrantReadWriteLock.readLock();</span><br><span class="line">		<span class="comment">//写锁</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> Lock writeLock = reentrantReadWriteLock.writeLock();</span><br><span class="line">		<span class="comment">//操作数i</span></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">int</span> i;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//读操作</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Object <span class="title">handleRead</span><span class="params">(Lock lock)</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">			<span class="keyword">try</span>&#123;</span><br><span class="line">				lock.lock();</span><br><span class="line">				<span class="comment">//读操作耗时1s</span></span><br><span class="line">				Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">				<span class="keyword">return</span> i;</span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				lock.unlock();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//写操作</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleWrite</span><span class="params">(Lock lock,<span class="keyword">int</span> value)</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">			<span class="keyword">try</span>&#123;</span><br><span class="line">				lock.lock();</span><br><span class="line">				<span class="comment">//写操作耗时1s</span></span><br><span class="line">				Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">				i=value;</span><br><span class="line">			&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">				lock.unlock();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">			<span class="comment">//模拟读写操作实例</span></span><br><span class="line">			<span class="keyword">final</span> ReadWriteLockDemo demo = <span class="keyword">new</span> ReadWriteLockDemo();</span><br><span class="line">			<span class="comment">//构建一个读线程方法</span></span><br><span class="line">			Runnable readRun = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						demo.handleRead(readLock); <span class="comment">//本实例为读并行的读锁 </span></span><br><span class="line"><span class="comment">//						demo.handleRead(lock);   // 传入 读操作串行的重入锁 效率低</span></span><br><span class="line">					&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">						<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">					</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">			Runnable writeRun = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						<span class="comment">//写操作均阻塞</span></span><br><span class="line">						demo.handleWrite(writeLock, <span class="number">4</span>);</span><br><span class="line"><span class="comment">//						demo.handleWrite(lock, 222);    </span></span><br><span class="line">					&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">						<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">			<span class="comment">//启动18个读线程</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">0</span>;j&lt;<span class="number">18</span>;j++)&#123;</span><br><span class="line">				<span class="keyword">new</span> Thread(readRun).start();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//启动2个写线程</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">18</span>;j&lt;<span class="number">20</span>;j++)&#123;</span><br><span class="line">				<span class="keyword">new</span> Thread(writeRun).start();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>以上代码如果是并行的读写锁读操作 执行很快 否则会很慢（串行读20s左右）。</p>
+<h1 id="倒计时器-CountDownLatch"><a href="#倒计时器-CountDownLatch" class="headerlink" title="倒计时器 CountDownLatch"></a>倒计时器 CountDownLatch</h1><p>CountDownLatch是一个非常实用的多线程工具类，这个工具通常用来控制线程的等待，它可以让某一个线程等待直到倒计时结束，再开始执行。<br><code>public CountDownLatch(int count)</code> 构造器包含了实用计数器作为计数个数 即需要特定数量的线程来完成任务。<br><code>countDown.await()</code>方法会要求主线程等待所有检查操作完成后才能继续执行<br><code>countDown.countDown()</code>方法没执行一次计数器减1，代表可以少一个线程去执行特定的操作。<br>实例代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 程序计数器操作demo</span></span><br><span class="line"><span class="comment"> * 每执行一次countDown()方法计数器减少一</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountDownLatchDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="comment">//构建计数器对象 传入参数为10 即代表需要有10个线程来执行检查任务</span></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">final</span> CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">10</span>);</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">final</span> CountDownLatchDemo demo = <span class="keyword">new</span> CountDownLatchDemo();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//模拟检查任务</span></span><br><span class="line">			Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">			System.out.println(<span class="string">"check Completed!"</span>);</span><br><span class="line">			<span class="comment">//计数减少1 </span></span><br><span class="line">			latch.countDown();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		ExecutorService pool = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">			<span class="comment">//从线程池中启动十个线程</span></span><br><span class="line">			pool.submit(demo);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//等待检查 阻塞主线程 对run方法进行计数 计数减为零主线程才可以继续执行 否则一直阻塞</span></span><br><span class="line">		latch.await();</span><br><span class="line">		System.out.println(<span class="string">"Fire!"</span>);</span><br><span class="line">		<span class="comment">///停止线程池</span></span><br><span class="line">		pool.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="CyclicBarrier循环栅栏"><a href="#CyclicBarrier循环栅栏" class="headerlink" title="CyclicBarrier循环栅栏"></a>CyclicBarrier循环栅栏</h1><p>一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)cyclibarrier.await()。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环 的 barrier。<br>使用场景：<br>需要所有的子任务都完成时，才执行主任务，这个时候就可以选择使用CyclicBarrier。</p>
+<p>CyclicBarrier是另外一种多线程并发控制的实用工具。和CountDownLatch类似，它也可以实现线程间的计数等待，且功能比CountDownLatch更为强大和复杂，循环栅栏  —循环的意思即为假设每次可以计数拦截10个线程，第二批又可以重新从10开始计数如此地循环下去。其构造方法如下：<br><code>public CyclicBarrier(int parties,Runnable barrierAction)</code> arg1位计数总数，arg2位计数完成后会执行的任务<br>实例代码如下 我们模拟一个一群士兵集结完毕后 回调将军线程并提示集结完毕的指令场景：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * CyclicBarrier</span></span><br><span class="line"><span class="comment"> * 循环栅栏</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CyclicBarrierDemo</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//模拟循环栅栏阻塞后 执行将军的命令</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">final</span> CyclicBarrier cyclibarrier;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">Soldier</span><span class="params">(String name, CyclicBarrier cyclibarrier)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.cyclibarrier = cyclibarrier;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="comment">//等待所有线程到齐 await()方法执行之前所有参与者将一直等待</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				cyclibarrier.await();</span><br><span class="line">				doWork();</span><br><span class="line">				<span class="comment">//等待所有士兵完成工作 重用等待</span></span><br><span class="line">				cyclibarrier.await();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException | BrokenBarrierException e) &#123;</span><br><span class="line">				<span class="comment">//BrokenBarrierException 该异常为表示当前cyclicBarrier已经破损，就地散伙不再等待了</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">doWork</span><span class="params">()</span></span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">500</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			System.out.println(name+<span class="string">"  任务完成！"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//BarrierRun类 用于CyclicBarrier执行完的回调函数 await()执行2次这里也调用2次</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BarrierRun</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">boolean</span> flag;</span><br><span class="line">		<span class="keyword">int</span> N;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">BarrierRun</span><span class="params">(<span class="keyword">boolean</span> flag, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.flag = flag;</span><br><span class="line">			N = n;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">			<span class="keyword">if</span>(flag)&#123;</span><br><span class="line">				System.out.println(<span class="string">"司令：【士兵"</span>+N+<span class="string">"个任务完成"</span>);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="comment">//阻塞await方法调用会执行这个命令等待士兵线程过来并执行完</span></span><br><span class="line">				System.out.println(<span class="string">"司令：【士兵】"</span>+N+<span class="string">"个集结完毕！"</span>); </span><br><span class="line">				flag=<span class="keyword">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">final</span> <span class="keyword">int</span> N= <span class="number">10</span>;</span><br><span class="line">		<span class="comment">//构建十个士兵线程组</span></span><br><span class="line">		Thread[] allSoldier = <span class="keyword">new</span> Thread[N];</span><br><span class="line">		<span class="keyword">boolean</span> flag =<span class="keyword">false</span>;</span><br><span class="line">		<span class="comment">//构建cyclicBarrier 循环栅栏对象，传入阻塞放行后会执行的线程 await()方法每调用一次这个方法返回方法就会执行一次</span></span><br><span class="line">		CyclicBarrier cyclicBarrier = <span class="keyword">new</span> CyclicBarrier(N, <span class="keyword">new</span> BarrierRun(flag, N));</span><br><span class="line">		System.out.println(<span class="string">"集合队伍！"</span>);</span><br><span class="line">		<span class="comment">//启动十个线程</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;N;i++)&#123;</span><br><span class="line">			System.out.println(<span class="string">"士兵"</span>+i+<span class="string">"报道"</span>);</span><br><span class="line">			allSoldier[i]= <span class="keyword">new</span> Thread(<span class="keyword">new</span> Soldier(<span class="string">"士兵"</span>+i, cyclicBarrier));</span><br><span class="line">			allSoldier[i].start();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="线程阻塞工具类-LockSupport"><a href="#线程阻塞工具类-LockSupport" class="headerlink" title="线程阻塞工具类 LockSupport"></a>线程阻塞工具类 LockSupport</h1><p>LockSupport是一个非常方便实用的线程阻塞工具类，它可以在线程内任意位置让线程阻塞和解除阻塞，它弥补了<code>suspend()</code>方法在<code>resume()</code>方法之后执行导致无法继续执行的情况，和<code>wait()</code>方法相比较它不需要获得某个对象的锁，也不会抛出InterruptedException异常。<br>LockSupport方法的静态方法<code>park()</code>可以阻塞当前线程，<code>park（obj）</code>还可以等待某一对象的阻塞，类似的还有<code>parkNanos()</code>,<code>parkUntil()</code>等方法，它们实现了一个限时的等待。调用静态方法<code>unpark(thread)</code>可以解除某个线程的阻塞。<br>实例代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 并发包下的</span></span><br><span class="line"><span class="comment"> * LockSupport</span></span><br><span class="line"><span class="comment"> * 线程阻塞工具类 LockSupport</span></span><br><span class="line"><span class="comment"> * 它的优势在于可以随时阻塞，不需要获得锁或者担心不阻塞在阻塞之前执行</span></span><br><span class="line"><span class="comment"> * 且不会抛出异常</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LockSupportDemo</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LockSupportDemo1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">			<span class="keyword">public</span> <span class="keyword">static</span> LockSupportDemo1 obj = <span class="keyword">new</span> LockSupportDemo1();</span><br><span class="line">			</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">//阻塞</span></span><br><span class="line">			<span class="keyword">synchronized</span>(obj)&#123;</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"阻塞了"</span>);</span><br><span class="line">				<span class="comment">//阻塞 </span></span><br><span class="line"><span class="comment">//				LockSupport.park();</span></span><br><span class="line">				<span class="comment">//park方法还可以传入等待对象 通过jps --&gt; jstack pid 的CLI命令可以看到等待的对象</span></span><br><span class="line">				LockSupport.park(<span class="keyword">this</span>);</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"解除阻塞"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * LockSupport还支持中断影响，虽然它不会抛出异常 但是可以通过判断方法获得中断标记并返回</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LockSupportDemo2</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> LockSupportDemo2 obj = <span class="keyword">new</span> LockSupportDemo2();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//阻塞</span></span><br><span class="line">		<span class="keyword">synchronized</span>(obj)&#123;</span><br><span class="line">			System.out.println(Thread.currentThread().getName()+<span class="string">"阻塞了"</span>);</span><br><span class="line">			<span class="comment">//阻塞</span></span><br><span class="line">			LockSupport.park();</span><br><span class="line">			<span class="comment">//park方法还可以传入等待对象 通过jstack pid 的CLI命令可以看到等待的对象</span></span><br><span class="line"><span class="comment">//			LockSupport.park(this);</span></span><br><span class="line">			<span class="keyword">if</span>(Thread.interrupted())&#123;</span><br><span class="line">				System.out.println(Thread.currentThread().getName()+<span class="string">"中断"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			System.out.println(Thread.currentThread().getName()+<span class="string">"解除阻塞"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> LockSupportDemo1(),<span class="string">"locksupport1"</span>);</span><br><span class="line">		Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> LockSupportDemo1(),<span class="string">"locksupport2"</span>);</span><br><span class="line">		t1.start();</span><br><span class="line">		Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		t2.start();</span><br><span class="line">		<span class="comment">//unpark方法用于解除特定线程的阻塞</span></span><br><span class="line">		LockSupport.unpark(t1);</span><br><span class="line">		Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		LockSupport.unpark(t2);</span><br><span class="line">		t1.join();t2.join();</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 执行以上这段代码发现永久不会因为park()方法导致线程永久性地挂起</span></span><br><span class="line"><span class="comment">		 * 这是因为LockSupport实现了一个类似信号量的机制，它为每个线程准备了一个许可，如果许可可用park函数立即返回，否则就阻塞。而Unpark函数实际上就是使得某一不可用许可变为可用，但是和信号量不同的是，一个线程有且仅有一个许可。</span></span><br><span class="line"><span class="comment">		 * 这个特点就使得即使unpark()方法发生在park()方法之前 park()方法也可以继续执行不会阻塞。</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		Thread t3 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> LockSupportDemo2(),<span class="string">"locksupport3"</span>);</span><br><span class="line">		Thread t4 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> LockSupportDemo2(),<span class="string">"locksupport4"</span>);</span><br><span class="line">		t3.start();</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">		t4.start();</span><br><span class="line">		<span class="comment">//中断就解除阻塞 马上响应返回</span></span><br><span class="line">		t3.interrupt();</span><br><span class="line">		LockSupport.unpark(t4);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>下一篇我们将介绍非常重要的内容，线程池。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" title= Java并发编程笔记（三）JDK并发包详解2 >
+                    <span>Next Post</span>
+                    <span>Java并发编程笔记（三）JDK并发包详解2</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" title= Java并发编程笔记（一）基础概念理解 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（一）基础概念理解</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java并发编程笔记（二）JDK并发包详解1", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#synchronized的功能扩展：重入锁"><span class="toc-number">1.</span> <span class="toc-text">synchronized的功能扩展：重入锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#重入锁的中断响应"><span class="toc-number">1.1.</span> <span class="toc-text">重入锁的中断响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁申请等待限时"><span class="toc-number">1.2.</span> <span class="toc-text">锁申请等待限时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公平锁与非公平锁"><span class="toc-number">1.3.</span> <span class="toc-text">公平锁与非公平锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重入锁的搭档Condition"><span class="toc-number">1.4.</span> <span class="toc-text">重入锁的搭档Condition</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#允许多个线程同时访问（控制线程访问个数）信号量Semaphore"><span class="toc-number">2.</span> <span class="toc-text">允许多个线程同时访问（控制线程访问个数）信号量Semaphore</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ReadWriteLock读写锁"><span class="toc-number">3.</span> <span class="toc-text">ReadWriteLock读写锁</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#倒计时器-CountDownLatch"><span class="toc-number">4.</span> <span class="toc-text">倒计时器 CountDownLatch</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CyclicBarrier循环栅栏"><span class="toc-number">5.</span> <span class="toc-text">CyclicBarrier循环栅栏</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#线程阻塞工具类-LockSupport"><span class="toc-number">6.</span> <span class="toc-text">线程阻塞工具类 LockSupport</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 16 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

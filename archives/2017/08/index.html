@@ -158,14 +158,15 @@
     
     
         <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
+            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
                 
-                    <span>超快速KV NOSQL-LevelDB</span>
+                    <span>Java并发编程笔记（四）锁的优化及其注意事项</span>
             </a>
-            <a class="content-show-full" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
+            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（四）锁的优化及其注意事项/" >
                 <div class="abstract-content">
-                    LevelDB简介LevelDb就是这两位大神级别的工程师发起的开源项目，简而言之，LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库。正像上面介绍的，这二位是Bigtable的设计和实现者，如果了解Bigtable的话，应该知道在这个影响深远的分布式存储系统中有两个核心的部分：Master Server和Tablet Server。其中Master Server做一些管理数据的存储以及分布式调度工作，实际的分布式数据存储以及读写操作是由Tablet Server完成的，而LevelDb则可以理解为一个简化版的Tablet Server。
-LevelD...
+                    我们采用并行算法的目的是为了提升效率，但事实上使用多线程的方式会额外地增加系统开销，如果在单核CPU上并行CPU的效率一般低于串行的，因此合理地使用并发才能将CPU性能发挥到极致。
+有助于提高锁性能的几点建议减少锁持有时间如果每个程序都占用锁时间很长。那么将是是一笔非常大的开销，只在必要时候进行同步就能明显减少开销，提高系统吞吐量。（减少锁的占有时间也有效地降低锁冲突的可能性 进而提升系统的并发能力）
+减小锁粒度减小锁的粒度也是一种削弱多线程锁竞争 的有效手段。前面所介绍的HashMap，如果你直接在类上加synchronized锁 那么无疑是线程安全的，但是这也锁粒度太大，所以性能很低...
                 </div>
             </a>
             <div class="abstract-post-meta">
@@ -173,15 +174,13 @@ LevelD...
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = NoSQL>NoSQL</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = LevelDB>LevelDB</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
     
 </div>
                 
                 <!-- date  -->
                 <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/25</span>
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
                 </div>
             </div>
         </article>

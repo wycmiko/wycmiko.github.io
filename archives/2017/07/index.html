@@ -158,14 +158,14 @@
     
     
         <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
+            <a class="abstract-title" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
                 
-                    <span>超快速KV NOSQL-LevelDB</span>
+                    <span>Java并发编程笔记（三）JDK并发包详解2</span>
             </a>
-            <a class="content-show-full" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
+            <a class="content-show-full" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
                 <div class="abstract-content">
-                    LevelDB简介LevelDb就是这两位大神级别的工程师发起的开源项目，简而言之，LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库。正像上面介绍的，这二位是Bigtable的设计和实现者，如果了解Bigtable的话，应该知道在这个影响深远的分布式存储系统中有两个核心的部分：Master Server和Tablet Server。其中Master Server做一些管理数据的存储以及分布式调度工作，实际的分布式数据存储以及读写操作是由Tablet Server完成的，而LevelDb则可以理解为一个简化版的Tablet Server。
-LevelD...
+                    线程复用：线程池一个系统中，如果盲目大量地创建线程对系统是有伤害的。大量的线程回收也会给GC增加很大的压力，延长GC的停顿时间，同数据库连接池一样，为了避免创建和销毁线程的高开销，对线程进行复用，需要时从线程池中获取线程，用完还给线程池，让线程池 空闲线程 和 工作线程 处于一个动态平衡之中。
+不要重复发明轮子：JDK对线程池的支持为了更好地控制多线程，JDK提供了一套Executor框架，帮助开发人员进行线程控制，其本质就是线程池。包含了许许多多的方法，以上成员均在java.util.concurrent包中，都是jdk并发包的核心类。其中ThreadPoolExecutor表示一个线...
                 </div>
             </a>
             <div class="abstract-post-meta">
@@ -173,15 +173,13 @@ LevelD...
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = NoSQL>NoSQL</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = LevelDB>LevelDB</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
     
 </div>
                 
                 <!-- date  -->
                 <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/25</span>
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/07/01</span>
                 </div>
             </div>
         </article>
