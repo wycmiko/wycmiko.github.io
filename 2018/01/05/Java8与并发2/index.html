@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java8与并发2 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java8与并发2</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java8与并发2
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Java8特性>Java8特性</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 函数式编程>函数式编程</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/01/05</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>上一篇我们介绍了Java8函数式编程的特点和基本操作，以及增强型的Future,CompletableFuture,这一篇我们将继续介绍Java8为并发所做的努力。</p>
+</blockquote>
+<h1 id="组合多个CompletableFuture"><a href="#组合多个CompletableFuture" class="headerlink" title="组合多个CompletableFuture"></a>组合多个CompletableFuture</h1><p>CompletableFuture 还允许你将多个CompletableFuture 进行组合。一种方法是使用thenCompose() 。将一个CompletableFuture执行完成的结果传递给下一个CompletionStage进行处理（返回新的实例）。<br>下面演示一个一个CompletableFuture调用后的结果作为另一个的参数调用的函数式过程：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> CompletableFuture&lt;Void&gt; future5 = CompletableFuture.supplyAsync(()-&gt;call(<span class="number">20</span>))</span><br><span class="line">		<span class="comment">//调用4000^2</span></span><br><span class="line">		.thenCompose((x)-&gt;CompletableFuture.supplyAsync(()-&gt;call(x)))</span><br><span class="line">		.thenApply((str)-&gt;<span class="string">"Result ="</span>+String.valueOf(str))</span><br><span class="line">		.thenAccept((x)-&gt;System.out.println(x));</span><br><span class="line"><span class="comment">//阻塞 等待异步Future执行完毕</span></span><br><span class="line">future5.get();</span><br></pre></td></tr></table></figure></p>
+<p>另外一种组合多个CompletableFuture方法是thenCombine(future2,doAction):<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//thenCombine 组合CompletableFuture future2=1600</span></span><br><span class="line"><span class="keyword">final</span> CompletableFuture&lt;Void&gt; future6 = CompletableFuture.supplyAsync(()-&gt;call(<span class="number">10</span>))</span><br><span class="line">		.thenCombine(future2, (x,y)-&gt;(x+y))</span><br><span class="line">		.thenAccept((i) -&gt; System.out.println(<span class="string">"100+1600="</span>+i));</span><br><span class="line">future6.get();</span><br></pre></td></tr></table></figure><br>这里需要注意的是thenCombine的这个future2如果要进行运算操作 必须要有返回值哦。</p>
+<h1 id="读写锁的改进-StampedLock"><a href="#读写锁的改进-StampedLock" class="headerlink" title="读写锁的改进 StampedLock"></a>读写锁的改进 StampedLock</h1><p>这类似于悲观策略的读写锁，但是它提供了乐观策略的锁机制，非常类似无锁操作，使得乐观读线程不会阻塞写线程。<br>以下为测试代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Java8读写锁加强 StampedLock</span></span><br><span class="line"><span class="comment"> * 带有乐观策略的读锁</span></span><br><span class="line"><span class="comment"> * 通过CLH自旋锁实现类似CAS机制</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StampedLockDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">double</span> x,y;</span><br><span class="line">	<span class="keyword">private</span> String type;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> StampedLock lock = <span class="keyword">new</span> StampedLock();</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">StampedLockDemo</span><span class="params">(<span class="keyword">double</span> x, <span class="keyword">double</span> y,String type)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.x = x;</span><br><span class="line">		<span class="keyword">this</span>.y = y;</span><br><span class="line">		<span class="keyword">this</span>.type=type;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//写锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAddValue</span><span class="params">(<span class="keyword">double</span> x,<span class="keyword">double</span> y)</span></span>&#123;</span><br><span class="line">		<span class="comment">//上写锁 返回一个类似时间戳的</span></span><br><span class="line">		<span class="keyword">long</span> stamp = lock.writeLock();</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.x+=x;</span><br><span class="line">			<span class="keyword">this</span>.y+=y;</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="comment">//根据Long的状态解锁</span></span><br><span class="line">			lock.unlockWrite(stamp);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//读方法  读锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getSqrtData</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">// 乐观读锁tryOptimisticRead</span></span><br><span class="line">		<span class="keyword">long</span> stamp = lock.tryOptimisticRead();</span><br><span class="line">		<span class="keyword">double</span> currentX = <span class="keyword">this</span>.x, currentY=<span class="keyword">this</span>.y;</span><br><span class="line">			<span class="comment">//判断当前线程是否被修改过</span></span><br><span class="line">			<span class="keyword">if</span>(!lock.validate(stamp))&#123;</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					<span class="comment">//如果验证不通过（数据不一致会出现脏读现象）就上读锁</span></span><br><span class="line">					stamp = lock.readLock();</span><br><span class="line">					currentX = <span class="keyword">this</span>.x;</span><br><span class="line">					currentY = <span class="keyword">this</span>.y;</span><br><span class="line">				&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">					<span class="comment">//不要忘记释放锁</span></span><br><span class="line">					lock.unlockRead(stamp);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="comment">//没被修改直接返回</span></span><br><span class="line">		<span class="keyword">return</span> Math.sqrt(currentX*currentX+currentY*currentY);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">3</span>;i++)&#123;</span><br><span class="line">			<span class="comment">//启动3个写线程</span></span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> StampedLockDemo(i, i*<span class="number">10</span>, <span class="string">"1"</span>)).start();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">			<span class="comment">//启动10个读线程 和一个写线程</span></span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> StampedLockDemo(i, i*<span class="number">10</span>, <span class="string">"2"</span>)).start();</span><br><span class="line">			<span class="keyword">if</span>(i==<span class="number">5</span>)&#123;</span><br><span class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> StampedLockDemo(i, i*<span class="number">10</span>, <span class="string">"1"</span>)).start();</span><br><span class="line">			&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="comment">//1代表启动修改值（增加指定的值）</span></span><br><span class="line">		<span class="keyword">if</span>(<span class="string">"1"</span>.equals(type))&#123;</span><br><span class="line">		System.out.println(Thread.currentThread().getName()+<span class="string">"begin setAddValue!"</span>);</span><br><span class="line">		setAddValue(x,y);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">double</span> sqrtData = getSqrtData();</span><br><span class="line">			System.out.println(Thread.currentThread().getName()+<span class="string">" sqrtData="</span>+sqrtData);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>可以看到，StampLock通过乐观读来提高并行能力。</p>
+<p><strong> 注意StampLock的坑 </strong><br>    StampLock内部实现机制类似于CAS机制，是基于CLH锁的，在它挂起线程时候使用的是Unsafe.park()函数，stampLock死循环过程中，该函数等待时候中断了是不会有中断处理的，会再次进入循环，当退出条件不满足时候，会吃尽系统的资源。它会一直存在知道自己抢占到了锁。</p>
+<h2 id="有关StampLock锁"><a href="#有关StampLock锁" class="headerlink" title="有关StampLock锁"></a>有关StampLock锁</h2><p>StampLock都是基于CLH锁的，CLH为一种自旋锁，它保证没有饥饿发生，并且可以保证FIFO的服务顺序。<br>CLH锁的基本思想是：锁维护一个等待队列（等待链表队列），所有申请锁，但是没有成功的线程都记录在这个等待队列中，每一个节点代表一个线程都保存有一个标记位，用于判断当前线程是否已经释放锁。<br>当一个线程试图获取锁时，会从当前等待队列尾部节点作为其前序节点，并使用类似如下代码判断前序节点是否已经成功释放锁：<br><code>while(pre.locked){}</code><br>只要前序节点没有释放锁，则表示当前线程还不能继续执行，自旋等待。释放锁时同理，将自己的自身节点locked标记为设置为false,这后续线程可以继续执行。<br>关于乐观锁 一次成功的乐观读必须保证当前锁没有被占用，通过一个state标记来判断。乐观读后如果一个线程申请写锁那么会改变这个state标记，那么在乐观锁确认时（validate）就好发现这个改动 而导致乐观锁失败。乐观锁失效后就提升锁级别，使用悲观读锁。悲观读锁会尝试设置state状态，如果失败则进入acquireRead()二次尝试锁获取。在acquireRead()中线程会在不同条件下进行若干次的自旋，试图通过CAS操作获得锁，如果自旋宣告失败则会启用CLH队列，再进行自旋，如果发现自己成功获得读锁会进一步激活cowait队列中的全部读线程，如果最终依然失败，那么会被<code>unsafe.park()</code>挂起当前线程，acquireWrite流程也与之类似，都通过自选尝试、加入等待队列、直至<code>Unsafe.park()</code>挂起的逻辑行为。</p>
+<h1 id="原子类的增强"><a href="#原子类的增强" class="headerlink" title="原子类的增强"></a>原子类的增强</h1><h2 id="更快的原子类-LongAdder"><a href="#更快的原子类-LongAdder" class="headerlink" title="更快的原子类 LongAdder"></a>更快的原子类 LongAdder</h2><p>Java.lang.concurrent.aotmic包下的大量的原子操作类，它们均采用CAS机制去无限循环，低并发情况下竞争成功率可能大，高并发竞争下不断失败尝试很是浪费性能，因此可以仿照ConcurrentHashMap。将热点数据进行分离，而最终的技术结果就是数组的求和累加，这样热点就进行了有效的分离，LongAddr正是使用了这种思想。<br>实际操作中LongAddr不会一开始就动用数组去处理，而是将所有数据都先记录在做一个base变量中，如果没有冲突就不扩展，有冲突就扩展为cell数组，依次判断下去。下面阐述了一波锁、原子操作类、加强原子类的耗时测试：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java8加强原子类 LongAddr</span></span><br><span class="line"><span class="comment"> * 辅助类</span></span><br><span class="line"><span class="comment"> * 测试 同步锁、无锁原子操作Atomic  以及加强原子操作LongAddr 性能测试</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span>  <span class="class"><span class="keyword">class</span> <span class="title">LongAddrDemo</span></span>&#123;</span><br><span class="line"><span class="comment">//定义线程数 任务数  以及目标总数常量</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_THREADS=<span class="number">3</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_TASKS=<span class="number">3</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TARGET_COUNT=<span class="number">1000000</span>;</span><br><span class="line">	<span class="comment">//构建原子 对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> AtomicLong account = <span class="keyword">new</span> AtomicLong(<span class="number">0L</span>);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> LongAdder addr = <span class="keyword">new</span> LongAdder();</span><br><span class="line">	<span class="comment">//要测试的数字</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">long</span> count=<span class="number">0</span>;</span><br><span class="line">	<span class="comment">//定义程序计数器3个</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch synchrLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch atomicLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch longAddrLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">increCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ++count;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">getCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> count;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//定义锁操作内部类</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchroTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> String name;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">long</span> startTime;</span><br><span class="line">		<span class="comment">//构建要调用方法的对象</span></span><br><span class="line">		<span class="keyword">public</span> LongAddrDemo demo = <span class="keyword">new</span> LongAddrDemo();</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">SynchroTest</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">long</span> count2 = demo.getCount();</span><br><span class="line">			</span><br><span class="line">			<span class="comment">//计算出加锁的时间</span></span><br><span class="line">			<span class="keyword">while</span>(count2&lt;TARGET_COUNT)&#123;</span><br><span class="line">				count2=demo.increCount();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"方法自增结果为："</span>+count2+<span class="string">" 耗时："</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			<span class="comment">//计数器减少一</span></span><br><span class="line">			synchrLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//启动同步方法测试</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span>  <span class="keyword">void</span> <span class="title">testSync</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">			SynchroTest sync = <span class="keyword">new</span> SynchroTest(<span class="string">"同步"</span>, startTime);</span><br><span class="line">			<span class="comment">//提交任务数相同的线程 开始计算会打印耗时</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(sync);</span><br><span class="line">			&#125;</span><br><span class="line">			synchrLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">long</span> startTime;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">AtomicTest</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//测试原子CAS操作的时间</span></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">//原子类</span></span><br><span class="line">			<span class="keyword">long</span> count2 = account.get() ;</span><br><span class="line">			<span class="keyword">while</span>(count2&lt;TARGET_COUNT)&#123;</span><br><span class="line">				count2=account.incrementAndGet();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"执行耗时"</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			atomicLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//测试</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testAtomic</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime= System.currentTimeMillis();</span><br><span class="line">			AtomicTest ato = <span class="keyword">new</span> AtomicTest(<span class="string">"原子CAS"</span>, startTime);</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(ato);</span><br><span class="line">			&#125;</span><br><span class="line">			atomicLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//测试LongAddr也是同理</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LongAddrThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">long</span> startTime;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">LongAddrThread</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">//sum()方法用于获取LongAddr的值</span></span><br><span class="line">			<span class="keyword">long</span> sum = addr.sum();</span><br><span class="line">			<span class="keyword">while</span>(sum&lt;TARGET_COUNT)&#123;</span><br><span class="line">				<span class="comment">//由于下面方法是void类型 所以需要重新赋值</span></span><br><span class="line">				addr.increment();</span><br><span class="line">				sum=addr.sum();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime=System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"耗时："</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			longAddrLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testLongAddr</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">			LongAddrThread t1 = <span class="keyword">new</span> LongAddrThread(<span class="string">"LongAddr线程"</span>, startTime);</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(t1);</span><br><span class="line">			&#125;</span><br><span class="line">			longAddrLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//下面测试三者性能：</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		SynchroTest.testSync();</span><br><span class="line">		AtomicTest.testAtomic();</span><br><span class="line">		LongAddrThread.testLongAddr();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>另外一个优化是LongAddr避免了伪共享问题，它并不是使用padding这种看起来比较碍眼的做法，而是采用新的注解@sun.misc.Contended:<br><img src="/avatar/并发/bingfa9.png" alt=""><br>上述使用了<code>@sun.misc.Contended</code>来使得Java虚拟机自动为Cell解决伪共享问题，但是需要使用额外的参数，<code>-XX:-RestrictContended</code>，否则这个注释将被忽略。</p>
+<h1 id="LongAdder-的功能增强版-：LongAccumulator"><a href="#LongAdder-的功能增强版-：LongAccumulator" class="headerlink" title="LongAdder 的功能增强版 ：LongAccumulator"></a>LongAdder 的功能增强版 ：LongAccumulator</h1><p>LongAccumulator 是LongAdder的亲兄弟，它们有公共的父类 Striped64。因此LongAccumulator内部的优化方式和LongAdder是一样的。它们都将一个long整数进行分割，存储在不同的变量中，以防止多线程的竞争。二者的主要逻辑是类似的，但是LongAccumulator是LongAdder的功能扩展，对于LongAdder而言它只是每次对整数进行加法操作，而LongAccumulator则可以每次实现任意函数操作。可以使用下面的构造函数<br><code>public LongAccumulator(LongBinaryOperator accumulatorFunction,long identity)</code><br>第一个参数是需要执行的二元函数（接受2个long返回long）,第二个参数为初始值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * LongAddr的加强</span></span><br><span class="line"><span class="comment"> * Longaddr每次只能对整数执行一次加法 </span></span><br><span class="line"><span class="comment"> * 而LongAccumulator可以实现任意函数操作</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongAccumulatorDemo</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="comment">//初始化LongAccumulator  函数意思为取其最大值</span></span><br><span class="line">		LongAccumulator  accumulator = <span class="keyword">new</span> LongAccumulator(Long::max, Long.MIN_VALUE);</span><br><span class="line">		<span class="comment">//启动一千个线程</span></span><br><span class="line">		Thread[] ti = <span class="keyword">new</span> Thread[<span class="number">1000</span>];</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)&#123;</span><br><span class="line">			ti[i] = <span class="keyword">new</span> Thread(</span><br><span class="line">					() -&gt;&#123;</span><br><span class="line">						Random r = <span class="keyword">new</span> Random();</span><br><span class="line">						<span class="keyword">long</span> ran = r.nextInt();</span><br><span class="line">						<span class="comment">//调用方法 accumulate 该方法通过第一个参数指定 保存最大值到内部（可能是cell数组内，也可能是base）</span></span><br><span class="line">						accumulator.accumulate(ran);</span><br><span class="line">					&#125;);</span><br><span class="line">			ti[i].start();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)&#123;</span><br><span class="line">			ti[i].join();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//通过longValue()获取最大值</span></span><br><span class="line">		System.out.println(<span class="string">"LongAccumulator的最大值为："</span>+accumulator.longValue());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2017/12/28/Java8与并发/" title= Java8与并发 >
+                    <span>Previous Post</span>
+                    <span>Java8与并发</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java8与并发2", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#组合多个CompletableFuture"><span class="toc-number">1.</span> <span class="toc-text">组合多个CompletableFuture</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#读写锁的改进-StampedLock"><span class="toc-number">2.</span> <span class="toc-text">读写锁的改进 StampedLock</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#有关StampLock锁"><span class="toc-number">2.1.</span> <span class="toc-text">有关StampLock锁</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原子类的增强"><span class="toc-number">3.</span> <span class="toc-text">原子类的增强</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#更快的原子类-LongAdder"><span class="toc-number">3.1.</span> <span class="toc-text">更快的原子类 LongAdder</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LongAdder-的功能增强版-：LongAccumulator"><span class="toc-number">4.</span> <span class="toc-text">LongAdder 的功能增强版 ：LongAccumulator</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 23 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2018/01/05/Java8与并发2/" >Java8与并发2</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/28</span><a class="archive-post-title" href= "/2017/12/28/Java8与并发/" >Java8与并发</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+

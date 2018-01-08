@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Java8与并发 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java8与并发</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Java8与并发
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Java8特性>Java8特性</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 函数式编程>函数式编程</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2017/12/28</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>自2014年Oracle发布Java8新版本后，对于Java来说这显然是一个具有里程碑意义的版本，它最主要的改进是增加了函数式编程，就目前而言最令人头疼的问题就是Java那繁琐的语法，不得不使我们要花费大量的代码行数去实现一些司空见惯的功能。这一切都在Java8函数式编程中。</p>
+<h1 id="Java8函数式编程简介"><a href="#Java8函数式编程简介" class="headerlink" title="Java8函数式编程简介"></a>Java8函数式编程简介</h1><p>函数式编程与面向对象设计方法在思路和手段上各有千秋，在这里我们简要介绍一下函数式编程于面向对象相比较的一些特点和差异。</p>
+<h2 id="函数作为一等公民"><a href="#函数作为一等公民" class="headerlink" title="函数作为一等公民"></a>函数作为一等公民</h2><p>JS是我们常见的语言，我们可以把它称之为多范式语言，既可以作为不是很严格的面向对象语言，也可以当做函数式语言。一个显著特点是函数可以作为参数传入，另一个显著特点是函数可以作为另一个函数的返回值。</p>
+<h2 id="无副作用"><a href="#无副作用" class="headerlink" title="无副作用"></a>无副作用</h2><p>函数的副作用指的是函数在调用过程中除了给出返回值以外还修改了函数外部状态。比如函数在调用过程中修改了某一全局状态，函数式编程认为函数的副作用应该尽量被避免。因为当一个变量被改变后我们很难想象是哪一个函数修改的。如果函数都是显式函数，那么函数必然不会被外部或者全局信息影响，对调查和排错是非常有益的。<br>注意：显示函数是指与外界交换数据的唯一渠道就是参数和返回值，显示函数不会去读取或者修改函数的外部状态 与之相对的是隐式函数，隐式函数除了参数和返回值外还会读取外部信息或者修改外部信息。<br>（一般编程语言中都允许副作用的存在）这种函数调用的副作用咋子函数式编程里需要更有效地去限制。</p>
+<h2 id="申明式的"><a href="#申明式的" class="headerlink" title="申明式的"></a>申明式的</h2><p>函数式编程是申明式的编程方式，相对于命令式而言呢，命令式喜欢使用大量的指令或者可变对象，我们总是习惯于创建对象或者变量，并且修改它们的状态值，或者喜欢提供一系列的指令来要求程序执行。函数式编程你只需要提供你的要求，申明你的用意即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> arr[] = &#123;<span class="number">123</span>,<span class="number">215</span>,<span class="number">532</span>,<span class="number">2</span>,<span class="number">14</span>,<span class="number">152</span>,<span class="number">3</span>&#125;;</span><br><span class="line">Arrays.sort(arr);</span><br><span class="line"><span class="comment">//申明式编程 区别于传统命令式编程</span></span><br><span class="line">Arrays.stream(arr).forEach(System.out::println);</span><br></pre></td></tr></table></figure><br> 可以看出循环体消失了，对应的操作封装在程序库中。</p>
+<h2 id="不变对象"><a href="#不变对象" class="headerlink" title="不变对象"></a>不变对象</h2><p>函数式编程中，几乎所有对象都不会被轻易的修改，有点类似不变模式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//函数式编程特性之 不变对象 将所有数组元素+1并返回</span></span><br><span class="line">Arrays.stream(arr).map((x)-&gt;x=x+<span class="number">1</span>).forEach(System.out::println);</span><br><span class="line">System.out.println(<span class="string">"原数组值不会改变："</span>);</span><br><span class="line">Arrays.stream(arr).forEach(System.out::println);</span><br></pre></td></tr></table></figure></p>
+<h2 id="利于并行"><a href="#利于并行" class="headerlink" title="利于并行"></a>利于并行</h2><p>由于函数式编程不改变对象原有的值，那么我们就不用担心并发下会把这个对象”写坏”,由于对象是不变的 我们不需要进行任何同步操作，这样不仅有利于并行化同时在并行化后由于没有同步锁机制，其性能也会更好。</p>
+<h2 id="更少的代码"><a href="#更少的代码" class="headerlink" title="更少的代码"></a>更少的代码</h2><p>函数式编程更加简明扼要，类似于Clojure语言（一种运行于JVM的函数式编程语言）。例如：判断一个数组的奇数还是偶数，奇数+1 否则不操作输出数组：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">"操作3："</span>);</span><br><span class="line"><span class="comment">//判断数组每一个元素 如果为偶数则不变 奇数+1</span></span><br><span class="line">Arrays.stream(arr).map((x)-&gt;(x%<span class="number">2</span>==<span class="number">0</span>?x:x+<span class="number">1</span>)).forEach(System.out::println);</span><br></pre></td></tr></table></figure><br>只需要一行代码搞定。</p>
+<h1 id="函数式编程基础"><a href="#函数式编程基础" class="headerlink" title="函数式编程基础"></a>函数式编程基础</h1><h2 id="FunctionalInterface-注释"><a href="#FunctionalInterface-注释" class="headerlink" title="FunctionalInterface 注释"></a>FunctionalInterface 注释</h2><p>Java8提供函数式接口的概念，简单来说就是只定义了单一抽象方法的接口：比如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * FuntionalInterface 用于表明该接口为一个函数式接口，该接口定义只包含一个抽象方法handle()</span><br><span class="line"> * 如果一个函数满足函数式接口定义那么即使不标注编译器仍然会将其视为函数式接口，标注了</span><br><span class="line"> * 编译器就会进行检测，如不符合规范（例如有2个抽象方法）则编译报错。</span><br><span class="line"> * 这点类似于Override注解</span><br><span class="line"> * @author 圈圈</span><br><span class="line"> * @version 1.0</span><br><span class="line"> */</span><br><span class="line">@FunctionalInterface</span><br><span class="line">public static interface IntHandler&#123;</span><br><span class="line">	void handle(int i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里需要注意的是，<strong> 函数式接口需要满足接口只有一个抽象方法的规范，可以有多个默认方法 </strong>（Java8新增的接口默认方法以及被java.lang.Object 实现的方法）。<br>如下是一个完全符合规范的函数式接口：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IntHadnler</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">handle</span><span class="params">(<span class="keyword">int</span> i)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>以下不是函数式接口 equals已经在Object实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IntHadnler</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="接口默认方法"><a href="#接口默认方法" class="headerlink" title="接口默认方法"></a>接口默认方法</h2><p>Java8之前的版本，接口只能包含抽象方法。自java8之后  接口也可以包含若干个实例方法（不需要实现）。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IntHadnler</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">handle</span><span class="params">(<span class="keyword">int</span> i)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Running..."</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果接口继承中都有相同的default方法的话 调用的时候 编译器会抛出一个错误。所以需要指明。<br><code>SuperInterfaceName.super.run();</code> 这样调用<br>Java8中Comparator比较器引入了若干个默认方法，先按照字符串长度排序：在按照大小写不敏感的字母顺序排：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Conmparator&lt;String&gt; cmp = Comparator.comparingInt(String::length)</span><br><span class="line">.thenComparing(String,CASE_INSENSITIVE_ORDER);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a>Lambda表达式</h2><p>ambda表达式可以说是函数式编程的核心。lambda表达式极大地增强了Java语言的表达能力，lambada表达式即匿名函数，它是一段没有函数名的函数体，可以作为参数直接传递给相关的调用者。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//函数式 lambda表达式</span><br><span class="line">//默认传入的变量都是final的</span><br><span class="line">final int num =2 ;</span><br><span class="line">//</span><br><span class="line">Function&lt;Integer, Integer&gt; stringConvert = (from) -&gt; from*num;</span><br><span class="line">//输出4</span><br><span class="line">System.out.println(&quot;lambda result =&quot;+stringConvert.apply(2));</span><br></pre></td></tr></table></figure></p>
+<h3 id="方法引用"><a href="#方法引用" class="headerlink" title="方法引用"></a>方法引用</h3><p>方法引用是Java8提出来用于简化Lambda表达式的一种手段，他通过类名和方法名来定位到一个静态方法或者实例方法。<br>方法引用在Java8中使用也非常灵活，总的来说分为以下几种：</p>
+<ul>
+<li>静态方法引用 ： ClassName::methodName</li>
+<li>实例上的实例方法引用 ： InstanceName::methodName</li>
+<li>父类的实例方法引用 : super::methodName</li>
+<li>类型的实例方法引用 ： ClassName::methodName</li>
+<li>构造方法引用 ： Class::new</li>
+<li>数组构造方法引用 : TypeName[]::new</li>
+</ul>
+<p>基本归类为 方法名或者实例名::方法名，构造函数则为 Class::new。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//lambda表达式方法引用</span></span><br><span class="line">List&lt;Student&gt; list = <span class="keyword">new</span> ArrayList&lt;Student&gt;();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=<span class="number">10</span>;i++)&#123;</span><br><span class="line">	list.add(<span class="keyword">new</span> Student(<span class="string">"张三"</span>+i, i));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//lambda表达式调用实例方法 </span></span><br><span class="line">list.stream().map(Student::getName).forEach(System.out::println);</span><br></pre></td></tr></table></figure><br>调用构造方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 一般来说如果使用静态方法或者调用明确，流内元素会自动作为调用目标</span></span><br><span class="line"><span class="comment"> * 因此如果一个class存在同名的实例方法和构造方法的话编译器就会感到很困惑。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//函数式调用构造函数 </span></span><br><span class="line">UserFactory&lt;Student&gt; usr = Student::<span class="keyword">new</span>;</span><br><span class="line">Student stuu = usr.create(<span class="string">"123"</span>, <span class="number">2</span>);</span><br><span class="line">System.out.println(<span class="string">"调用 构造函数生成的对象："</span>+stuu.getName());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 定义函数式接口 Student::new构建对象会根据函数签名去寻找对应的构造方法</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0 </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;U&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">UserFactory</span>&lt;<span class="title">U</span> <span class="keyword">extends</span> <span class="title">Student</span>&gt;</span>&#123;</span><br><span class="line">	<span class="function">U <span class="title">create</span><span class="params">(String name,<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="一步一步走入函数式编程"><a href="#一步一步走入函数式编程" class="headerlink" title="一步一步走入函数式编程"></a>一步一步走入函数式编程</h2><p>就以遍历数组为例，如果使用Java8中流 可以这么做：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java8函数式编程</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Java8FunctionHandler</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> arr[] = &#123;<span class="number">12</span>,<span class="number">42</span>,<span class="number">125</span>,<span class="number">1255</span>,<span class="number">234</span>,<span class="number">1</span>&#125;;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 函数式编程 	Arrays.stream(arr)返回一个流对象 类似于集合数组 </span></span><br><span class="line"><span class="comment">		 * 它的foreach方法它接受一个IntConsumer接口 因为这个流是IntStream 也是装有Integer元素的流</span></span><br><span class="line"><span class="comment">		 * 它还接受DoubleStream LongStream等对象流 类型取决于它传入的参数</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		System.out.println(<span class="string">"函数式编程遍历："</span>);</span><br><span class="line">		Arrays.stream(arr).forEach(<span class="keyword">new</span> IntConsumer() &#123;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">				System.out.print(value+<span class="string">"、"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">		<span class="comment">//但是上述代码好像看起来还是很冗长 ，既然是value是推导出来的 那么我们就简化</span></span><br><span class="line">		System.out.println(<span class="string">"\n简化遍历："</span>);</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 此时已经很清晰简洁了吧</span></span><br><span class="line"><span class="comment">		 * lambda表达式由“-&gt;”分割 左半部分表示参数 右半部分表示实现体（执行体）</span></span><br><span class="line"><span class="comment">		 * 因此我们可以简单理解lambda表达式只是匿名对象实现的一种新的方式</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		Arrays.stream(arr).forEach((x)-&gt;System.out.print(x+<span class="string">"、"</span>));</span><br><span class="line">		<span class="comment">//还可以无须声明 继续简化 直接::方法引用静态方法输出</span></span><br><span class="line">		System.out.println(<span class="string">"继续简化"</span>);</span><br><span class="line">		Arrays.stream(arr).forEach(System.out::println);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>用lambda表达式不仅可以简化匿名类的编写，与接口默认方法相结合，顺畅的流式API对各种组件的自由装配。下面例子展示了两次输出，一次输出到标准错误，一次输出到标准输出。<br>使用流式API andthen()：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//一次输出到标准错误，一次输出到标准输出。</span><br><span class="line">IntConsumer out = System.out::println;</span><br><span class="line">IntConsumer err = System.err::println;</span><br><span class="line">//andThen将两者按照时间顺序分开先后</span><br><span class="line">Arrays.stream(arr).forEach(out.andThen(err));</span><br></pre></td></tr></table></figure></p>
+<p>我们看看intConsumer源码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">default</span> IntConsumer <span class="title">andThen</span><span class="params">(IntConsumer after)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(after);</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">int</span> t) -&gt; &#123; accept(t); after.accept(t); &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>返回一个新的IntConsumer 先调用第一个 再调用第二个IntConsumer 从而实现多个处理器的集合 这种操作手法在函数式编程中极其常用。</p>
+<h2 id="并行流与并行排序"><a href="#并行流与并行排序" class="headerlink" title="并行流与并行排序"></a>并行流与并行排序</h2><p>Java8中，可以在接口不变的情况下，将流改为并行流。这样可以很自然地使用多线程进行集合中的处理。</p>
+<h3 id="使用并行流过滤数据"><a href="#使用并行流过滤数据" class="headerlink" title="使用并行流过滤数据"></a>使用并行流过滤数据</h3><p>这里展示一个求指定数据范围内质数的例子 首先我们需要一个判定质数的方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isPrime</span><span class="params">(<span class="keyword">int</span> num)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(num&lt;<span class="number">2</span>)&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i =<span class="number">2</span>;Math.sqrt(num)&gt;=i;i++)&#123;</span><br><span class="line">			<span class="keyword">if</span>(num%i==<span class="number">0</span>)&#123;</span><br><span class="line">				 <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>函数式编程指定 range范围 去调用静态函数  filter流过滤出所有的质数 并 count累加:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> count = IntStream.range(<span class="number">2</span>, <span class="number">1000000</span>).filter(ConcurrentStream::isPrime).count();</span><br><span class="line">System.out.println(<span class="string">"2-1000000的所有质数累加为："</span>+count);</span><br></pre></td></tr></table></figure><br>    并行程序,只需要将流并行化即可,parallel就让程序以多线程的形式去跑,应用于流内所有元素。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">count=IntStream.range(<span class="number">1</span>, <span class="number">1000000</span>).parallel().filter(ConcurrentStream::isPrime).count();</span><br><span class="line">System.out.println(<span class="string">"多线程的count:"</span>+count);</span><br></pre></td></tr></table></figure></p>
+<h2 id="从集合到并行流"><a href="#从集合到并行流" class="headerlink" title="从集合到并行流"></a>从集合到并行流</h2><p>在函数式编程中 我们可以从集合得到一个流或者并行流，下面这段代码试图统计集合内所有学生的平均分：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; list = <span class="keyword">new</span> ArrayList&lt;Student&gt;();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++)&#123;</span><br><span class="line">	Student stu = <span class="keyword">new</span> ConcurrentStream().new Student(<span class="string">"Jack"</span>+i,<span class="keyword">new</span> Random().nextInt(<span class="number">100</span>));</span><br><span class="line">	list.add(stu);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//统计总分</span></span><br><span class="line"><span class="keyword">long</span> count2 = list.stream().mapToLong((x)-&gt;x.scores).sum();</span><br><span class="line"><span class="comment">//非并行统计平均分</span></span><br><span class="line"><span class="keyword">double</span> avgScores = list.stream().mapToInt((x)-&gt;x.scores).average().getAsDouble();</span><br><span class="line">System.out.println(<span class="string">"100个学生的总分是："</span>+count2+<span class="string">"平均分是"</span>+avgScores);</span><br><span class="line"><span class="comment">//并行执行</span></span><br><span class="line">avgScores = list.parallelStream().mapToInt((x)-&gt;x.scores).average().getAsDouble();</span><br><span class="line">System.out.println(<span class="string">"100个学生的总分是："</span>+count2+<span class="string">" 并行平均分是"</span>+avgScores);</span><br></pre></td></tr></table></figure></p>
+<h2 id="并行排序"><a href="#并行排序" class="headerlink" title="并行排序"></a>并行排序</h2><p>除了并行流以外，有串行的Arrays.sort()，Java8 有并行的 <code>Arrays.parallelSort()</code> 这类并行排序。除此之外 还提供了赋值接口<br><code>public static void setAll(int[] array,IntUanryOperator generator)</code><br><code>//并行对应 parallerSetAll(...)</code><br>这个接口是函数式意味很浓的接口，它的第二个参数是一个函数式接口，如果我们想给每个数组元素附上一个随机值，那么可以：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Java8 数组排序  &amp;&amp; Arrays.setAll赋值</span></span><br><span class="line"><span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">100</span>];</span><br><span class="line">Random r=<span class="keyword">new</span> Random();</span><br><span class="line"><span class="comment">//串行赋值setAll  并行赋值parallelSetAll</span></span><br><span class="line">Arrays.parallelSetAll(arr, (x)-&gt;r.nextInt());</span><br><span class="line">System.out.println(<span class="string">"并行排序后数组输出："</span>);</span><br><span class="line">Arrays.parallelSort(arr);</span><br><span class="line">Arrays.stream(arr).forEach((x)-&gt;System.out.print(x+<span class="string">"、"</span>));</span><br></pre></td></tr></table></figure>    </p>
+<h2 id="增强的Future-CompletableFuture"><a href="#增强的Future-CompletableFuture" class="headerlink" title="增强的Future:CompletableFuture"></a>增强的Future:CompletableFuture</h2><p>Java8中新增了一个超大型工具类，为什么说它大呢，因为它不但实现了Future接口，还实现了CompletionStage接口，CompletionStage接口拥有多达40种方法，是的你没看错 这不符合面向对象设计原则的“单一职责原则（单方法接口）” 。但是它也就这么存在了，通过ComletionStation接口 我们可以在一个执行结果上进行多次的流式调用，以此可以得到最终结果。<br>completableFuture和Future一样，具有完成好了再通知的能力，作为函数调用契约，如果你向其请求一个数据如果数据还没有准备好请求线程就会等待，通过CompletableFuture我么可以手动设置CompletableFuture的完成状态。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompletableFutureDemo</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	CompletableFuture&lt;Double&gt; future = <span class="keyword">null</span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CompletableFutureDemo</span><span class="params">(CompletableFuture&lt;Double&gt; future)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.future = future;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">double</span> result = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//如无数据会一直阻塞在这里</span></span><br><span class="line">			result = future.get() * future.get();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException | ExecutionException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//取到数据后阻塞解除</span></span><br><span class="line">		System.out.println(<span class="string">"结果为： result="</span>+result);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ExecutorService pool = Executors.newFixedThreadPool(<span class="number">100</span>);</span><br><span class="line">		<span class="keyword">final</span> CompletableFuture&lt;Double&gt; com = <span class="keyword">new</span> CompletableFuture&lt;Double&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">50</span>;i++)&#123;</span><br><span class="line">			pool.execute(<span class="keyword">new</span> CompletableFutureDemo(com));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//启动50个线程后</span></span><br><span class="line">		<span class="comment">//模拟主线程自己工作5秒</span></span><br><span class="line">		Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">		<span class="comment">//赋值数据 50个线程解除阻塞 result = 20*20</span></span><br><span class="line">		com.complete(<span class="number">20.0</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>    </p>
+<p><strong> CompletableFuture异步执行任务 </strong><br>通过CompletableFuture的封装，我们可以进一步地实现Future模式那样的异步调用。代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">call</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//模拟一个长时间的执行</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> num*num;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure><br>main方法 lambda表达式异步调用  supplyAsync()：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">final CompletableFuture&lt;Integer&gt; future2 = CompletableFuture.supplyAsync(()-&gt;call(40));</span><br><span class="line">System.out.println(&quot;异步调用完成返回 40^2=&quot;+future2.get());</span><br></pre></td></tr></table></figure></p>
+<p>查看这异步方法的类似方法有：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; <span class="function">CompletableFuture&lt;U&gt; <span class="title">supplyAsync</span><span class="params">(Supplier&lt;U&gt; supplier)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> asyncSupplyStage(asyncPool, supplier);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; <span class="function">CompletableFuture&lt;U&gt; <span class="title">supplyAsync</span><span class="params">(Supplier&lt;U&gt; supplier,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                      Executor executor)</span> </span></span><br><span class="line"><span class="function">   <span class="keyword">public</span> <span class="keyword">static</span> CompletableFuture&lt;Void&gt; <span class="title">runAsync</span><span class="params">(Runnable runnable)</span> </span></span><br><span class="line"><span class="function">   <span class="keyword">public</span> <span class="keyword">static</span> CompletableFuture&lt;Void&gt; <span class="title">runAsync</span><span class="params">(Runnable runnable,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                  Executor executor)</span> </span></span><br></pre></td></tr></table></figure>    </p>
+<p><strong> 其中supplyAsync适用于有返回值的场景，而runAsync适用于无返回值的场景。 </strong><br>它们都有一个重载方法携带一个线程池参数，可以指定在哪个线程池中工作，如果不指定就在默认的系统公共的线程池<code>ForkJoinPool.common()</code>。<br>注意：<code>ForkJoinPool.commonPool()</code>方法是Java8中新增的线程池方法，它获得一个公共的线程池方法，但是这些都是精灵线程，如果主线程退出他们也退出。<br><strong> CompletionStage的流式调用 </strong><br>前文已经提到，CompletionStage的40个接口就是为函数式编程做准备的，在这里我们看看如何进行函数式API的调用（以刚才的方法为例）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//转变不同的类型 所以返回类型为void</span></span><br><span class="line"><span class="keyword">final</span> CompletableFuture&lt;Void&gt; future3 = CompletableFuture.supplyAsync(()-&gt;call(<span class="number">40</span>))</span><br><span class="line">		.thenApply((i) -&gt; Integer.toString(i))</span><br><span class="line">		.thenApply((str)-&gt;<span class="string">"66"</span>+str+<span class="string">"66"</span>)</span><br><span class="line">		.thenAccept(System.out::println);</span><br><span class="line"><span class="comment">//如果不写get等待它执行完的话 主线程执行完上面代码就会立即退出（异步调用）</span></span><br><span class="line">future3.get();</span><br></pre></td></tr></table></figure>    </p>
+<h3 id="CompletableFuture中的异常处理"><a href="#CompletableFuture中的异常处理" class="headerlink" title="CompletableFuture中的异常处理"></a>CompletableFuture中的异常处理</h3><p>在CompletableFuture在执行过程中遇到异常，我们可以使用函数式编程风格优雅地进行处理，exceptionally():</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//异常处理 如果不会发生异常 则往下走 如果发生异常 就进入异常处理流式代码块并返回</span></span><br><span class="line"><span class="keyword">final</span> CompletableFuture&lt;Void&gt; future4 = CompletableFuture.supplyAsync(()-&gt;excepDemo(<span class="number">20</span>))</span><br><span class="line">				.exceptionally(ex -&gt; &#123;</span><br><span class="line">					<span class="comment">//异常走这里 直接返回</span></span><br><span class="line">					System.out.println(ex.toString());</span><br><span class="line">					<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">				&#125;).thenApply((str)-&gt;Integer.toString(str))</span><br><span class="line">				.thenAccept(System.out::println);</span><br><span class="line">		future4.get();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//伪造个异常</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">excepDemo</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> x/<span class="number">0</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>    
+<p>为此我们将看到如下输出：</p>
+<p><code>java.util.concurrent.CompletionException: java.lang.ArithmeticException: / by zero
+0</code></p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2018/01/05/Java8与并发2/" title= Java8与并发2 >
+                    <span>Next Post</span>
+                    <span>Java8与并发2</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" title= Java并发编程笔记（九）NIO与AIO2 >
+                    <span>Previous Post</span>
+                    <span>Java并发编程笔记（九）NIO与AIO2</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Java8与并发", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java8函数式编程简介"><span class="toc-number">1.</span> <span class="toc-text">Java8函数式编程简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#函数作为一等公民"><span class="toc-number">1.1.</span> <span class="toc-text">函数作为一等公民</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无副作用"><span class="toc-number">1.2.</span> <span class="toc-text">无副作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#申明式的"><span class="toc-number">1.3.</span> <span class="toc-text">申明式的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不变对象"><span class="toc-number">1.4.</span> <span class="toc-text">不变对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利于并行"><span class="toc-number">1.5.</span> <span class="toc-text">利于并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更少的代码"><span class="toc-number">1.6.</span> <span class="toc-text">更少的代码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#函数式编程基础"><span class="toc-number">2.</span> <span class="toc-text">函数式编程基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FunctionalInterface-注释"><span class="toc-number">2.1.</span> <span class="toc-text">FunctionalInterface 注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#接口默认方法"><span class="toc-number">2.2.</span> <span class="toc-text">接口默认方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lambda表达式"><span class="toc-number">2.3.</span> <span class="toc-text">Lambda表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法引用"><span class="toc-number">2.3.1.</span> <span class="toc-text">方法引用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一步一步走入函数式编程"><span class="toc-number">2.4.</span> <span class="toc-text">一步一步走入函数式编程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#并行流与并行排序"><span class="toc-number">2.5.</span> <span class="toc-text">并行流与并行排序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用并行流过滤数据"><span class="toc-number">2.5.1.</span> <span class="toc-text">使用并行流过滤数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#从集合到并行流"><span class="toc-number">2.6.</span> <span class="toc-text">从集合到并行流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#并行排序"><span class="toc-number">2.7.</span> <span class="toc-text">并行排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增强的Future-CompletableFuture"><span class="toc-number">2.8.</span> <span class="toc-text">增强的Future:CompletableFuture</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CompletableFuture中的异常处理"><span class="toc-number">2.8.1.</span> <span class="toc-text">CompletableFuture中的异常处理</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 23 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2018/01/05/Java8与并发2/" >Java8与并发2</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/28</span><a class="archive-post-title" href= "/2017/12/28/Java8与并发/" >Java8与并发</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
