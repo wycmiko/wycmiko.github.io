@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        分布式流数据处理Kafka-三 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >翁玉川 Miko 个人博客.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">分布式流数据处理Kafka-三</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>翁玉川 Miko 个人博客.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            分布式流数据处理Kafka-三
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/01/15</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>上一篇介绍了基本的终端操作，这一篇将介绍介绍kafka的JavaAPI操作。</p>
+</blockquote>
+<p>Apache Kafka引入一个新的java客户端（在org.apache.kafka.clients 包中），替代老的Scala客户端，但是为了兼容，将会共存一段时间。为了减少依赖，这些客户端都有一个独立的jar，而旧的Scala客户端继续与服务端保留在同个包下。</p>
+<h1 id="Kafka有4个核心API："><a href="#Kafka有4个核心API：" class="headerlink" title="Kafka有4个核心API："></a>Kafka有4个核心API：</h1><p>  ● Producer API 允许应用程序发送数据流到kafka集群中的topic。<br>  ● Consumer API 允许应用程序从kafka集群的topic中读取数据流。<br>  ● Streams API 允许从输入topic转换数据流到输出topic。<br>  ● Connect API 通过实现连接器（connector），不断地从一些源系统或应用程序中拉取数据到kafka，或从kafka提交数据到宿系统（sink system）或应用程序。<br>kafka公开了其所有的功能协议，与语言无关。只有java客户端作为kafka项目的一部分进行维护，其他的作为开源的项目提供，这里提供了非java客户端的列表。<br><a href="https://cwiki.apache.org/confluence/display/KAFKA/Clients" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/KAFKA/Clients</a></p>
+<p>生产者消费者API，这里我们引入了maven kafka依赖：</p>
+<h1 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 引入kafka依赖 --&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>kafka-clients<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.11.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>KafkaProducer 0.10.1.1 API 和0.9.0.0的API没有什么区别。</p>
+<h1 id="kafka客户端发布record-消息-到kafka集群"><a href="#kafka客户端发布record-消息-到kafka集群" class="headerlink" title="kafka客户端发布record(消息)到kafka集群"></a>kafka客户端发布record(消息)到kafka集群</h1><p>新的生产者是线程安全的，在线程之间共享单个生产者实例，通常单例比多个实例要快。<br>一个简单的例子，使用producer发送一个有序的key/value(键值对)，放到java的main方法里就能直接运行，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerDemo</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 新的生产者是线程安全的，在线程间共享单个实例</span></span><br><span class="line">	<span class="comment">// 下面的这个用例 main方法就可以搞定</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException </span>&#123;</span><br><span class="line">		<span class="comment">// 构建kafka生产者配置对象</span></span><br><span class="line">		Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">		<span class="comment">// 封装配置</span></span><br><span class="line">		props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"localhost:9092"</span>);</span><br><span class="line">		<span class="comment">// 判断请求是否为完整的条件，all将会阻塞消息，性能最低但是最可靠</span></span><br><span class="line">		props.put(<span class="string">"acks"</span>, <span class="string">"all"</span>);</span><br><span class="line">		<span class="comment">// 设置重试次数，如果启用重试，可能会有重复消息的可能</span></span><br><span class="line">		props.put(<span class="string">"retries"</span>, <span class="number">0</span>);</span><br><span class="line">		<span class="comment">// 生产者缓存每个分区未发送的消息，缓存大小通过batch.size指定</span></span><br><span class="line">		props.put(<span class="string">"batch.size"</span>, <span class="number">16384</span>);</span><br><span class="line">		<span class="comment">// 设置缓冲区等待延迟，将指示生产者发送请求之前等待一段时间，希望更多的消息填补到未满的批中</span></span><br><span class="line">		props.put(<span class="string">"linger.ms"</span>, <span class="number">1</span>);</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * 控制生产者可用的缓存总量，如果消息发送速度比其传输到服务器的快，将会耗尽这个缓存空间。</span></span><br><span class="line"><span class="comment">		 * 当缓存空间耗尽，其他发送调用将被阻塞，阻塞时间的阈值通过max.block.ms设定， 之后它将抛出一个TimeoutException。</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		props.put(<span class="string">"buffer.memory"</span>, <span class="number">33554432</span>);</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * 将用户提供的key和value对象ProducerRecord转换成字节，</span></span><br><span class="line"><span class="comment">		 * 你可以使用附带的ByteArraySerializaer或StringSerializer处理简单的string或byte类型。</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		props.put(<span class="string">"key.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line">		props.put(<span class="string">"value.serializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>);</span><br><span class="line"></span><br><span class="line">		Producer&lt;String, String&gt; producer = <span class="keyword">new</span> KafkaProducer&lt;&gt;(props);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">			<span class="comment">// 有阻塞调用</span></span><br><span class="line">			<span class="comment">// send方法采用的是异步的future模式 调用get方法将阻塞，等到有返回才放行</span></span><br><span class="line">		<span class="comment">//producer.send(new ProducerRecord&lt;String, String&gt;("my-topic", "topicKey" + i, "topicValue" + i)).get();</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">// 无阻塞调用：</span></span><br><span class="line">			producer.send(<span class="keyword">new</span> ProducerRecord&lt;String, String&gt;(<span class="string">"my-topic"</span>, <span class="string">"topicKey"</span> + i, <span class="string">"topicValue"</span> + i),</span><br><span class="line">					<span class="keyword">new</span> Callback() &#123;</span><br><span class="line"></span><br><span class="line">						<span class="comment">// 触发回调函数 无阻塞调用 有值就返回不为null 同时执行两次会保证顺序执行</span></span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCompletion</span><span class="params">(RecordMetadata rm, Exception e)</span> </span>&#123;</span><br><span class="line">							<span class="keyword">if</span> (e != <span class="keyword">null</span>)</span><br><span class="line">								e.printStackTrace();</span><br><span class="line">							System.out.println(<span class="string">"The offset of the record we just sent is"</span> + rm.offset());</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="消费者API："><a href="#消费者API：" class="headerlink" title="消费者API："></a>消费者API：</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class KafkaConsumer&lt;K,V&gt;</span><br><span class="line">extends Object</span><br><span class="line">implements Consumer&lt;K,V&gt;</span><br></pre></td></tr></table></figure>
+<p>Kafka客户端从集群中消费消息，并透明地处理kafka集群中的故障服务器，透明地调节适应集群中变化的数据分区。也和服务器交互，平衡消费者。<br>消费者TCP长连接到broker来拉取消息。故障导致的消费者关闭失败，将会泄露这些连接，消费者不是线程安全的，可以查看更多关于Multi-threaded（多线程）处理的细节。</p>
+<h2 id="偏移量和消费者的位置"><a href="#偏移量和消费者的位置" class="headerlink" title="偏移量和消费者的位置"></a>偏移量和消费者的位置</h2><p>kafka为分区中的每条消息保存一个偏移量（offset），这个偏移量是该分区中一条消息的唯一标示符。也表示消费者在分区的位置。例如，一个位置是5的消费者(说明已经消费了0到4的消息)，下一个接收消息的偏移量为5的消息。实际上有两个与消费者相关的“位置”概念：<br>消费者的位置给出了下一条记录的偏移量。它比消费者在该分区中看到的最大偏移量要大一个。 它在每次消费者在调用poll(long)中接收消息时自动增长。<br>“已提交”的位置是已安全保存的最后偏移量，如果进程失败或重新启动时，消费者将恢复到这个偏移量。消费者可以选择定期自动提交偏移量，也可以选择通过调用commit API来手动的控制(如：commitSync 和 commitAsync)。<br>这个区别是消费者来控制一条消息什么时候才被认为是已被消费的，控制权在消费者，下面我们进一步更详细地讨论。</p>
+<h2 id="消费者组和主题订阅"><a href="#消费者组和主题订阅" class="headerlink" title="消费者组和主题订阅"></a>消费者组和主题订阅</h2><p>Kafka的消费者组概念，通过进程池瓜分消费和处理消息的工作。这些进程可以在同一台机器运行，也可分布到多台机器上，增加可扩展性和容错性,相同group.id的消费者将视为同一个消费者组。<br>分组中的每个消费者通过subscribe API动态的订阅一个topic列表。kafka将已订阅topic的消息发送到每个消费者组中。并通过平衡分区在消费者分组中所有成员之间来达到平均。因此每个分区恰好地分配1个消费者（一个消费者组中）。所有如果一个topic有4个分区，并且一个消费者分组有2个消费者。那么每个消费者消费2个分区。<br>消费者组的成员是动态维护的：如果一个消费者故障。分配给它的分区将重新分配给同一个分组中其他的消费者。同样的，如果一个新的消费者加入到分组，将从现有消费者中移一个给它。这被称为重新平衡分组，并在下面更详细地讨论。 当新分区添加到订阅的topic时，或者当创建与订阅的正则表达式匹配的新topic时，也将重新平衡。将通过定时刷新自动发现新的分区，并将其分配给分组的成员。<br>从概念上讲，你可以将消费者分组看作是由多个进程组成的单一逻辑订阅者。作为一个多订阅系统，Kafka支持对于给定topic任何数量的消费者组，而不重复。<br>这是在消息系统中常见的功能的略微概括。所有进程都将是单个消费者分组的一部分（类似传统消息传递系统中的队列的语义），因此消息传递就像队列一样，在组中平衡。与传统的消息系统不同的是，虽然，你可以有多个这样的组。但每个进程都有自己的消费者组（类似于传统消息系统中pub-sub的语义），因此每个进程都会订阅到该主题的所有消息。<br>此外，当分组重新分配自动发生时，可以通过ConsumerRebalanceListener通知消费者，这允许他们完成必要的应用程序级逻辑，例如状态清除，手动偏移提交等。有关更多详细信息，请参阅Kafka存储的偏移。<br>它也允许消费者通过使用<code>assign(Collection)</code>手动分配指定分区，如果使用手动指定分配分区，那么动态分区分配和协调消费者组将失效。</p>
+<h2 id="发现消费者故障"><a href="#发现消费者故障" class="headerlink" title="发现消费者故障"></a>发现消费者故障</h2><p>订阅一组topic后，当调用poll(long）时，消费者将自动加入到组中。只要持续的调用poll，消费者将一直保持可用，并继续从分配的分区中接收消息。此外，消费者向服务器定时发送心跳。 如果消费者崩溃或无法在<code>session.timeout.ms</code>配置的时间内发送心跳，则消费者将被视为死亡，并且其分区将被重新分配。<br>还有一种可能，消费可能遇到“活锁”的情况，它持续的发送心跳，但是没有处理。为了预防消费者在这种情况下一直持有分区，我们使用<code>max.poll.interval.ms</code>活跃检测机制。 在此基础上，如果你调用的poll的频率大于最大间隔，则客户端将主动地离开组，以便其他消费者接管该分区。 发生这种情况时，你会看到offset提交失败（调用commitSync（）引发的CommitFailedException）。这是一种安全机制，保障只有活动成员能够提交offset。所以要留在组中，你必须持续调用poll。<br>消费者提供两个配置设置来控制poll循环：<br><code>max.poll.interval.ms</code>：增大poll的间隔，可以为消费者提供更多的时间去处理返回的消息（调用poll(long)返回的消息，通常返回的消息都是一批）。缺点是此值越大将会延迟组重新平衡。<br><code>max.poll.records</code>：此设置限制每次调用poll返回的消息数，这样可以更容易的预测        每次poll间隔要处理的最大值。通过调整此值，可以减少poll间隔，减少重新平衡分组的<br>对于消息处理时间不可预测地的情况，这些选项是不够的。 处理这种情况的推荐方法是将消息处理移到另一个线程中，让消费者继续调用poll。 但是必须注意确保已提交的offset不超过实际位置。另外，你必须禁用自动提交，并只有在线程完成处理后才为记录手动提交偏移量（取决于你）。 还要注意，你需要pause暂停分区，不会从poll接收到新消息，让线程处理完之前返回的消息（如果你的处理能力比拉取消息的慢，那创建新线程将导致你机器内存溢出）。</p>
+<h2 id="消费者示例代码"><a href="#消费者示例代码" class="headerlink" title="消费者示例代码"></a>消费者示例代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerDemo</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//</span></span><br><span class="line">		Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">		<span class="comment">// 指明kafka broker服务IP端口 他将自动发现集群中的其他broker</span></span><br><span class="line">		props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"localhost:9092"</span>);</span><br><span class="line">		<span class="comment">// 相同的group.id为同一个消费者组</span></span><br><span class="line">		props.put(<span class="string">"group.id"</span>, <span class="string">"test"</span>);</span><br><span class="line">		<span class="comment">// 启用自动提交偏移量 kafka为分区中的每条消息保存一个偏移量（offset），这个偏移量是该分区中一条消息的唯一标示符</span></span><br><span class="line">		props.put(<span class="string">"enable.auto.commit"</span>, <span class="string">"true"</span>);</span><br><span class="line">		<span class="comment">// 自动提交间隔为1秒</span></span><br><span class="line">		props.put(<span class="string">"auto.commit.interval.ms"</span>, <span class="string">"1000"</span>);</span><br><span class="line">		<span class="comment">// 告诉消费者获取到的key-value都为String类型</span></span><br><span class="line">		props.put(<span class="string">"key.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">		props.put(<span class="string">"value.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">		<span class="comment">// 构建consumer对象</span></span><br><span class="line">		KafkaConsumer&lt;String, String&gt; consumer = <span class="keyword">new</span> KafkaConsumer&lt;&gt;(props);</span><br><span class="line">		<span class="comment">// 订阅topic主题 可以是一个List集合</span></span><br><span class="line">		consumer.subscribe(Arrays.asList(<span class="string">"my-topic"</span>));</span><br><span class="line">		<span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">			<span class="comment">/*</span></span><br><span class="line"><span class="comment">			 * 订阅一组topic后，当调用poll(long）时，消费者将自动加入到组中。只要持续的调用poll，消费者将一直保持可用，</span></span><br><span class="line"><span class="comment">			 * 并继续从分配的分区中接收消息。此外，消费者向服务器定时发送心跳来证明该组的该消费者存活可用。</span></span><br><span class="line"><span class="comment">			 */</span></span><br><span class="line">			ConsumerRecords&lt;String, String&gt; records = consumer.poll(<span class="number">100</span>);</span><br><span class="line">			<span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; record : records)</span><br><span class="line">				<span class="comment">//输出消费的信息的key 和value  以及当前偏移量</span></span><br><span class="line">				System.out.printf(<span class="string">"offset = %d, key = %s, value = %s%n"</span>, record.offset(), record.key(), record.value());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class KafkaConsumer&lt;K,V&gt;</span><br><span class="line">extends Object</span><br><span class="line">implements Consumer&lt;K,V&gt;</span><br></pre></td></tr></table></figure>
+<p>Kafka客户端从集群中消费消息，并透明地处理kafka集群中的故障服务器，透明地调节适应集群中变化的数据分区。也和服务器交互，平衡消费者。<br>消费者TCP长连接到broker来拉取消息。故障导致的消费者关闭失败，将会泄露这些连接，消费者不是线程安全的，可以查看更多关于Multi-threaded（多线程）处理的细节。</p>
+<h2 id="偏移量和消费者的位置-1"><a href="#偏移量和消费者的位置-1" class="headerlink" title="偏移量和消费者的位置"></a>偏移量和消费者的位置</h2><p>kafka为分区中的每条消息保存一个偏移量（offset），这个偏移量是该分区中一条消息的唯一标示符。也表示消费者在分区的位置。例如，一个位置是5的消费者(说明已经消费了0到4的消息)，下一个接收消息的偏移量为5的消息。实际上有两个与消费者相关的“位置”概念：<br>消费者的位置给出了下一条记录的偏移量。它比消费者在该分区中看到的最大偏移量要大一个。 它在每次消费者在调用poll(long)中接收消息时自动增长。<br>“已提交”的位置是已安全保存的最后偏移量，如果进程失败或重新启动时，消费者将恢复到这个偏移量。消费者可以选择定期自动提交偏移量，也可以选择通过调用commit API来手动的控制(如：commitSync 和 commitAsync)。<br>这个区别是消费者来控制一条消息什么时候才被认为是已被消费的，控制权在消费者，下面我们进一步更详细地讨论。</p>
+<h3 id="自动提交偏移量"><a href="#自动提交偏移量" class="headerlink" title="自动提交偏移量"></a>自动提交偏移量</h3><p>这是个【自动提交偏移量】的简单的kafka消费者API。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">   props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"localhost:9092"</span>);</span><br><span class="line">   props.put(<span class="string">"group.id"</span>, <span class="string">"test"</span>);</span><br><span class="line">   props.put(<span class="string">"enable.auto.commit"</span>, <span class="string">"true"</span>);</span><br><span class="line">   props.put(<span class="string">"auto.commit.interval.ms"</span>, <span class="string">"1000"</span>);</span><br><span class="line">   props.put(<span class="string">"key.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">   props.put(<span class="string">"value.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">   KafkaConsumer&lt;String, String&gt; consumer = <span class="keyword">new</span> KafkaConsumer&lt;&gt;(props);</span><br><span class="line">   consumer.subscribe(Arrays.asList(<span class="string">"foo"</span>, <span class="string">"bar"</span>));</span><br><span class="line">   <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">       ConsumerRecords&lt;String, String&gt; records = consumer.poll(<span class="number">100</span>);</span><br><span class="line">       <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; record : records)</span><br><span class="line">           System.out.printf(<span class="string">"offset = %d, key = %s, value = %s%n"</span>, record.offset(), record.key(), record.value());</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>设置<code>enable.auto.commit</code>,偏移量由<code>auto.commit.interval.ms</code>控制自动提交的频率。<br>集群是通过配置bootstrap.servers指定一个或多个broker。不用指定全部的broker，它将自动发现集群中的其余的borker（最好指定多个，万一有服务器故障）。<br>在这个例子中，客户端订阅了主题foo和bar。消费者组叫test。<br>broker通过心跳机器自动检测test组中失败的进程，消费者会自动ping集群，告诉进群它还活着。只要消费者能够做到这一点，它就被认为是活着的，并保留分配给它分区的权利，如果它停止心跳的时间超过session.timeout.ms,那么就会认为是故障的，它的分区将被分配到别的进程。<br>这个deserializer设置如何把byte转成object类型，例子中，通过指定string解析器，我们告诉获取到的消息的key和value只是简单个string类型。</p>
+<h3 id="手动控制偏移量"><a href="#手动控制偏移量" class="headerlink" title="手动控制偏移量"></a>手动控制偏移量</h3><p>不需要定时的提交offset，可以自己控制offset，当消息认为已消费过了，这个时候再去提交它们的偏移量。这个很有用的，当消费的消息结合了一些处理逻辑，这个消息就不应该认为是已经消费的，直到它完成了整个处理。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">   props.put(<span class="string">"bootstrap.servers"</span>, <span class="string">"localhost:9092"</span>);</span><br><span class="line">   props.put(<span class="string">"group.id"</span>, <span class="string">"test"</span>);</span><br><span class="line">   props.put(<span class="string">"enable.auto.commit"</span>, <span class="string">"false"</span>);</span><br><span class="line">   props.put(<span class="string">"auto.commit.interval.ms"</span>, <span class="string">"1000"</span>);</span><br><span class="line">   props.put(<span class="string">"session.timeout.ms"</span>, <span class="string">"30000"</span>);</span><br><span class="line">   props.put(<span class="string">"key.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">   props.put(<span class="string">"value.deserializer"</span>, <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">   KafkaConsumer&lt;String, String&gt; consumer = <span class="keyword">new</span> KafkaConsumer&lt;&gt;(props);</span><br><span class="line">   consumer.subscribe(Arrays.asList(<span class="string">"foo"</span>, <span class="string">"bar"</span>));</span><br><span class="line">   <span class="keyword">final</span> <span class="keyword">int</span> minBatchSize = <span class="number">200</span>;</span><br><span class="line">   List&lt;ConsumerRecord&lt;String, String&gt;&gt; buffer = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">   <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">       ConsumerRecords&lt;String, String&gt; records = consumer.poll(<span class="number">100</span>);</span><br><span class="line">       <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; record : records) &#123;</span><br><span class="line">           buffer.add(record);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (buffer.size() &gt;= minBatchSize) &#123;</span><br><span class="line">           insertIntoDb(buffer);</span><br><span class="line">           consumer.commitSync();</span><br><span class="line">           buffer.clear();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure><br>   在这个例子中，我们将消费一批消息并将它们存储在内存中。当我们积累足够多的消息后，我们再将它们批量插入到数据库中。如果我们设置offset自动提交（之前说的例子），消费将被认为是已消费的。这样会出现问题，我们的进程可能在批处理记录之后，但在它们被插入到数据库之前失败了。<br>为了避免这种情况，我们将在相应的记录插入数据库之后再手动提交偏移量。这样我们可以准确控制消息是成功消费的。提出一个相反的可能性：在插入数据库之后，但是在提交之前，这个过程可能会失败（即使这可能只是几毫秒，这是一种可能性）。在这种情况下，进程将获取到已提交的偏移量，并会重复插入的最后一批数据。这种方式就是所谓的“至少一次”保证，在故障情况下，可以重复。<br>如果您无法执行这些操作，可能会使已提交的偏移超过消耗的位置，从而导致缺少记录。 使用手动偏移控制的优点是，您可以直接控制记录何时被视为“已消耗”。<br>注意：使用自动提交也可以“至少一次”。但是要求你必须下次调用poll（long）之前或关闭消费者之前，处理完所有返回的数据。如果操作失败，这将会导致已提交的offset超过消费的位置，从而导致丢失消息。使用手动控制offset的有点是，你可以直接控制消息何时提交。、<br>上面的例子使用commitSync表示所有收到的消息为”已提交”，在某些情况下，你可以希望更精细的控制，通过指定一个明确消息的偏移量为“已提交”。在下面，我们的例子中，我们处理完每个分区中的消息后，提交偏移量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">         <span class="keyword">while</span>(running) &#123;</span><br><span class="line">             ConsumerRecords&lt;String, String&gt; records = consumer.poll(Long.MAX_VALUE);</span><br><span class="line">             <span class="keyword">for</span> (TopicPartition partition : records.partitions()) &#123;</span><br><span class="line">                 List&lt;ConsumerRecord&lt;String, String&gt;&gt; partitionRecords = records.records(partition);</span><br><span class="line">                 <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; record : partitionRecords) &#123;</span><br><span class="line">                     System.out.println(record.offset() + <span class="string">": "</span> + record.value());</span><br><span class="line">                 &#125;</span><br><span class="line">                 <span class="keyword">long</span> lastOffset = partitionRecords.get(partitionRecords.size() - <span class="number">1</span>).offset();</span><br><span class="line">                 consumer.commitSync(Collections.singletonMap(partition, <span class="keyword">new</span> OffsetAndMetadata(lastOffset + <span class="number">1</span>)));</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">       consumer.close();</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>注意：已提交的offset应始终是你的程序将读取的下一条消息的offset。因此，调用commitSync（offsets）时，你应该加1个到最后处理的消息的offset。</p>
+<h1 id="订阅指定的分区"><a href="#订阅指定的分区" class="headerlink" title="订阅指定的分区"></a>订阅指定的分区</h1><p>在前面的例子中，我们订阅我们感兴趣的topic，让kafka提供给我们平分后的topic分区。但是，在有些情况下，你可能需要自己来控制分配指定分区，例如：<br>  ● 如果这个消费者进程与该分区保存了某种本地状态（如本地磁盘的键值存储），则它应该只能获取这个分区的消息。<br>  ● 如果消费者进程本身具有高可用性，并且如果它失败，会自动重新启动（可能使用集群管理框架如YARN，Mesos，或者AWS设施，或作为一个流处理框架的一部分）。 在这种情况下，不需要Kafka检测故障，重新分配分区，因为消费者进程将在另一台机器上重新启动。<br>要使用此模式，，你只需调用<code>assign（Collection）</code>消费指定的分区即可：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String topic = <span class="string">"foo"</span>;</span><br><span class="line">TopicPartition partition0 = <span class="keyword">new</span> TopicPartition(topic, <span class="number">0</span>);</span><br><span class="line">TopicPartition partition1 = <span class="keyword">new</span> TopicPartition(topic, <span class="number">1</span>);</span><br><span class="line">consumer.assign(Arrays.asList(partition0, partition1));</span><br></pre></td></tr></table></figure><br>一旦手动分配分区，你可以在循环中调用poll（跟前面的例子一样）。消费者分组仍需要提交offset，只是现在分区的设置只能通过调用assign修改，因为手动分配不会进行分组协调，因此消费者故障不会引发分区重新平衡。每一个消费者是独立工作的（即使和其他的消费者共享GroupId）。为了避免offset提交冲突，通常你需要确认每一个consumer实例的gorupId都是唯一的。<br><strong> 注意:手动分配分区（即，assgin）和动态分区分配的订阅topic模式（即，subcribe）不能混合使用。 </strong></p>
+<h1 id="offset存储在其他地方"><a href="#offset存储在其他地方" class="headerlink" title="offset存储在其他地方"></a>offset存储在其他地方</h1><p>消费者可以不使用kafka内置的offset仓库。可以选择自己来存储offset。要注意的是，将消费的offset和结果存储在同一个的系统中，用原子的方式存储结果和offset，但这不能保证原子，要想消费是完全原子的，并提供的“正好一次”的消费保证比kafka默认的“至少一次”的语义要更高。你需要使用kafka的offset提交功能。<br>这有结合的例子。<br>  ● 如果消费的结果存储在关系数据库中，存储在数据库的offset，让提交结果和offset在单个事务中。这样，事务成功，则offset存储和更新。如果offset没有存储，那么偏移量也不会被更新。<br>  ● 如果offset和消费结果存储在本地仓库。例如，可以通过订阅一个指定的分区并将offset和索引数据一起存储来构建一个搜索索引。如果这是以原子的方式做的，常见的可能是，即使崩溃引起未同步的数据丢失。索引程序从它确保没有更新丢失的地方恢复，而仅仅丢失最近更新的消息。<br>每个消息都有自己的offset，所以要管理自己的偏移，你只需要做到以下几点：<br>  ● 配置 <code>enable.auto.commit=false</code><br>  ● 使用提供的 ConsumerRecord 来保存你的位置。<br>  ● 在重启时用 <code>seek(TopicPartition, long)</code> 恢复消费者的位置。<br>当分区分配也是手动完成的（像上文搜索索引的情况），这种类型的使用是最简单的。 如果分区分配是自动完成的，需要特别小心处理分区分配变更的情况。可以通过调用<code>subscribe（Collection，ConsumerRebalanceListener）</code>和<code>subscribe（Pattern，ConsumerRebalanceListener）</code>中提供的ConsumerRebalanceListener实例来完成的。例如，当分区向消费者获取时，消费者将通过实现<code>ConsumerRebalanceListener.onPartitionsRevoked（Collection）</code>来给这些分区提交它们offset。当分区分配给消费者时，消费者通过<code>ConsumerRebalanceListener.onPartitionsAssigned(Collection)</code>为新的分区正确地将消费者初始化到该位置。<br>ConsumerRebalanceListener的另一个常见用法是清除应用已移动到其他位置的分区的缓存。</p>
+<h1 id="控制消费的位置"><a href="#控制消费的位置" class="headerlink" title="控制消费的位置"></a>控制消费的位置</h1><p>大多数情况下，消费者只是简单的从头到尾的消费消息，周期性的提交位置（自动或手动）。kafka也支持消费者去手动的控制消费的位置，可以消费之前的消息也可以跳过最近的消息。<br>有几种情况，手动控制消费者的位置可能是有用的。<br>一种场景是对于时间敏感的消费者处理程序，对足够落后的消费者，直接跳过，从最近的消费开始消费。<br>另一个使用场景是本地状态存储系统（上一节说的）。在这样的系统中，消费者将要在启动时初始化它的位置（无论本地存储是否包含）。同样，如果本地状态已被破坏（假设因为磁盘丢失），则可以通过重新消费所有数据并重新创建状态（假设kafka保留了足够的历史）在新的机器上重新创建。<br>kafka使用<code>seek(TopicPartition, long)</code>指定新的消费位置。用于查找服务器保留的最早和最新的offset的特殊的方法也可用（<code>seekToBeginning(Collection)</code> 和 <code>seekToEnd(Collection)</code>）。</p>
+<h1 id="消费者流量控制"><a href="#消费者流量控制" class="headerlink" title="消费者流量控制"></a>消费者流量控制</h1><p>如果消费者分配了多个分区，并同时消费所有的分区，这些分区具有相同的优先级。在一些情况下，消费者需要首先消费一些指定的分区，当指定的分区有少量或者已经没有可消费的数据时，则开始消费其他分区。<br>例如流处理，当处理器从2个topic获取消息并把这两个topic的消息合并，当其中一个topic长时间落后另一个，则暂停消费，以便落后的赶上来。<br>kafka支持动态控制消费流量，分别在future的poll(long)中使用pause(Collection) 和 resume(Collection) 来暂停消费指定分配的分区，重新开始消费指定暂停的分区。</p>
+<h1 id="多线程处理"><a href="#多线程处理" class="headerlink" title="多线程处理"></a>多线程处理</h1><p>Kafka消费者不是线程安全的。所有网络I/O都发生在进行调用应用程序的线程中。用户的责任是确保多线程访问正确同步的。非同步访问将导致ConcurrentModificationException。<br>此规则唯一的例外是wakeup()，它可以安全地从外部线程来中断活动操作。在这种情况下，将从操作的线程阻塞并抛出一个WakeupException。这可用于从其他线程来关闭消费者。 以下代码段显示了典型模式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KafkaConsumerRunner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">final</span> AtomicBoolean closed = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">final</span> KafkaConsumer consumer;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">try</span> &#123;</span><br><span class="line">             consumer.subscribe(Arrays.asList(<span class="string">"topic"</span>));</span><br><span class="line">             <span class="keyword">while</span> (!closed.get()) &#123;</span><br><span class="line">                 ConsumerRecords records = consumer.poll(<span class="number">10000</span>);</span><br><span class="line">                 <span class="comment">// Handle new records</span></span><br><span class="line">             &#125;</span><br><span class="line">         &#125; <span class="keyword">catch</span> (WakeupException e) &#123;</span><br><span class="line">             <span class="comment">// Ignore exception if closing</span></span><br><span class="line">             <span class="keyword">if</span> (!closed.get()) <span class="keyword">throw</span> e;</span><br><span class="line">         &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">             consumer.close();</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// Shutdown hook which can be called from a separate thread</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         closed.set(<span class="keyword">true</span>);</span><br><span class="line">         consumer.wakeup();</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>在单独的线程中，可以通过设置关闭标志和唤醒消费者来关闭消费者。<br>      closed.set(true);<br>     consumer.wakeup();</p>
+<p>我们没有多线程模型的例子。但留下几个操作可用来实现多线程处理消息。</p>
+<ol>
+<li>每个线程一个消费者<br>每个线程自己的消费者实例。这里是这种方法的优点和缺点：<br> ○ PRO: 这是最容易实现的<br> ○ PRO: 因为它不需要在线程之间协调，所以通常它是最快的。<br> ○ PRO: 它按顺序处理每个分区（每个线程只处理它接受的消息）。<br> ○ CON: 更多的消费者意味着更多的TCP连接到集群（每个线程一个）。一般kafka处理连接非常的快，所以这是一个小成本。<br> ○ CON: 更多的消费者意味着更多的请求被发送到服务器，但稍微较少的数据批次可能导致I/O吞吐量的一些下降。<br> ○ CON: 所有进程中的线程总数受到分区总数的限制。</li>
+<li>解耦消费和处理<br>另一个替代方式是一个或多个消费者线程，它来消费所有数据，其消费所有数据并将ConsumerRecords实例切换到由实际处理记录处理的处理器线程池来消费的阻塞队列。这个选项同样有利弊：<br> ○ PRO: 可扩展消费者和处理进程的数量。这样单个消费者的数据可分给多个处理器线程来执行，避免对分区的任何限制。<br> ○ CON: 跨多个处理器的顺序保证需要特别注意，因为线程是独立的执行，后来的消息可能比遭到的消息先处理，这仅仅是因为线程执行的运气。如果对排序没有问题，这就不是个问题。<br> ○ CON: 手动提交变得更困难，因为它需要协调所有的线程以确保处理对该分区的处理完成。<br>这种方法有多种玩法，例如，每个处理线程可以有自己的队列，消费者线程可以使用TopicPartitionhash到这些队列中，以确保按顺序消费，并且提交也将简化。</li>
+</ol>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2018/01/11/分布式流数据处理Kafka-二/" title= 分布式流数据处理Kafka(二) >
+                    <span>Previous Post</span>
+                    <span>分布式流数据处理Kafka(二)</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "分布式流数据处理Kafka-三", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kafka有4个核心API："><span class="toc-number">1.</span> <span class="toc-text">Kafka有4个核心API：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#引入依赖"><span class="toc-number">2.</span> <span class="toc-text">引入依赖</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#kafka客户端发布record-消息-到kafka集群"><span class="toc-number">3.</span> <span class="toc-text">kafka客户端发布record(消息)到kafka集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#消费者API："><span class="toc-number">4.</span> <span class="toc-text">消费者API：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#偏移量和消费者的位置"><span class="toc-number">4.1.</span> <span class="toc-text">偏移量和消费者的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消费者组和主题订阅"><span class="toc-number">4.2.</span> <span class="toc-text">消费者组和主题订阅</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发现消费者故障"><span class="toc-number">4.3.</span> <span class="toc-text">发现消费者故障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消费者示例代码"><span class="toc-number">4.4.</span> <span class="toc-text">消费者示例代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#偏移量和消费者的位置-1"><span class="toc-number">4.5.</span> <span class="toc-text">偏移量和消费者的位置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#自动提交偏移量"><span class="toc-number">4.5.1.</span> <span class="toc-text">自动提交偏移量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动控制偏移量"><span class="toc-number">4.5.2.</span> <span class="toc-text">手动控制偏移量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#订阅指定的分区"><span class="toc-number">5.</span> <span class="toc-text">订阅指定的分区</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#offset存储在其他地方"><span class="toc-number">6.</span> <span class="toc-text">offset存储在其他地方</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#控制消费的位置"><span class="toc-number">7.</span> <span class="toc-text">控制消费的位置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#消费者流量控制"><span class="toc-number">8.</span> <span class="toc-text">消费者流量控制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#多线程处理"><span class="toc-number">9.</span> <span class="toc-text">多线程处理</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 26 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2018/01/15/分布式流数据处理Kafka-三/" >分布式流数据处理Kafka-三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/11</span><a class="archive-post-title" href= "/2018/01/11/分布式流数据处理Kafka-二/" >分布式流数据处理Kafka(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2018/01/08/分布式流数据处理Kafka-一/" >分布式流数据处理Kafka(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2018/01/05/Java8与并发2/" >Java8与并发2</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/28</span><a class="archive-post-title" href= "/2017/12/28/Java8与并发/" >Java8与并发</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
