@@ -210,11 +210,11 @@
 <p><strong>原则一：避免创建重复的RDD，尽可能复用同一个RDD</strong></p>
 <p>对于同一份数据不要创建多个RDD，对不同的数据执行算子操作时要尽可能地复用一个RDD。</p>
 <p><strong>原则二：对多次使用的RDD进行持久化</strong></p>
-<p>前面已经提到Spark中rdd内部的转换关系是一个DAG，因此对于一个RDD执行多次算子时，都会重新从源头处计算一遍，这种方式的性能是很差的。如下图所示，其中D和E代表action算子，在计算D和E时要分别从A开始计算。<br><img src="https://pic1.zhimg.com/v2-afe661e697b7f868594fa96e8e45f339_b.jpg" alt="image"></p>
+<p>前面已经提到Spark中rdd内部的转换关系是一个DAG，因此对于一个RDD执行多次算子时，都会重新从源头处计算一遍，这种方式的性能是很差的。如下图所示，其中D和E代表action算子，在计算D和E时要分别从A开始计算。<br><img src="/avatar/spark/spark1.jpg" alt="image"></p>
 <p>最好的方法就是对C进行持久化，此时Spark就会将数据保存到内存或者磁盘中，以后每次对C这个RDD进行算子操作时，都会直接从内存或磁盘中提取持久化的RDD数据，不会从源头处重新计算一遍。</p>
 <p><strong>原则三：尽量避免使用shuffle类算子</strong></p>
 <p>Spark作业运行过程中，最消耗性能的地方就是shuffle过程。shuffle过程就是将分布在集群中多个节点上的同一个key，拉取到同一个节点上，进行groupby或join等操作，reduceByKey、join、distinct、repartition等都属于shuffle算子。至于什么是shuffle，引用Spark核心设计思想的经典论文<code>“Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing”</code>可以解释。</p>
-<p><img src="https://pic3.zhimg.com/v2-45f3be00ff7a88d9faaf11fb258d4dcb_b.jpg" alt=""><em>narrow依赖和wide依赖的例子。图中每个无阴影蓝色方框（大方框）表示一个RDD，有阴影的蓝色方框（小方框）表示RDD分区</em></p>
+<p><img src="/avatar/spark/spark2.jpg" alt="image"><br><em>narrow依赖和wide依赖的例子。图中每个无阴影蓝色方框（大方框）表示一个RDD，有阴影的蓝色方框（小方框）表示RDD分区</em></p>
 <p><strong>RDD就是一个不可变的带分区的记录集合，Spark提供了RDD上的两类操作，转换和动作</strong>。转换是用来定义一个新的RDD，包括map, flatMap, filter, union, sample, join, groupByKey, cogroup, ReduceByKey, cros, sortByKey, mapValues等，动作是返回一个结果，包括collect, reduce, count, save, lookupKey。shuffle顾名思义就是被打散，是否被shuffle就看计算后对应多少分区，那么：</p>
 <ul>
 <li>如果一个RDD的依赖的每个分区只依赖另一个RDD的同一个分区，就是narow，如图上的map、filter、union等，这样就不需要进行shuffle，同时还可以按照流水线的方式，把一个分区上的多个操作放在一个Task里进行。</li>
@@ -222,10 +222,10 @@
 </ul>
 <p><strong>原则四：使用预聚合的shuffle操作</strong></p>
 <p>如果有些时候实在无法避免使用shuffle操作，那么尽量使用可以预聚合的算子。预聚合就是在每个节点本地对相同的key进行一次聚合操作，多条相同的key被聚合起来后，那么其他节点再拉取所有节点上的相同key时，就会大大减少磁盘IO以及网络传输开销。下图所示，每个节点本地首先对于相同key进行了聚合。</p>
-<p><img src="https://pic3.zhimg.com/v2-f2ed64e0fb5d86a04c97c734a764e002_b.jpg" alt=""></p>
+<p><img src="/avatar/spark/spark3.jpg" alt="image"></p>
 <p><strong>原则五：使用高性能的算子</strong></p>
 <p>除了shuffle相关的算子有优化原则之外，其他的算子也都有着相应的优化原则，不一一陈述。</p>
-<p>资源调优在spark-submit时可以为作业配置合适的资源，理论上来说资源给的越多任务执行得越快，但集群又不是你家的，侵占太多资源可能会被kill掉。摩拜的Spark部署在集群上，公司内部共享这些资源，Spark的SparkContext先把任务提交到YARN上，再由Application Master创建应用程序，然后为它向Resource Manager申请资源，并启动Executor来运行任务集，同时监控它的整个运行过程，直到运行完成。<br><img src="https://pic1.zhimg.com/v2-c51b9b23aefec98f119459b27d1cf0a0_b.jpg" alt="image"></p>
+<p>资源调优在spark-submit时可以为作业配置合适的资源，理论上来说资源给的越多任务执行得越快，但集群又不是你家的，侵占太多资源可能会被kill掉。摩拜的Spark部署在集群上，公司内部共享这些资源，Spark的SparkContext先把任务提交到YARN上，再由Application Master创建应用程序，然后为它向Resource Manager申请资源，并启动Executor来运行任务集，同时监控它的整个运行过程，直到运行完成。<br><img src="/avatar/spark/spark4.jpg" alt="image"></p>
 <p>资源相关的参数</p>
 <p><strong>num-executors</strong></p>
 <ul>
@@ -367,6 +367,10 @@
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-archive">
     <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
     
     
     
@@ -861,9 +865,9 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -879,10 +883,6 @@
     
         <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
@@ -890,6 +890,10 @@
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     
