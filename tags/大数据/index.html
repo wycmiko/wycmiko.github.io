@@ -158,6 +158,39 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/18/Spark基础性能调优/" >
+                
+                    <span>Spark基础性能调优</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/18/Spark基础性能调优/" >
+                <div class="abstract-content">
+                    在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。
+后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/18</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
                 
                     <span>HBase概念及操作（四）内部表原理以及拆分操作</span>
@@ -175,9 +208,9 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -210,9 +243,9 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -245,9 +278,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -275,9 +308,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -679,7 +712,18 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
     
     
     
-    <div class="total-archive"> 总计 : 26 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 27 </div>
     
     <div class="post-archive">
     
@@ -688,6 +732,11 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/18</span><a class="archive-post-title" href= "/2018/01/18/Spark基础性能调优/" >Spark基础性能调优</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -833,9 +882,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -854,6 +903,10 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     

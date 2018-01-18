@@ -171,6 +171,34 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
+                
+                    <span>Java并发编程笔记（五）锁的优化及其注意事项2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
+                <div class="abstract-content">
+                    让普通变量也享受原子操作：AtomicIntegerFieldUpdater/Long/Reference普通变量通过该类也可以享受原子操作CAS的线程安全特性。使用如下：public static final AtomicIntegerFieldUpdater&lt;T&gt; field = AtomicIntegerFieldUpdater.newUpdater(T.class,&quot;FieldName&quot;);来进行构造，也可以使用cas的incrementAndGet()方法进行自增等操作。但是使用该类需要注意以下几点：1、Updater只能修改其可见范围，例如必须...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >
                 
                     <span>Java并发编程笔记（四）锁的优化及其注意事项</span>
@@ -335,9 +363,9 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -370,9 +398,9 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -405,9 +433,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
@@ -435,60 +463,15 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
 </div>
                 
                 <!-- date  -->
                 <div class="abstract-date">
                     <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/04/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/30/JVM总体梳理/" >
-                
-                    <span>JVM总体梳理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/30/JVM总体梳理/" >
-                <div class="abstract-content">
-                    对于Java程序员来讲，spring全家桶几乎可以搞定一切，spring全家桶便是精妙的招式，jvm就是内功心法很重要的一块，线上出现性能问题，jvm调优更是不可回避的问题。因此JVM基础知识对于高级程序员的重要性不必言语，我司在面试高级开发的时候，jvm相关知识也必定是考核的标准之一。本篇文章会根据之前写的jvm系列文章梳理出jvm需要关注的所有考察点。
-jvm 总体梳理jvm体系总体分四大块：
-
-类的加载机制
-jvm内存结构
-GC算法 垃圾回收
-GC分析 命令调优
-
-
-类的加载机制主要关注点：
-
-什么是类的加载
-类的生命周期
-类加载器
-双亲委派模型
-
-什么是类的加载？
-&nbsp;&...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = JVM虚拟机>JVM虚拟机</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/30</span>
                 </div>
             </div>
         </article>
@@ -954,7 +937,18 @@ GC分析 命令调优
     
     
     
-    <div class="total-archive"> 总计 : 26 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 27 </div>
     
     <div class="post-archive">
     
@@ -963,6 +957,11 @@ GC分析 命令调优
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/18</span><a class="archive-post-title" href= "/2018/01/18/Spark基础性能调优/" >Spark基础性能调优</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1108,9 +1107,9 @@ GC分析 命令调优
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -1129,6 +1128,10 @@ GC分析 命令调优
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     

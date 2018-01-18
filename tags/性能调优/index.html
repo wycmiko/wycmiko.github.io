@@ -158,14 +158,14 @@
     
     
         <article class="index-post">
-            <a class="abstract-title" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
+            <a class="abstract-title" href = "/2018/01/18/Spark基础性能调优/" >
                 
-                    <span>Java并发编程笔记（八）NIO与AIO</span>
+                    <span>Spark基础性能调优</span>
             </a>
-            <a class="content-show-full" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
+            <a class="content-show-full" href = "/2018/01/18/Spark基础性能调优/" >
                 <div class="abstract-content">
-                    NIO简介Java NIO(New IO)是一个可以替代标准Java IO API的IO API（从Java 1.4开始)，Java NIO提供了与标准IO不同的IO工作方式。
-基本概念 Java NIO: Channels and Buffers（通道和缓冲区） 标准的IO基于字节流和字符流进行操作的，而NIO是基于通道（Channel）和缓冲区（Buffer）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。 Java NIO: Non-blocking IO（非阻塞IO） Java NIO可以让你非阻塞的使用IO，例如：当线程从通道读取数据到缓冲区时，线程还是可以进...
+                    在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。
+后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部...
                 </div>
             </a>
             <div class="abstract-post-meta">
@@ -173,15 +173,17 @@
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
     
 </div>
                 
                 <!-- date  -->
                 <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/11/11</span>
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/18</span>
                 </div>
             </div>
         </article>
