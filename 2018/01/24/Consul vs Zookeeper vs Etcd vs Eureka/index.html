@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        Spark基础性能调优 · 翁玉川Miko个人博客
+        Consul vs Zookeeper vs Etcd vs Eureka · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -72,7 +72,7 @@
                 <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">Spark基础性能调优</a>
+                <a href="#" class="post-name">Consul vs Zookeeper vs Etcd vs Eureka</a>
             </div>
     </div>
     
@@ -93,7 +93,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Spark基础性能调优
+            Consul vs Zookeeper vs Etcd vs Eureka
             <!-- 404 -->
             
         </h1>
@@ -111,18 +111,14 @@
             
                 <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 服务治理>服务治理</a>
     
 </div>
             
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2018/01/18</span>
+                <span class="post-intro-time">2018/01/24</span>
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
                     <span id="busuanzi_value_page_pv"></span>
@@ -205,69 +201,19 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。</p>
-<p>后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部的转换关系是一个DAG（有向无环图），只有出发了action 算子才开始计算。开始可以画出计算pipeline，写得多了脑子自然会形成计算的pipeline，在开发过程中，时时刻刻都要注意一些性能优化的基本原则。</p>
-<p><strong>原则一：避免创建重复的RDD，尽可能复用同一个RDD</strong></p>
-<p>对于同一份数据不要创建多个RDD，对不同的数据执行算子操作时要尽可能地复用一个RDD。</p>
-<p><strong>原则二：对多次使用的RDD进行持久化</strong></p>
-<p>前面已经提到Spark中rdd内部的转换关系是一个DAG，因此对于一个RDD执行多次算子时，都会重新从源头处计算一遍，这种方式的性能是很差的。如下图所示，其中D和E代表action算子，在计算D和E时要分别从A开始计算。<br><img src="/avatar/spark/spark1.jpg" alt="image"></p>
-<p>最好的方法就是对C进行持久化，此时Spark就会将数据保存到内存或者磁盘中，以后每次对C这个RDD进行算子操作时，都会直接从内存或磁盘中提取持久化的RDD数据，不会从源头处重新计算一遍。</p>
-<p><strong>原则三：尽量避免使用shuffle类算子</strong></p>
-<p>Spark作业运行过程中，最消耗性能的地方就是shuffle过程。shuffle过程就是将分布在集群中多个节点上的同一个key，拉取到同一个节点上，进行groupby或join等操作，reduceByKey、join、distinct、repartition等都属于shuffle算子。至于什么是shuffle，引用Spark核心设计思想的经典论文<code>“Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing”</code>可以解释。</p>
-<p><img src="/avatar/spark/spark2.jpg" alt="image"><br><em>narrow依赖和wide依赖的例子。图中每个无阴影蓝色方框（大方框）表示一个RDD，有阴影的蓝色方框（小方框）表示RDD分区</em></p>
-<p><strong>RDD就是一个不可变的带分区的记录集合，Spark提供了RDD上的两类操作，转换和动作</strong>。转换是用来定义一个新的RDD，包括map, flatMap, filter, union, sample, join, groupByKey, cogroup, ReduceByKey, cros, sortByKey, mapValues等，动作是返回一个结果，包括collect, reduce, count, save, lookupKey。shuffle顾名思义就是被打散，是否被shuffle就看计算后对应多少分区，那么：</p>
-<ul>
-<li>如果一个RDD的依赖的每个分区只依赖另一个RDD的同一个分区，就是narow，如图上的map、filter、union等，这样就不需要进行shuffle，同时还可以按照流水线的方式，把一个分区上的多个操作放在一个Task里进行。</li>
-<li>如果一个RDD的每个分区需要依赖另一个RDD的所有分区，就是wide，如图上的groupbykey，这样的依赖需要进行shuffle，运算量倍增。</li>
-</ul>
-<p><strong>原则四：使用预聚合的shuffle操作</strong></p>
-<p>如果有些时候实在无法避免使用shuffle操作，那么尽量使用可以预聚合的算子。预聚合就是在每个节点本地对相同的key进行一次聚合操作，多条相同的key被聚合起来后，那么其他节点再拉取所有节点上的相同key时，就会大大减少磁盘IO以及网络传输开销。下图所示，每个节点本地首先对于相同key进行了聚合。</p>
-<p><img src="/avatar/spark/spark3.jpg" alt="image"></p>
-<p><strong>原则五：使用高性能的算子</strong></p>
-<p>除了shuffle相关的算子有优化原则之外，其他的算子也都有着相应的优化原则，不一一陈述。</p>
-<p>资源调优在spark-submit时可以为作业配置合适的资源，理论上来说资源给的越多任务执行得越快，但集群又不是你家的，侵占太多资源可能会被kill掉。摩拜的Spark部署在集群上，公司内部共享这些资源，Spark的SparkContext先把任务提交到YARN上，再由Application Master创建应用程序，然后为它向Resource Manager申请资源，并启动Executor来运行任务集，同时监控它的整个运行过程，直到运行完成。<br><img src="/avatar/spark/spark4.jpg" alt="image"></p>
-<p>资源相关的参数</p>
-<p><strong>num-executors</strong></p>
-<ul>
-<li>参数说明：该参数用于设置Spark作业总共要用多少个Executor进程来执行。Driver在向YARN集群管理器申请资源时，YARN集群管理器会尽可能按照你的设置来在集群的各个工作节点上，启动相应数量的Executor进程。这个参数非常之重要，如果不设置的话，默认只会给你启动少量的Executor进程，此时你的Spark作业的运行速度是非常慢的。</li>
-<li>参数调优建议：每个Spark作业的运行一般设置50~100个左右的Executor进程比较合适，设置太少或太多的Executor进程都不好。设置的太少，无法充分利用集群资源；设置的太多的话，大部分队列可能无法给予充分的资源。</li>
-</ul>
-<p><strong>executor-memory</strong></p>
-<ul>
-<li>参数说明：该参数用于设置每个Executor进程的内存。Executor内存的大小，很多时候直接决定了Spark作业的性能，而且跟常见的JVM OOM异常，也有直接的关联。</li>
-<li>参数调优建议：每个Executor进程的内存设置4G~8G较为合适。但是这只是一个参考值，具体的设置还是得根据不同部门的资源队列来定。可以看看自己团队的资源队列的最大内存限制是多少，num-executors乘以executor-memory，是不能超过队列的最大内存量的。此外，如果你是跟团队里其他人共享这个资源队列，那么申请的内存量最好不要超过资源队列最大总内存的1/3~1/2，避免你自己的Spark作业占用了队列所有的资源，导致别的同学的作业无法运行。</li>
-</ul>
-<p><strong>executor-cores</strong></p>
-<ul>
-<li>参数说明：该参数用于设置每个Executor进程的CPU core数量。这个参数决定了每个Executor进程并行执行task线程的能力。因为每个CPU core同一时间只能执行一个task线程，因此每个Executor进程的CPU core数量越多，越能够快速地执行完分配给自己的所有task线程。</li>
-<li>参数调优建议：Executor的CPU core数量设置为2~4个较为合适。同样得根据不同部门的资源队列来定，可以看看自己的资源队列的最大CPU core限制是多少，再依据设置的Executor数量，来决定每个Executor进程可以分配到几个CPU core。同样建议，如果是跟他人共享这个队列，那么num-executors * executor-cores不要超过队列总CPU core的1/3~1/2左右比较合适，也是避免影响其他同学的作业运行。给出本次项目执行时所给的资源，还是比较省的，这个可以根据集群的情况进行调整。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spark-submit \</span><br><span class="line">  --master yarn \</span><br><span class="line">  --executor-memory 8G \</span><br><span class="line">  --num-executors 16 \</span><br><span class="line">  --executor-cores 2</span><br></pre></td></tr></table></figure>
-<p><strong>数据倾斜调优</strong></p>
-<p><strong>数据倾斜就是大部分执行得很快，个别任务执行得很慢</strong>。比如进行groupby的时候，某个key对应的数据量特别大，就会发生数据倾斜。shuffle过程会导致数据倾斜，可能会触发数据倾斜的shuffle算子包括distinct、groupByKey、reduceByKey、aggregateByKey、join、cogroup、repartition等，因此能很快定位导致数据倾斜的代码。遇到数据倾斜时通常会使用repartition这个转换操作对RDD进行重新分区，重新分区后数据会均匀分布在不同的分区中，避免了数据倾斜。</p>
-<p>参考文献：</p>
-<blockquote>
-<p><a href="https://tech.meituan.com/spark-tuning-basic.html" target="_blank" rel="noopener">Spark性能优化指南——基础篇</a></p>
-<p><a href="https://tech.meituan.com/spark-tuning-pro.html" target="_blank" rel="noopener">Spark性能优化指南——高级篇</a></p>
-<p>作者：徐小贱民<br>来源：知乎</p>
-</blockquote>
+        <p><img src="/avatar/并发/fwzl.png" alt=""></p>
+<p>  ● 服务的健康检查<br>Euraka 使用时需要显式配置健康检查支持；Zookeeper,Etcd 则在失去了和服务进程的连接情况下任务不健康，而 Consul 相对更为详细点，比如内存是否已使用了90%，文件系统的空间是不是快不足了。<br>  ● 多数据中心支持<br>Consul 通过 WAN 的 Gossip 协议，完成跨数据中心的同步；而且其他的产品则需要额外的开发工作来实现；<br>  ● KV 存储服务<br>除了 Eureka ,其他几款都能够对外支持 k-v 的存储服务，所以后面会讲到这几款产品追求高一致性的重要原因。而提供存储服务，也能够较好的转化为动态配置服务哦。<br>  ● 产品设计中 CAP 理论的取舍<br>Eureka 典型的 AP,作为分布式场景下的服务发现的产品较为合适，服务发现场景的可用性优先级较高，一致性并不是特别致命。其次 CA 类型的场景 Consul,也能提供较高的可用性，并能 k-v store 服务保证一致性。 而Zookeeper,Etcd则是CP类型 牺牲可用性，在服务发现场景并没太大优势；<br>  ● 多语言能力与对外提供服务的接入协议<br>Zookeeper的跨语言支持较弱，其他几款支持 http11 提供接入的可能。Euraka 一般通过 sidecar的方式提供多语言客户端的接入支持。Etcd 还提供了Grpc的支持。 Consul除了标准的Rest服务api,还提供了DNS的支持。<br>  ● Watch的支持（客户端观察到服务提供者变化）<br>Zookeeper 支持服务器端推送变化，Eureka 2.0(正在开发中)也计划支持。 Eureka 1,Consul,Etcd则都通过长轮询的方式来实现变化的感知；<br>  ● 自身集群的监控<br>除了 Zookeeper ,其他几款都默认支持 metrics，运维者可以搜集并报警这些度量信息达到监控目的；<br>  ● 安全<br>Consul,Zookeeper 支持ACL，另外 Consul,Etcd 支持安全通道https.<br>  ● Spring Cloud的集成<br>目前都有相对应的 boot starter，提供了集成能力。<br>总的来看，目前Consul 自身功能，和 spring cloud 对其集成的支持都相对较为完善，而且运维的复杂度较为简单（没有详细列出讨论），Eureka 设计上比较符合场景，但还需持续的完善。</p>
+<p>附：<br>（etcd 是一个分布式一致性k-v存储系统，可用于服务注册发现与共享配置，具有以下优点。<br>  ● 简单 ： 相比于晦涩难懂的paxos算法，etcd基于相对简单且易实现的raft算法实现一致性，并通过gRPC提供接口调用<br>  ● 安全：支持TLS通信，并可以针对不同的用户进行对key的读写控制<br>  ● 高性能：10,000 /秒的写性能）</p>
 
     </article>
     <!-- 前后页  -->
     <ul class="post-pager">
         
-            <li class="next">
-                <a href= "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" title= Consul vs Zookeeper vs Etcd vs Eureka >
-                    <span>Next Post</span>
-                    <span>Consul vs Zookeeper vs Etcd vs Eureka</span>
-                </a>
-            </li>
-        
         
             <li class="previous">
-                <a href= "/2018/01/15/分布式流数据处理Kafka-三/" title= 分布式流数据处理Kafka-三 >
+                <a href= "/2018/01/18/Spark基础性能调优/" title= Spark基础性能调优 >
                     <span>Previous Post</span>
-                    <span>分布式流数据处理Kafka-三</span>
+                    <span>Spark基础性能调优</span>
                 </a>
             </li>
         
@@ -283,7 +229,7 @@
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
     var gitment = new Gitment({
-        // id: "Spark基础性能调优", // 可选。默认为 location.href
+        // id: "Consul vs Zookeeper vs Etcd vs Eureka", // 可选。默认为 location.href
         owner: 'wycmiko',
         repo: 'blogcomment.github.io',
         oauth: {
