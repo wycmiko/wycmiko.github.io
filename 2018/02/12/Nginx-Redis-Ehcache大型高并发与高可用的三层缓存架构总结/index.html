@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Nginx+Redis+Ehcache三层缓存架构总结 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Nginx+Redis+Ehcache三层缓存架构总结</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Yuchuan Weng.Miko Tech-Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Nginx+Redis+Ehcache三层缓存架构总结
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 高并发>高并发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 缓存>缓存</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/02/12</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>摘要: 对于高并发架构，毫无疑问缓存是最重要的一环，对于大量的高并发，可以采用三层缓存架构来实现，nginx+redis+ehcache</p>
+</blockquote>
+<h1 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h1><p>对于中间件nginx常用来做流量的分发，同时nginx本身也有自己的缓存（容量有限），我们可以用来缓存热点数据，让用户的请求直接走缓存并返回，减少流向服务器的流量</p>
+<h2 id="一、模板引擎"><a href="#一、模板引擎" class="headerlink" title="一、模板引擎"></a>一、模板引擎</h2><p>通常我们可以配合使用freemaker/velocity等模板引擎来抗住大量的请求</p>
+<p>小型系统可能直接在服务器端渲染出所有的页面并放入缓存，之后的相同页面请求就可以直接返回，不用去查询数据源或者做数据逻辑处理<br>对于页面非常之多的系统，当模板有改变，上述方法就需要重新渲染所有的页面模板，毫无疑问是不可取的。因此配合nginx+lua（OpenResty），将模板单独保存在nginx缓存中，同时对于用来渲染的数据也存在nginx缓存中，但是需要设置一个缓存过期的时间，以尽可能保证模板的实时性</p>
+<h2 id="二、双层nginx来提升缓存命中率"><a href="#二、双层nginx来提升缓存命中率" class="headerlink" title="二、双层nginx来提升缓存命中率"></a>二、双层nginx来提升缓存命中率</h2><p>对于部署多个nginx而言，如果不加入一些数据的路由策略，那么可能导致每个nginx的缓存命中率很低。因此可以部署双层nginx</p>
+<p>分发层nginx负责流量分发的逻辑和策略，根据自己定义的一些规则，比如根据productId进行hash，然后对后端nginx数量取模将某一个商品的访问请求固定路由到一个nginx后端服务器上去<br>后端nginx用来缓存一些热点数据到自己的缓存区</p>
+<h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><p>用户的请求，在nginx没有缓存相应的数据，那么会进入到redis缓存中，redis可以做到全量数据的缓存，通过水平扩展能够提升并发、高可用的能力</p>
+<h2 id="一、持久化机制"><a href="#一、持久化机制" class="headerlink" title="一、持久化机制"></a>一、持久化机制</h2><p>持久化机制：将redis内存中的数据持久化到磁盘中，然后可以定期将磁盘文件上传至S3(AWS)或者ODPS（阿里云）等一些云存储服务上去。</p>
+<p>如果同时使用RDB和AOF两种持久化机制，那么在redis重启的时候，会使用AOF来重新构建数据，因为AOF中的数据更加完整，建议将两种持久化机制都开启，用AO F来保证数据不丢失，作为数据恢复的第一选择；用RDB来作不同程度的冷备，在AOF文件都丢失或损坏不可用的时候来快速进行数据的恢复。</p>
+<p>实战踩坑：对于想从RDB恢复数据，同时AOF开关也是打开的，一直无法正常恢复，因为每次都会优先从AOF获取数据（如果临时关闭AOF，就可以正常恢复）。此时首先停止redis，然后关闭AOF，拷贝RDB到相应目录，启动redis之后热修改配置参数redis config set appendonly yes，此时会自动生成一个当前内存数据的AOF文件，然后再次停止redis，打开AOF配置，再次启动数据就正常启动</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p>对redis中的数据执行周期性的持久化，每一刻持久化的都是全量数据的一个快照。对redis性能影响较小，基于RDB能够快速异常恢复</p>
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><p>以append-only的模式写入一个日志文件中，在redis重启的时候可以通过回放AOF日志中的写入指令来重新构建整个数据集。（实际上每次写的日志数据会先到linux os cache，然后redis每隔一秒调用操作系统fsync将os cache中的数据写入磁盘）。对redis有一定的性能影响，能够尽量保证数据的完整性。redis通过rewrite机制来保障AOF文件不会太庞大，基于当前内存数据并可以做适当的指令重构。</p>
+<h2 id="二、redis集群"><a href="#二、redis集群" class="headerlink" title="二、redis集群"></a>二、redis集群</h2><h3 id="replication"><a href="#replication" class="headerlink" title="replication"></a>replication</h3><p>一主多从架构，主节点负责写，并且将数据同步到其他salve节点（异步执行），从节点负责读，主要就是用来做读写分离的横向扩容架构。这种架构的master节点数据一定要做持久化，否则，当master宕机重启之后内存数据清空，那么就会将空数据复制到slave，导致所有数据消失</p>
+<h3 id="sentinal哨兵"><a href="#sentinal哨兵" class="headerlink" title="sentinal哨兵"></a>sentinal哨兵</h3><p>哨兵是redis集群架构中很重要的一个组件，负责监控redis master和slave进程是否正常工作，当某个redis实例故障时，能够发送消息报警通知给管理员，当master node宕机能够自动转移到slave node上，如果故障转移发生来，会通知client客户端新的master地址。sentinal至少需要3个实例来保证自己的健壮性，并且能够更好地进行quorum投票以达到majority来执行故障转移。<br>前两种架构方式最大的特点是，每个节点的数据是相同的，无法存取海量的数据。因此哨兵集群的方式使用与数据量不大的情况</p>
+<h3 id="redis-cluster"><a href="#redis-cluster" class="headerlink" title="redis cluster"></a>redis cluster</h3><p>redis cluster支撑多master node，每个master node可以挂载多个slave node，如果mastre挂掉会自动将对应的某个slave切换成master。需要注意的是redis cluster架构下slave节点主要是用来做高可用、故障主备切换的，如果一定需要slave能够提供读的能力，修改配置也可以实现（同时也需要修改jedis源码来支持该情况下的读写分离操作）。redis cluster架构下，master就是可以任意扩展的，直接横向扩展master即可提高读写吞吐量。slave节点能够自动迁移（让master节点尽量平均拥有slave节点），对整个架构过载冗余的slave就可以保障系统更高的可用性。</p>
+<h1 id="ehcache"><a href="#ehcache" class="headerlink" title="ehcache"></a>ehcache</h1><p>tomcat jvm堆内存缓存，主要是抗redis出现大规模灾难。如果redis出现了大规模的宕机，导致nginx大量流量直接涌入数据生产服务，那么最后的tomcat堆内存缓存也可以处理部分请求，避免所有请求都直接流向DB</p>
+<p>针对上面的技术我特意整理了一下，有很多技术不是靠几句话能讲清楚，所以干脆找朋友录制了一些视频，很多问题其实答案很简单，但是背后的思考和逻辑不简单，要做到知其然还要知其所以然。</p>
+<h1 id="缓存数据更新策略"><a href="#缓存数据更新策略" class="headerlink" title="缓存数据更新策略"></a>缓存数据更新策略</h1><p>对时效性要求高的缓存数据，当发生变更的时候，直接采取数据库和redis缓存双写的方案，让缓存时效性最高。<br>对时效性不高的数据，当发生变更之后，采取MQ异步通知的方式，通过数据生产服务来监听MQ消息，然后异步去拉取服务的数据更新tomcat jvm缓存和redis缓存，对于nginx本地缓存过期之后就可以从redis中拉取新的数据并更新到nginx本地。</p>
+<h1 id="经典的缓存-数据库读写的模式，cache-aside-pattern"><a href="#经典的缓存-数据库读写的模式，cache-aside-pattern" class="headerlink" title="经典的缓存+数据库读写的模式，cache aside pattern"></a>经典的缓存+数据库读写的模式，cache aside pattern</h1><p>读的时候，先读缓存，缓存没有的话，那么就读数据库，然后取出数据后放入缓存，同时返回响应<br>更新的时候，先删除缓存，然后再更新数据库<br>之所以更新的时候只是删除缓存，因为对于一些复杂有逻辑的缓存数据，每次数据变更都更新一次缓存会造成额外的负担，只是删除缓存，让该数据下一次被使用的时候再去执行读的操作来重新缓存，这里采用的是懒加载的策略。举个例子，一个缓存涉及的表的字段，在1分钟内就修改了20次，或者是100次，那么缓存跟新20次，100次；但是这个缓存在1分钟内就被读取了1次，因此每次更新缓存就会有大量的冷数据，对于缓存符合28黄金法则，20%的数据，占用了80%的访问量</p>
+<h1 id="数据库和redis缓存双写不一致的问题"><a href="#数据库和redis缓存双写不一致的问题" class="headerlink" title="数据库和redis缓存双写不一致的问题"></a>数据库和redis缓存双写不一致的问题</h1><p>最初级的缓存不一致问题以及解决方案</p>
+<p>问题：如果先修改数据库再删除缓存，那么当缓存删除失败来，那么会导致数据库中是最新数据，缓存中依旧是旧数据，造成数据不一致。<br>解决方案：可以先删除缓存，再修改数据库，如果删除缓存成功但是数据库修改失败，那么数据库中是旧数据，缓存是空不会出现不一致<br>比较复杂的数据不一致问题分析</p>
+<p>问题：对于数据发生来变更，先删除缓存，然后去修改数据库，此时数据库中的数据还没有修改成功，并发的读请求到来去读缓存发现是空，进而去数据库查询到此时的旧数据放到缓存中，然后之前对数据库数据的修改成功来，就会造成数据不一致</p>
+<p>解决方案：将数据库与缓存更新与读取操作进行异步串行化。当更新数据的时候，根据数据的唯一标识，将更新数据操作路由到一个jvm内部的队列中，一个队列对应一个工作线程，线程串行拿到队列中的操作一条一条地执行。当执行队列中的更新数据操作，删除缓存，然后去更新数据库，此时还没有完成更新的时候过来一个读请求，读到了空的缓存那么可以先将缓存更新的请求发送至路由之后的队列中，此时会在队列积压，然后同步等待缓存更新完成，一个队列中多个相同数据缓存更新请求串在一起是没有意义的，因此可以做过滤处理。等待前面的更新数据操作完成数据库操作之后，才会去执行下一个缓存更新的操作，此时会从数据库中读取最新的数据，然后写入缓存中，如果请求还在等待时间范围内，不断轮询发现可以取到缓存中值就可以直接返回（此时可能会有对这个缓存数据的多个请求正在这样处理）；如果请求等待事件超过一定时长，那么这一次的请求直接读取数据库中的旧值</p>
+<p>对于这种处理方式需要注意一些问题：<br>读请求长时阻塞：由于读请求进行来非常轻度的异步化，所以对超时的问题需要格外注意，超过超时时间会直接查询DB，处理不好会对DB造成压力，因此需要测试系统高峰期QPS来调整机器数以及对应机器上的队列数最终决定合理的请求等待超时时间<br>多实例部署的请求路由：可能这个服务会部署多个实例，那么必须保证对应的请求都通过nginx服务器路由到相同的服务实例上<br>热点数据的路由导师请求的倾斜：因为只有在商品数据更新的时候才会清空缓存，然后才会导致读写并发，所以更新频率不是太高的话，这个问题的影响并不是特别大，但是的确可能某些机器的负载会高一些</p>
+<h1 id="分布式缓存重建并发冲突解决方案"><a href="#分布式缓存重建并发冲突解决方案" class="headerlink" title="分布式缓存重建并发冲突解决方案"></a>分布式缓存重建并发冲突解决方案</h1><p>对于缓存生产服务，可能部署在多台机器，当redis和ehcache对应的缓存数据都过期不存在时，此时可能nginx过来的请求和kafka监听的请求同时到达，导致两者最终都去拉取数据并且存入redis中，因此可能产生并发冲突的问题，可以采用redis或者zookeeper类似的分布式锁来解决，让请求的被动缓存重建与监听主动的缓存重建操作避免并发的冲突，当存入缓存的时候通过对比时间字段废弃掉旧的数据，保存最新的数据到缓存</p>
+<ul>
+<li>缓存冷启动以及缓存预热解决方案</li>
+</ul>
+<p>当系统第一次启动，大量请求涌入，此时的缓存为空，可能会导致DB崩溃，进而让系统不可用，同样当redis所有缓存数据异常丢失，也会导致该问题。因此，可以提前放入数据到redis避免上述冷启动的问题，当然也不可能是全量数据，可以根据类似于当天的具体访问情况，实时统计出访问频率较高的热数据，这里热数据也比较多，需要多个服务并行的分布式去读写到redis中（所以要基于zk分布式锁）</p>
+<p>通过nginx+lua将访问流量上报至kafka中，storm从kafka中消费数据，实时统计处每个商品的访问次数，访问次数基于LRU（apache commons collections LRUMap）内存数据结构的存储方案，使用LRUMap去存放是因为内存中的性能高，没有外部依赖，每个storm task启动的时候基于zk分布式锁将自己的id写入zk同一个节点中，每个storm task负责完成自己这里的热数据的统计，每隔一段时间就遍历一下这个map，然后维护一个前1000的数据list，然后去更新这个list，最后开启一个后台线程，每隔一段时间比如一分钟都将排名的前1000的热数据list同步到zk中去，存储到这个storm task对应的一个znode中去</p>
+<p>部署多个实例的服务，每次启动的时候就会去拿到上述维护的storm task id列表的节点数据，然后根据taskid，一个一个去尝试获取taskid对应的znode的zk分布式锁，如果能够获取到分布式锁，再去获取taskid status的锁进而查询预热状态，如果没有被预热过，那么就将这个taskid对应的热数据list取出来，从而从DB中查询出来写入缓存中，如果taskid分布式锁获取失败，快速抛错进行下一次循环获取下一个taskid的分布式锁即可，此时就是多个服务实例基于zk分布式锁做协调并行的进行缓存的预热</p>
+<ul>
+<li>缓存热点导致系统不可用解决方案</li>
+</ul>
+<p>对于瞬间大量的相同数据的请求涌入，可能导致该数据经过hash策略之后对应的应用层nginx被压垮，如果请求继续就会影响至其他的nginx，最终导致所有nginx出现异常整个系统变得不可用。</p>
+<p>基于nginx+lua+storm的热点缓存的流量分发策略自动降级来解决上述问题的出现，可以设定访问次数大于后95%平均值n倍的数据为热点，在storm中直接发送http请求到流量分发的nginx上去，使其存入本地缓存，然后storm还会将热点对应的完整缓存数据没发送到所有的应用nginx服务器上去，并直接存放到本地缓存。</p>
+<p>对于流量分发nginx，访问对应的数据，如果发现是热点标识就立即做流量分发策略的降级，对同一个数据的访问从hash到一台应用层nginx降级成为分发至所有的应用层nginx。storm需要保存上一次识别出来的热点List，并同当前计算出来的热点list做对比，如果已经不是热点数据，则发送对应的http请求至流量分发nginx中来取消对应数据的热点标识</p>
+<ul>
+<li>缓存雪崩解决方案</li>
+</ul>
+<p>redis集群彻底崩溃，缓存服务大量对redis的请求等待，占用资源，随后缓存服务大量的请求进入源头服务去查询DB，使DB压力过大崩溃，此时对源头服务的请求也大量等待占用资源，缓存服务大量的资源全部耗费在访问redis和源服务无果，最后使自身无法提供服务，最终会导致整个网站崩溃。</p>
+<p>事前的解决方案，搭建一套高可用架构的redis cluster集群，主从架构、一主多从，一旦主节点宕机，从节点自动跟上，并且最好使用双机房部署集群。</p>
+<p>事中的解决方案，部署一层ehcache缓存，在redis全部实现情况下能够抗住部分压力；对redis cluster的访问做资源隔离，避免所有资源都等待，对redis cluster的访问失败时的情况去部署对应的熔断策略，部署redis cluster的降级策略；对源服务访问的限流以及资源隔离</p>
+<p>事后的解决方案：redis数据做了备份可以直接恢复，重启redis即可；redis数据彻底失败来或者数据过旧，可以快速缓存预热，然后让redis重新启动。然后由于资源隔离的half-open策略发现redis已经能够正常访问，那么所有的请求将自动恢复</p>
+<ul>
+<li>缓存穿透解决方案</li>
+</ul>
+<p>对于在多级缓存中都没有对应的数据，并且DB也没有查询到数据，此时大量的请求都会直接到达DB，导致DB承载高并发的问题。解决缓存穿透的问题可以对DB也没有的数据返回一个空标识的数据，进而保存到各级缓存中，因为有对数据修改的异步监听，所以当数据有更新，新的数据会被更新到缓存汇中。</p>
+<ul>
+<li>Nginx缓存失效导致redis压力倍增</li>
+</ul>
+<p>可以在nginx本地，设置缓存数据的时候随机缓存的有效期，避免同一时刻缓存都失效而大量请求直接进入redis。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" title= Consul vs Zookeeper vs Etcd vs Eureka >
+                    <span>Previous Post</span>
+                    <span>Consul vs Zookeeper vs Etcd vs Eureka</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "Nginx+Redis+Ehcache三层缓存架构总结", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+        
+            
+                <a href="//wycmiko.cn/about" class="iconfont-archer linkedin" target="_blank" title="linkedin"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx"><span class="toc-number">1.</span> <span class="toc-text">Nginx</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、模板引擎"><span class="toc-number">1.1.</span> <span class="toc-text">一、模板引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、双层nginx来提升缓存命中率"><span class="toc-number">1.2.</span> <span class="toc-text">二、双层nginx来提升缓存命中率</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis"><span class="toc-number">2.</span> <span class="toc-text">Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、持久化机制"><span class="toc-number">2.1.</span> <span class="toc-text">一、持久化机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB"><span class="toc-number">2.1.1.</span> <span class="toc-text">RDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF"><span class="toc-number">2.1.2.</span> <span class="toc-text">AOF</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、redis集群"><span class="toc-number">2.2.</span> <span class="toc-text">二、redis集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#replication"><span class="toc-number">2.2.1.</span> <span class="toc-text">replication</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sentinal哨兵"><span class="toc-number">2.2.2.</span> <span class="toc-text">sentinal哨兵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis-cluster"><span class="toc-number">2.2.3.</span> <span class="toc-text">redis cluster</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ehcache"><span class="toc-number">3.</span> <span class="toc-text">ehcache</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#缓存数据更新策略"><span class="toc-number">4.</span> <span class="toc-text">缓存数据更新策略</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#经典的缓存-数据库读写的模式，cache-aside-pattern"><span class="toc-number">5.</span> <span class="toc-text">经典的缓存+数据库读写的模式，cache aside pattern</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数据库和redis缓存双写不一致的问题"><span class="toc-number">6.</span> <span class="toc-text">数据库和redis缓存双写不一致的问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分布式缓存重建并发冲突解决方案"><span class="toc-number">7.</span> <span class="toc-text">分布式缓存重建并发冲突解决方案</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 29 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/12</span><a class="archive-post-title" href= "/2018/02/12/Nginx-Redis-Ehcache大型高并发与高可用的三层缓存架构总结/" >Nginx+Redis+Ehcache三层缓存架构总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >Consul vs Zookeeper vs Etcd vs Eureka</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/18</span><a class="archive-post-title" href= "/2018/01/18/Spark基础性能调优/" >Spark基础性能调优</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2018/01/15/分布式流数据处理Kafka-三/" >分布式流数据处理Kafka-三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/11</span><a class="archive-post-title" href= "/2018/01/11/分布式流数据处理Kafka-二/" >分布式流数据处理Kafka(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2018/01/08/分布式流数据处理Kafka-一/" >分布式流数据处理Kafka(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2018/01/05/Java8与并发2/" >Java8与并发2</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/28</span><a class="archive-post-title" href= "/2017/12/28/Java8与并发/" >Java8与并发</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
