@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        翁玉川Miko个人博客
+        人人必知的10个jQuery小技巧 · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -58,6 +58,8 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
@@ -65,27 +67,71 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">人人必知的10个jQuery小技巧</a>
+            </div>
+    </div>
+    
     <a class="home-link" href=/>Yuchuan Weng.Miko Tech-Blog.</a>
 </header>
     <div class="wrapper">
         <div class="site-intro">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
+            人人必知的10个jQuery小技巧
+            <!-- 404 -->
+            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = JQuery>JQuery</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/03/15</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
         
     </div>
 </div>
@@ -153,336 +199,69 @@
             }
         </script>
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/03/15/人人必知的10个jQuery小技巧/" >
-                
-                    <span>人人必知的10个jQuery小技巧</span>
-            </a>
-            <a class="content-show-full" href = "/2018/03/15/人人必知的10个jQuery小技巧/" >
-                <div class="abstract-content">
-                    返回顶部按钮你可以利用 animate 和 scrollTop 来实现返回顶部的动画，而不需要使用其他插件。12// Back to top$(&apos;a.top&apos;).click(function () &#123;  $(document.body).animate(&#123;scrollTop: 0&#125;, 800);  return false;&#125;);&lt;!-- Create an anchor tag --&gt;&lt;a class=&quot;top&quot; href=&quot;#&quot;&gt;Back to top&lt;/...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = JQuery>JQuery</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/03/15</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" >
-                
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="返回顶部按钮"><a href="#返回顶部按钮" class="headerlink" title="返回顶部按钮"></a>返回顶部按钮</h1><p>你可以利用 animate 和 scrollTop 来实现返回顶部的动画，而不需要使用其他插件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// Back to top$(&apos;a.top&apos;).click(function () &#123;  $(document.body).animate(&#123;scrollTop: 0&#125;, 800);  return false;&#125;);</span><br><span class="line">&lt;!-- Create an anchor tag --&gt;&lt;a class=&quot;top&quot; href=&quot;#&quot;&gt;Back to top&lt;/a&gt;</span><br></pre></td></tr></table></figure></p>
+<p>改变 scrollTop 的值可以调整返回距离顶部的距离，而 animate 的第二个参数是执行返回动作需要的时间(单位：毫秒)。</p>
+<h1 id="预加载图片"><a href="#预加载图片" class="headerlink" title="预加载图片"></a>预加载图片</h1><p>如果你的页面中使用了很多不可见的图片（如：hover 显示），你可能需要预加载它们：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$.preloadImages = function () &#123;  for (var i = 0; i &lt; arguments.length; i++) &#123;    $(&apos;&lt;img&gt;&apos;).attr(&apos;src&apos;, arguments[i]);  &#125;&#125;;$.preloadImages(&apos;img/hover1.png&apos;, &apos;img/hover2.png&apos;);</span><br></pre></td></tr></table></figure></p>
+<h1 id="检查图片是否加载完成"><a href="#检查图片是否加载完成" class="headerlink" title="检查图片是否加载完成"></a>检查图片是否加载完成</h1><p>有时候你需要确保图片完成加载完成以便执行后面的操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;img&apos;).load(function () &#123;  console.log(&apos;image load successful&apos;);&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>你可以把 img 替换为其他的 ID 或者 class 来检查指定图片是否加载完成。</p>
+<h1 id="自动修改破损图像"><a href="#自动修改破损图像" class="headerlink" title="自动修改破损图像"></a>自动修改破损图像</h1><p>如果你碰巧在你的网站上发现了破碎的图像链接，你可以用一个不易被替换的图像来代替它们。添加这个简单的代码可以节省很多麻烦：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;img&apos;).on(&apos;error&apos;, function () &#123;  $(this).prop(&apos;src&apos;, &apos;img/broken.png&apos;);&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>即使你的网站没有破碎的图像链接，添加这段代码也没有任何害处。</p>
+<h1 id="鼠标悬停-hover-切换-class-属性"><a href="#鼠标悬停-hover-切换-class-属性" class="headerlink" title="鼠标悬停(hover)切换 class 属性"></a>鼠标悬停(hover)切换 class 属性</h1><p>假如当用户鼠标悬停在一个可点击的元素上时，你希望改变其效果，下面这段代码可以在其悬停在元素上时添加 class 属性，当用户鼠标离开时，则自动取消该 class属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;.btn&apos;).hover(function () &#123;  $(this).addClass(&apos;hover&apos;);  &#125;, function () &#123;    $(this).removeClass(&apos;hover&apos;);  &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>你只需要添加必要的CSS代码即可。如果你想要更简洁的代码，可以使用toggleClass 方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;.btn&apos;).hover(function () &#123;   $(this).toggleClass(&apos;hover&apos;); &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>注：直接使用CSS实现该效果可能是更好的解决方案，但你仍然有必要知道该方法。</p>
+<h1 id="禁用-input-字段"><a href="#禁用-input-字段" class="headerlink" title="禁用 input 字段"></a>禁用 input 字段</h1><p>有时你可能需要禁用表单的 submit 按钮或者某个 input 字段，直到用户执行了某些操作（例如，检查“已阅读条款”复选框）。可以添加 disabled 属性，直到你想启用它时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;input[type=&quot;submit&quot;]&apos;).prop(&apos;disabled&apos;, true);</span><br></pre></td></tr></table></figure></p>
+<p>你要做的就是执行 removeAttr 方法，并把要移除的属性作为参数传入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;input[type=&quot;submit&quot;]&apos;).removeAttr(&apos;disabled&apos;);</span><br></pre></td></tr></table></figure></p>
+<h1 id="阻止链接加载"><a href="#阻止链接加载" class="headerlink" title="阻止链接加载"></a>阻止链接加载</h1><p>有时你不希望链接到某个页面或者重新加载它，你可能希望它来做一些其他事情或者触发一些其他脚本，你可以这么做：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(&apos;a.no-link&apos;).click(function (e) &#123;  e.preventDefault();&#125;);</span><br></pre></td></tr></table></figure></p>
+<h1 id="切换-fade-slide"><a href="#切换-fade-slide" class="headerlink" title="切换 fade/slide"></a>切换 fade/slide</h1><p>fade 和 slide 是我们在 jQuery 中经常使用的动画效果，它们可以使元素显示效果更好。但是如果你希望元素显示时使用第一种效果，而消失时使用第二种效果，则可以这么做：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// Fade$(&apos;.btn&apos;).click(function () &#123;  $(&apos;.element&apos;).fadeToggle(&apos;slow&apos;);&#125;);// Toggle$(&apos;.btn&apos;).click(function () &#123;  $(&apos;.element&apos;).slideToggle(&apos;slow&apos;);&#125;);</span><br></pre></td></tr></table></figure></p>
+<h1 id="简单的手风琴效果"><a href="#简单的手风琴效果" class="headerlink" title="简单的手风琴效果"></a>简单的手风琴效果</h1><p>这是一个实现手风琴效果快速简单的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// Close all panels$(&apos;#accordion&apos;).find(&apos;.content&apos;).hide();// Accordion$(&apos;#accordion&apos;).find(&apos;.accordion-header&apos;).click(function () &#123;  var next = $(this).next();  next.slideToggle(&apos;fast&apos;);  $(&apos;.content&apos;).not(next).slideUp(&apos;fast&apos;);  return false;&#125;);</span><br></pre></td></tr></table></figure></p>
+<h1 id="让两个-DIV-高度相同"><a href="#让两个-DIV-高度相同" class="headerlink" title="让两个 DIV 高度相同"></a>让两个 DIV 高度相同</h1><p>有时你需要让两个 div 高度相同，而不管它们里面的内容多少。可以使用下面的代码片段：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var $columns = $(&apos;.column&apos;);var height = 0;$columns.each(function () &#123;  if ($(this).height() &gt; height) &#123;    height = $(this).height();  &#125;&#125;);$columns.height(height);</span><br></pre></td></tr></table></figure></p>
+<p>这段代码会循环一组元素，并设置它们的高度为元素中的最大高。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" title= Nginx+Redis+Ehcache三层缓存架构总结 >
+                    <span>Previous Post</span>
                     <span>Nginx+Redis+Ehcache三层缓存架构总结</span>
-            </a>
-            <a class="content-show-full" href = "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" >
-                <div class="abstract-content">
-                    
-摘要: 对于高并发架构，毫无疑问缓存是最重要的一环，对于大量的高并发，可以采用三层缓存架构来实现，nginx+redis+ehcache
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
 
-Nginx对于中间件nginx常用来做流量的分发，同时nginx本身也有自己的缓存（容量有限），我们可以用来缓存热点数据，让用户的请求直接走缓存并返回，减少流向服务器的流量
-一、模板引擎通常我们可以配合使用freemaker/velocity等模板引擎来抗住大量的请求
-小型系统可能直接在服务器端渲染出所有的页面并放入缓存，之后的相同页面请求就可以直接返回，不用去查询数据源或者做数据逻辑处理对于页面非常之多的系统，当模板有改变，上述方法就需要重新渲染...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 高并发>高并发</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 缓存>缓存</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/02/12</span>
-                </div>
-            </div>
-        </article>
+<!-- City版安装代码已完成 -->
     
     
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >
-                
-                    <span>Consul vs Zookeeper vs Etcd vs Eureka</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >
-                <div class="abstract-content">
-                    
-  ● 服务的健康检查Euraka 使用时需要显式配置健康检查支持；Zookeeper,Etcd 则在失去了和服务进程的连接情况下任务不健康，而 Consul 相对更为详细点，比如内存是否已使用了90%，文件系统的空间是不是快不足了。  ● 多数据中心支持Consul 通过 WAN 的 Gossip 协议，完成跨数据中心的同步；而且其他的产品则需要额外的开发工作来实现；  ● KV 存储服务除了 Eureka ,其他几款都能够对外支持 k-v 的存储服务，所以后面会讲到这几款产品追求高一致性的重要原因。而提供存储服务，也能够较好的转化为动态配置服务哦。  ● 产品设计中 CAP 理论的...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 服务治理>服务治理</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/24</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/18/Spark基础性能调优/" >
-                
-                    <span>Spark基础性能调优</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/18/Spark基础性能调优/" >
-                <div class="abstract-content">
-                    在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。
-后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/18</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
-                
-                    <span>分布式流数据处理Kafka-三</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
-                <div class="abstract-content">
-                    
-上一篇介绍了基本的终端操作，这一篇将介绍介绍kafka的JavaAPI操作。
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "人人必知的10个jQuery小技巧", // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: 'bd0aed079e12449eff90ce082144976dbb7ca4d2',
+        },
+    })
+    gitment.render('container')
 
-Apache Kafka引入一个新的java客户端（在org.apache.kafka.clients 包中），替代老的Scala客户端，但是为了兼容，将会共存一段时间。为了减少依赖，这些客户端都有一个独立的jar，而旧的Scala客户端继续与服务端保留在同个包下。
-Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到kafka集群中的topic。  ● Consumer API 允许应用程序从kafka集群的topic中读取数据流。  ● Streams API 允许从输...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/15</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
-                
-                    <span>分布式流数据处理Kafka(二)</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
-                <div class="abstract-content">
-                    上一篇介绍了基本概念，本篇则介绍一些基本使用。
-下载代码下载0.10.0.0版本并且解压它。&gt; tar -xzf kafka_2.11-0.10.0.0.tgz&gt; cd kafka_2.11-0.10.0.0
-启动服务运行kafka需要使用Zookeeper，所以你需要先启动Zookeeper，如果你没有Zookeeper，你可以使用kafka自带打包和配置好的Zookeeper。&gt; bin/zookeeper-server-start.sh config/zookeeper.properties打印日志：    [2013-04-22 15:01:37,495] IN...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/11</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/08/分布式流数据处理Kafka-一/" >
-                
-                    <span>分布式流数据处理Kafka(一)</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/08/分布式流数据处理Kafka-一/" >
-                <div class="abstract-content">
-                    Kafka简介Kafka 起初是由 LinkedIn 公司开发的一个分布式的消息系统，后成为 Apache 的一部分，它使用 Scala 编写，以可水平扩展和高吞吐率而被广泛使用。目前越来越多的开源分布式处理系统如 Cloudera、Apache Storm、Spark 等都支持与 Kafka 集成。随着微服务的流行，很多公司都在尝试将现有的系统进行架构升级。促成 Movio 公司架构改造的一项关键技术就是 Kafka 消息队列。Kafka 作为分布式消息队列，在可靠性和可扩展性方面有非常大的优势。它不仅成为了 Movio 公司基础架构的关键组成部分，还为正在创建的系统架构提供了依据。本...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/08</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/05/Java8与并发2/" >
-                
-                    <span>Java8与并发2</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/05/Java8与并发2/" >
-                <div class="abstract-content">
-                    
-上一篇我们介绍了Java8函数式编程的特点和基本操作，以及增强型的Future,CompletableFuture,这一篇我们将继续介绍Java8为并发所做的努力。
+</script>
 
-组合多个CompletableFutureCompletableFuture 还允许你将多个CompletableFuture 进行组合。一种方法是使用thenCompose() 。将一个CompletableFuture执行完成的结果传递给下一个CompletionStage进行处理（返回新的实例）。下面演示一个一个CompletableFuture调用后的结果作为另一个的参数调用的函数式过程：1234567final...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
+    <!--PC版-->
+
+    <!--PC版-->
+
+
     
-        <a class="post-tag" href="javascript:void(0);" data-href = Java8特性>Java8特性</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 函数式编程>函数式编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/05</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/12/28/Java8与并发/" >
-                
-                    <span>Java8与并发</span>
-            </a>
-            <a class="content-show-full" href = "/2017/12/28/Java8与并发/" >
-                <div class="abstract-content">
-                    自2014年Oracle发布Java8新版本后，对于Java来说这显然是一个具有里程碑意义的版本，它最主要的改进是增加了函数式编程，就目前而言最令人头疼的问题就是Java那繁琐的语法，不得不使我们要花费大量的代码行数去实现一些司空见惯的功能。这一切都在Java8函数式编程中。
-Java8函数式编程简介函数式编程与面向对象设计方法在思路和手段上各有千秋，在这里我们简要介绍一下函数式编程于面向对象相比较的一些特点和差异。
-函数作为一等公民JS是我们常见的语言，我们可以把它称之为多范式语言，既可以作为不是很严格的面向对象语言，也可以当做函数式语言。一个显著特点是函数可以作为参数传入，另一个显著...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Java8特性>Java8特性</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 函数式编程>函数式编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/12/28</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
-                
-                    <span>Java并发编程笔记（九）NIO与AIO2</span>
-            </a>
-            <a class="content-show-full" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
-                <div class="abstract-content">
-                    读完了再通知我 AIOAIO即为Asynchronized。异步IO， NIO只是newIO不是异步的，只是同步可以设置为非阻塞模式 ，真正异步的是AIO。AIO将Future模式运用的十分广泛，它不是等待IO准备好后再通知线程。而是等待IO操作完成后再通知线程，实现异步IO。
-AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketChannel。
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/12/14</span>
-                </div>
-            </div>
-        </article>
-    
-    <!-- paginator  -->
-    
-    <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">#NEXT</a>
-    </nav>
-    
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -542,6 +321,13 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#返回顶部按钮"><span class="toc-number">1.</span> <span class="toc-text">返回顶部按钮</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#预加载图片"><span class="toc-number">2.</span> <span class="toc-text">预加载图片</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#检查图片是否加载完成"><span class="toc-number">3.</span> <span class="toc-text">检查图片是否加载完成</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#自动修改破损图像"><span class="toc-number">4.</span> <span class="toc-text">自动修改破损图像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#鼠标悬停-hover-切换-class-属性"><span class="toc-number">5.</span> <span class="toc-text">鼠标悬停(hover)切换 class 属性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#禁用-input-字段"><span class="toc-number">6.</span> <span class="toc-text">禁用 input 字段</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#阻止链接加载"><span class="toc-number">7.</span> <span class="toc-text">阻止链接加载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#切换-fade-slide"><span class="toc-number">8.</span> <span class="toc-text">切换 fade/slide</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#简单的手风琴效果"><span class="toc-number">9.</span> <span class="toc-text">简单的手风琴效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#让两个-DIV-高度相同"><span class="toc-number">10.</span> <span class="toc-text">让两个 DIV 高度相同</span></a></li></ol>
+    </div>
     
     <div class="back-top">&#xe639;</div>
     <div class="sidebar">

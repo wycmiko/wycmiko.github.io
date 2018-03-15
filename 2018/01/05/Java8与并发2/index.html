@@ -214,7 +214,7 @@
 <p><strong> 注意StampLock的坑 </strong><br>    StampLock内部实现机制类似于CAS机制，是基于CLH锁的，在它挂起线程时候使用的是Unsafe.park()函数，stampLock死循环过程中，该函数等待时候中断了是不会有中断处理的，会再次进入循环，当退出条件不满足时候，会吃尽系统的资源。它会一直存在知道自己抢占到了锁。</p>
 <h2 id="有关StampLock锁"><a href="#有关StampLock锁" class="headerlink" title="有关StampLock锁"></a>有关StampLock锁</h2><p>StampLock都是基于CLH锁的，CLH为一种自旋锁，它保证没有饥饿发生，并且可以保证FIFO的服务顺序。<br>CLH锁的基本思想是：锁维护一个等待队列（等待链表队列），所有申请锁，但是没有成功的线程都记录在这个等待队列中，每一个节点代表一个线程都保存有一个标记位，用于判断当前线程是否已经释放锁。<br>当一个线程试图获取锁时，会从当前等待队列尾部节点作为其前序节点，并使用类似如下代码判断前序节点是否已经成功释放锁：<br><code>while(pre.locked){}</code><br>只要前序节点没有释放锁，则表示当前线程还不能继续执行，自旋等待。释放锁时同理，将自己的自身节点locked标记为设置为false,这后续线程可以继续执行。<br>关于乐观锁 一次成功的乐观读必须保证当前锁没有被占用，通过一个state标记来判断。乐观读后如果一个线程申请写锁那么会改变这个state标记，那么在乐观锁确认时（validate）就好发现这个改动 而导致乐观锁失败。乐观锁失效后就提升锁级别，使用悲观读锁。悲观读锁会尝试设置state状态，如果失败则进入acquireRead()二次尝试锁获取。在acquireRead()中线程会在不同条件下进行若干次的自旋，试图通过CAS操作获得锁，如果自旋宣告失败则会启用CLH队列，再进行自旋，如果发现自己成功获得读锁会进一步激活cowait队列中的全部读线程，如果最终依然失败，那么会被<code>unsafe.park()</code>挂起当前线程，acquireWrite流程也与之类似，都通过自选尝试、加入等待队列、直至<code>Unsafe.park()</code>挂起的逻辑行为。</p>
 <h1 id="原子类的增强"><a href="#原子类的增强" class="headerlink" title="原子类的增强"></a>原子类的增强</h1><h2 id="更快的原子类-LongAdder"><a href="#更快的原子类-LongAdder" class="headerlink" title="更快的原子类 LongAdder"></a>更快的原子类 LongAdder</h2><p>Java.lang.concurrent.aotmic包下的大量的原子操作类，它们均采用CAS机制去无限循环，低并发情况下竞争成功率可能大，高并发竞争下不断失败尝试很是浪费性能，因此可以仿照ConcurrentHashMap。将热点数据进行分离，而最终的技术结果就是数组的求和累加，这样热点就进行了有效的分离，LongAddr正是使用了这种思想。<br>实际操作中LongAddr不会一开始就动用数组去处理，而是将所有数据都先记录在做一个base变量中，如果没有冲突就不扩展，有冲突就扩展为cell数组，依次判断下去。下面阐述了一波锁、原子操作类、加强原子类的耗时测试：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java8加强原子类 LongAddr</span></span><br><span class="line"><span class="comment"> * 辅助类</span></span><br><span class="line"><span class="comment"> * 测试 同步锁、无锁原子操作Atomic  以及加强原子操作LongAddr 性能测试</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span>  <span class="class"><span class="keyword">class</span> <span class="title">LongAddrDemo</span></span>&#123;</span><br><span class="line"><span class="comment">//定义线程数 任务数  以及目标总数常量</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_THREADS=<span class="number">3</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_TASKS=<span class="number">3</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TARGET_COUNT=<span class="number">1000000</span>;</span><br><span class="line">	<span class="comment">//构建原子 对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> AtomicLong account = <span class="keyword">new</span> AtomicLong(<span class="number">0L</span>);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> LongAdder addr = <span class="keyword">new</span> LongAdder();</span><br><span class="line">	<span class="comment">//要测试的数字</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">long</span> count=<span class="number">0</span>;</span><br><span class="line">	<span class="comment">//定义程序计数器3个</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch synchrLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch atomicLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> CountDownLatch longAddrLatch = <span class="keyword">new</span> CountDownLatch(MAX_TASKS);</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">increCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ++count;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">getCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> count;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//定义锁操作内部类</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchroTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">public</span> String name;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">long</span> startTime;</span><br><span class="line">		<span class="comment">//构建要调用方法的对象</span></span><br><span class="line">		<span class="keyword">public</span> LongAddrDemo demo = <span class="keyword">new</span> LongAddrDemo();</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">SynchroTest</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">long</span> count2 = demo.getCount();</span><br><span class="line">			</span><br><span class="line">			<span class="comment">//计算出加锁的时间</span></span><br><span class="line">			<span class="keyword">while</span>(count2&lt;TARGET_COUNT)&#123;</span><br><span class="line">				count2=demo.increCount();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"方法自增结果为："</span>+count2+<span class="string">" 耗时："</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			<span class="comment">//计数器减少一</span></span><br><span class="line">			synchrLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//启动同步方法测试</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span>  <span class="keyword">void</span> <span class="title">testSync</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">			SynchroTest sync = <span class="keyword">new</span> SynchroTest(<span class="string">"同步"</span>, startTime);</span><br><span class="line">			<span class="comment">//提交任务数相同的线程 开始计算会打印耗时</span></span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(sync);</span><br><span class="line">			&#125;</span><br><span class="line">			synchrLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">long</span> startTime;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">AtomicTest</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//测试原子CAS操作的时间</span></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">//原子类</span></span><br><span class="line">			<span class="keyword">long</span> count2 = account.get() ;</span><br><span class="line">			<span class="keyword">while</span>(count2&lt;TARGET_COUNT)&#123;</span><br><span class="line">				count2=account.incrementAndGet();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"执行耗时"</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			atomicLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//测试</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testAtomic</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime= System.currentTimeMillis();</span><br><span class="line">			AtomicTest ato = <span class="keyword">new</span> AtomicTest(<span class="string">"原子CAS"</span>, startTime);</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(ato);</span><br><span class="line">			&#125;</span><br><span class="line">			atomicLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//测试LongAddr也是同理</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LongAddrThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">long</span> startTime;</span><br><span class="line">		</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">LongAddrThread</span><span class="params">(String name, <span class="keyword">long</span> startTime)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>();</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.startTime = startTime;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="comment">//sum()方法用于获取LongAddr的值</span></span><br><span class="line">			<span class="keyword">long</span> sum = addr.sum();</span><br><span class="line">			<span class="keyword">while</span>(sum&lt;TARGET_COUNT)&#123;</span><br><span class="line">				<span class="comment">//由于下面方法是void类型 所以需要重新赋值</span></span><br><span class="line">				addr.increment();</span><br><span class="line">				sum=addr.sum();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">long</span> endTime=System.currentTimeMillis();</span><br><span class="line">			System.out.println(name+<span class="string">"耗时："</span>+(endTime-startTime)+<span class="string">"ms"</span>);</span><br><span class="line">			longAddrLatch.countDown();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testLongAddr</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);</span><br><span class="line">			<span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">			LongAddrThread t1 = <span class="keyword">new</span> LongAddrThread(<span class="string">"LongAddr线程"</span>, startTime);</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;MAX_TASKS;i++)&#123;</span><br><span class="line">				pool.submit(t1);</span><br><span class="line">			&#125;</span><br><span class="line">			longAddrLatch.await();</span><br><span class="line">			pool.shutdown();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//下面测试三者性能：</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		SynchroTest.testSync();</span><br><span class="line">		AtomicTest.testAtomic();</span><br><span class="line">		LongAddrThread.testLongAddr();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>另外一个优化是LongAddr避免了伪共享问题，它并不是使用padding这种看起来比较碍眼的做法，而是采用新的注解@sun.misc.Contended:<br><img src="/avatar/并发/bingfa9.png" alt=""><br>上述使用了<code>@sun.misc.Contended</code>来使得Java虚拟机自动为Cell解决伪共享问题，但是需要使用额外的参数，<code>-XX:-RestrictContended</code>，否则这个注释将被忽略。</p>
+<p>另外一个优化是LongAddr避免了伪共享问题，它并不是使用padding这种看起来比较碍眼的做法，而是采用新的注解@sun.misc.Contended:<br><img src="/avatar/并发/bingfa9.png" alt=""><br>上述使用了<a href="mailto:`@sun.misc.Contended" target="_blank" rel="noopener">`@sun.misc.Contended</a><code>来使得Java虚拟机自动为Cell解决伪共享问题，但是需要使用额外的参数，</code>-XX:-RestrictContended`，否则这个注释将被忽略。</p>
 <h1 id="LongAdder-的功能增强版-：LongAccumulator"><a href="#LongAdder-的功能增强版-：LongAccumulator" class="headerlink" title="LongAdder 的功能增强版 ：LongAccumulator"></a>LongAdder 的功能增强版 ：LongAccumulator</h1><p>LongAccumulator 是LongAdder的亲兄弟，它们有公共的父类 Striped64。因此LongAccumulator内部的优化方式和LongAdder是一样的。它们都将一个long整数进行分割，存储在不同的变量中，以防止多线程的竞争。二者的主要逻辑是类似的，但是LongAccumulator是LongAdder的功能扩展，对于LongAdder而言它只是每次对整数进行加法操作，而LongAccumulator则可以每次实现任意函数操作。可以使用下面的构造函数<br><code>public LongAccumulator(LongBinaryOperator accumulatorFunction,long identity)</code><br>第一个参数是需要执行的二元函数（接受2个long返回long）,第二个参数为初始值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * LongAddr的加强</span></span><br><span class="line"><span class="comment"> * Longaddr每次只能对整数执行一次加法 </span></span><br><span class="line"><span class="comment"> * 而LongAccumulator可以实现任意函数操作</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> 圈圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongAccumulatorDemo</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="comment">//初始化LongAccumulator  函数意思为取其最大值</span></span><br><span class="line">		LongAccumulator  accumulator = <span class="keyword">new</span> LongAccumulator(Long::max, Long.MIN_VALUE);</span><br><span class="line">		<span class="comment">//启动一千个线程</span></span><br><span class="line">		Thread[] ti = <span class="keyword">new</span> Thread[<span class="number">1000</span>];</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)&#123;</span><br><span class="line">			ti[i] = <span class="keyword">new</span> Thread(</span><br><span class="line">					() -&gt;&#123;</span><br><span class="line">						Random r = <span class="keyword">new</span> Random();</span><br><span class="line">						<span class="keyword">long</span> ran = r.nextInt();</span><br><span class="line">						<span class="comment">//调用方法 accumulate 该方法通过第一个参数指定 保存最大值到内部（可能是cell数组内，也可能是base）</span></span><br><span class="line">						accumulator.accumulate(ran);</span><br><span class="line">					&#125;);</span><br><span class="line">			ti[i].start();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)&#123;</span><br><span class="line">			ti[i].join();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//通过longValue()获取最大值</span></span><br><span class="line">		System.out.println(<span class="string">"LongAccumulator的最大值为："</span>+accumulator.longValue());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
     </article>
@@ -712,7 +712,84 @@
     
     
     
-    <div class="total-archive"> 总计 : 29 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 30 </div>
     
     <div class="post-archive">
     
@@ -721,6 +798,11 @@
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2018/03/15/人人必知的10个jQuery小技巧/" >人人必知的10个jQuery小技巧</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -881,11 +963,11 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -905,10 +987,6 @@
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
@@ -916,6 +994,12 @@
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     

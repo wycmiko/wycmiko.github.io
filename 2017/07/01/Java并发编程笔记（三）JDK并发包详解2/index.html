@@ -263,7 +263,7 @@
 <p>ConCurrentLinkedQueue:高并发环境中性能最好的队列就是它了。因为它有很复杂的实现。</p>
 <h2 id="高效读取：不变模式下的CopyOnWriteArrayList"><a href="#高效读取：不变模式下的CopyOnWriteArrayList" class="headerlink" title="高效读取：不变模式下的CopyOnWriteArrayList"></a>高效读取：不变模式下的CopyOnWriteArrayList</h2><p>很多应用场景中读操作远远大于写操作，比如有些系统级别的信息 往往只需要加载或者修改很少的次数，但是会被系统内所有模块频繁的访问 这种场景就需要读效率高 写就无所谓了。CopyOnWriteArrayList 这在读写锁上 读写分离的思想上又提升了一步，它读与写之间是可以并行的，但是写与写是互斥的。这样一来读操作性能就大幅提升了。那是怎么实现的呢？顾名思义 从CopyOnWrite可以看出 写操作是将原值复制一份 修改副本   写完之后再将修改后的副本替换掉原来的数据。这样保证写操作不会影响读操作了。<br>查看源码其读操作没有任何锁限制，非常简单。写操作：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** The array, accessed only via getArray/setArray. */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">transient</span> <span class="keyword">volatile</span> Object[] array;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">final</span> ReentrantLock lock = <span class="keyword">this</span>.lock;</span><br><span class="line">       lock.lock();</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           Object[] elements = getArray();</span><br><span class="line">           <span class="keyword">int</span> len = elements.length;</span><br><span class="line">           Object[] newElements = Arrays.copyOf(elements, len + <span class="number">1</span>);</span><br><span class="line">           newElements[len] = e;</span><br><span class="line">           setArray(newElements);</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           lock.unlock();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><br>是通过重入锁锁住然后创建副本 然后通过setArray修改变量值。 由于array是volatile的所以对读线程可见，读线程能立即察觉。</p>
 <h2 id="数据共享通道：BlockingQueue"><a href="#数据共享通道：BlockingQueue" class="headerlink" title="数据共享通道：BlockingQueue"></a>数据共享通道：BlockingQueue</h2><p>BlockingQueue是一个接口，其之所以适合作为数据共享通道还在于他的blocking阻塞上，它会让服务线程在队列为空时，进行等待，当有新的消息进入队列后自动将线程唤醒。这时候就有队列的两个入队方法<br><code>offer()</code>  如果队列满了返回false  不阻塞<br>put()  如果队列满了 就等待阻塞(notFull.await   直到调用take()方法的extract()方法 有空位时候 就有notFull.signal())<br>对应的两个出队方法：<br><code>poll()</code> 如果队列为空返回Null 不阻塞<br><code>take()</code> 如果队列为空 则等待阻塞（对应字段 Condition notEmpty.await()） 直到队列有可用元素（insert()方法有notEmpty.signal()）。<br>BlockingQueue的使用非常普遍，在后续的“5.3”生产者消费者一节中我们还会看到他们的身影，看他们如何使用BlockingQueue解耦生产者和消费者。</p>
-<h2 id="随机数据结构：跳表（ConcurrentSkipListMap）"><a href="#随机数据结构：跳表（ConcurrentSkipListMap）" class="headerlink" title="随机数据结构：跳表（ConcurrentSkipListMap）"></a>随机数据结构：跳表（ConcurrentSkipListMap）</h2><p>JDK并发包中除了常见的哈希表以外，还有一种有趣的数据结构—跳表。跳表也是一种用来快速查找的数据结构，有点类似于平衡树。它们都可以对元素进行快速的查找，但一个重要的区别是：对平衡树的插入和删除操作会改变树的整体结构，对跳表的插入和删除操作只改变部分的数据结构，这时候需要一个全局的锁来保证平衡树的安全，对于跳表只需要部分的锁即可。这样在高并发环境下就有更好的性能，就查询性能而言 跳表也是O(log n)所以JDK用跳表实现了一个Map。<br>跳表的另外一个特点是随机算法。跳表的本质是维护了多个链表，并且链表是分层的。例如最底层维护了一张跳表所有元素，往上一层是其子集，一个元素插入哪些层完全是随机的，如果运气不好性能会很糟糕，但实际情况而言它的表现是非常好的。<br>跳表内所有元素是排好序的，通过跳跃式的算法进行查找，例如：<br>查找元素7<br>h –&gt; 3 —&gt; 6<br>h –1 – 3—6 —-8<br>h–1–2–3–4–5–6–7–8<br>跳表会从顶层往下查找，查找元素7发现第一层6，快速跳跃小于7的元素，深入第二层6的位置发现8比7大就直接深入底层查找到了7。整个过程比一般链表从 1 开始逐步遍历要好的多。因此很显然，跳表是一种用空间换时间的方法。<br>使用跳表实现Map和哈希表实现Map区别为 哈希表Map不会保存元素顺序，而跳表会保存，且跳表内所有元素都是有序的，所以如果应用需求需要有序数据 那么跳表是不二选择  具体实现为 ConcurrentSkipListMap。 其内部数据结构主要是 Node<k,v>  Node所有操作均采用CAS，另外还有一个就是Index 通过Index进行全网组织。</k,v></p>
+<h2 id="随机数据结构：跳表（ConcurrentSkipListMap）"><a href="#随机数据结构：跳表（ConcurrentSkipListMap）" class="headerlink" title="随机数据结构：跳表（ConcurrentSkipListMap）"></a>随机数据结构：跳表（ConcurrentSkipListMap）</h2><p>JDK并发包中除了常见的哈希表以外，还有一种有趣的数据结构—跳表。跳表也是一种用来快速查找的数据结构，有点类似于平衡树。它们都可以对元素进行快速的查找，但一个重要的区别是：对平衡树的插入和删除操作会改变树的整体结构，对跳表的插入和删除操作只改变部分的数据结构，这时候需要一个全局的锁来保证平衡树的安全，对于跳表只需要部分的锁即可。这样在高并发环境下就有更好的性能，就查询性能而言 跳表也是O(log n)所以JDK用跳表实现了一个Map。<br>跳表的另外一个特点是随机算法。跳表的本质是维护了多个链表，并且链表是分层的。例如最底层维护了一张跳表所有元素，往上一层是其子集，一个元素插入哪些层完全是随机的，如果运气不好性能会很糟糕，但实际情况而言它的表现是非常好的。<br>跳表内所有元素是排好序的，通过跳跃式的算法进行查找，例如：<br>查找元素7<br>h –&gt; 3 —&gt; 6<br>h –1 – 3—6 —-8<br>h–1–2–3–4–5–6–7–8<br>跳表会从顶层往下查找，查找元素7发现第一层6，快速跳跃小于7的元素，深入第二层6的位置发现8比7大就直接深入底层查找到了7。整个过程比一般链表从 1 开始逐步遍历要好的多。因此很显然，跳表是一种用空间换时间的方法。<br>使用跳表实现Map和哈希表实现Map区别为 哈希表Map不会保存元素顺序，而跳表会保存，且跳表内所有元素都是有序的，所以如果应用需求需要有序数据 那么跳表是不二选择  具体实现为 ConcurrentSkipListMap。 其内部数据结构主要是 Node&lt;K,V&gt;  Node所有操作均采用CAS，另外还有一个就是Index 通过Index进行全网组织。</p>
 
     </article>
     <!-- 前后页  -->
@@ -760,7 +760,84 @@
     
     
     
-    <div class="total-archive"> 总计 : 29 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 30 </div>
     
     <div class="post-archive">
     
@@ -769,6 +846,11 @@
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2018/03/15/人人必知的10个jQuery小技巧/" >人人必知的10个jQuery小技巧</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -929,11 +1011,11 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -953,10 +1035,6 @@
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
@@ -964,6 +1042,12 @@
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     

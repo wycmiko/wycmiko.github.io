@@ -219,7 +219,7 @@
 <li>你需要指定要提交保存容器的ID。(译者按：通过docker ps -l 命令获得)</li>
 <li>无需拷贝完整的id，通常来讲最开始的三至四个字母即可区分。（译者按：非常类似git里面的版本号)<br>正确的命令：<br><code>$docker commit 698(ID) learn/ping</code>（要保存的容器名）</li>
 </ol>
-<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><p>简介：对一个镜像提交修改之后，就可以运行它里面新安装的命令了。<br>ok，到现在为止，你已经建立了一个完整的、自成体系的docker环境，并且安装了ping命令在里面。它可以在任何支持docker环境的系统中运行啦！(译者按：是不是很神奇呢？)让我们来体验一下吧！<br>目标：<br>在新的镜像中运行ping www.google.com命令。<br>提示：<br>一定要使用新的镜像名learn/ping来运行ping命令。(译者按：最开始下载的learn/tutorial镜像中是没有ping命令的)<br>正确的命令：<br><code>$docker run learn/ping ping www.google.com</code></p>
+<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><p>简介：对一个镜像提交修改之后，就可以运行它里面新安装的命令了。<br>ok，到现在为止，你已经建立了一个完整的、自成体系的docker环境，并且安装了ping命令在里面。它可以在任何支持docker环境的系统中运行啦！(译者按：是不是很神奇呢？)让我们来体验一下吧！<br>目标：<br>在新的镜像中运行ping <a href="http://www.google.com命令。" target="_blank" rel="noopener">www.google.com命令。</a><br>提示：<br>一定要使用新的镜像名learn/ping来运行ping命令。(译者按：最开始下载的learn/tutorial镜像中是没有ping命令的)<br>正确的命令：<br><code>$docker run learn/ping ping www.google.com</code></p>
 <h2 id="检查运行中的镜像"><a href="#检查运行中的镜像" class="headerlink" title="检查运行中的镜像"></a>检查运行中的镜像</h2><p>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br><strong> 检查运行中的镜像 </strong><br>现在你已经运行了一个docker容器，让我们来看下正在运行的容器。<br>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br>目标：<br>查找某一个运行中容器的id，然后使用<code>docker inspect</code>命令查看容器的信息。<br>提示：<br>可以使用镜像id的前面部分，不需要完整的id。<br>正确的命令：<br><code>$ docker inspect efe</code></p>
 <h2 id="发布docker镜像"><a href="#发布docker镜像" class="headerlink" title="发布docker镜像"></a>发布docker镜像</h2><p>简介：我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br><strong> 发布docker镜像 </strong><br>现在我们已经验证了新镜像可以正常工作，下一步我们可以将其发布到官方的索引网站。还记得我们最开始下载的learn/tutorial镜像吧，我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br>目标：<br>把learn/ping镜像发布到docker的index网站。<br>提示：</p>
 <ol>
@@ -725,7 +725,84 @@
     
     
     
-    <div class="total-archive"> 总计 : 29 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 30 </div>
     
     <div class="post-archive">
     
@@ -734,6 +811,11 @@
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2018/03/15/人人必知的10个jQuery小技巧/" >人人必知的10个jQuery小技巧</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -894,11 +976,11 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -918,10 +1000,6 @@
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
@@ -929,6 +1007,12 @@
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     

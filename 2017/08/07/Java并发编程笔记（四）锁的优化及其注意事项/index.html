@@ -218,7 +218,7 @@
 <p>现在来分析一波他的set方法源码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">            map.set(<span class="keyword">this</span>, value);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure><br>可以看出 ，它通过当前线程来去获取一个ThreadLocalMap,并把值设入ThreadLocalMap当中，而ThreadLocal你可以理解为一个hashmap,一个内部成员，写入ThreadLocalMap的key正是当前的ThreadLocal对象，value就是我们需要的值。<br>get()方法自然而然也就是把值都取出来：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     Thread t = Thread.currentThread();</span><br><span class="line">     ThreadLocalMap map = getMap(t);</span><br><span class="line">     <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">         ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">         <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">             <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">             T result = (T)e.value;</span><br><span class="line">             <span class="keyword">return</span> result;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> setInitialValue();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><br>首先get方法也是通过当前线程去获取一个ThreadLocalMap对象，然后通过该key去获取value。<br>由此我们可以引出一个问题，这些变量都是维护在Thread类内部的（ThreadLocalMap）定义所在类，这也就意味着只要线程不退出，对象的引用就一直存在。当线程退出时，Thread类会进行一些清理工作，其中就包括 清理ThreadLocalMap:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">当线程退出时 由系统进行回调 资源清理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">exit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (group != <span class="keyword">null</span>) &#123;</span><br><span class="line">            group.threadTerminated(<span class="keyword">this</span>);</span><br><span class="line">            group = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*加速资源清理 */</span></span><br><span class="line">        target = <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">/* Speed the release of some of these resources */</span></span><br><span class="line">        threadLocals = <span class="keyword">null</span>;</span><br><span class="line">        inheritableThreadLocals = <span class="keyword">null</span>;</span><br><span class="line">        inheritedAccessControlContext = <span class="keyword">null</span>;</span><br><span class="line">        blocker = <span class="keyword">null</span>;</span><br><span class="line">        uncaughtExceptionHandler = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p>因此 如果我们使用线程池（例如固定大小的线程池） 线程未必会退出，如果这样你将一些很大的对象放入ThreadLocal内（实际放入ThreadLocalMap内），可能会使系统出现内存泄漏的可能。（意思就是如果设置了对象不使用它 该对象也无法被回收）。此时你就要使用ThreadLocal.remove()方法将这个变量移除，就像关闭流和数据库连接一样，如果你不需要对象了就应该告诉虚拟机请回收防止内存泄漏。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ThreadLocalMap m = getMap(Thread.currentThread());</span><br><span class="line">    <span class="keyword">if</span> (m != <span class="keyword">null</span>)</span><br><span class="line">        m.remove(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>threadLocals = null;会加速垃圾回收（把对象设置为null即为弱引用，如果被垃圾回收器发现会立即回收），ThreadLocalMap是一个类似Hashmap。更精确地说 它是类似WeakHashMap。ThreadLocalMap实现使用了弱引用 WeakReference<threadlocal><br>        static class Entry extends WeakReference<threadlocal<?>&gt; {<br>            /<em>* The value associated with this ThreadLocal. </em>/<br>            Object value;</threadlocal<?></threadlocal></p>
+<p>threadLocals = null;会加速垃圾回收（把对象设置为null即为弱引用，如果被垃圾回收器发现会立即回收），ThreadLocalMap是一个类似Hashmap。更精确地说 它是类似WeakHashMap。ThreadLocalMap实现使用了弱引用 WeakReference<threadlocal><br>        static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; {<br>            /*<em> The value associated with this ThreadLocal. </em>/<br>            Object value;</threadlocal></p>
 <pre><code>    Entry(ThreadLocal&lt;?&gt; k, Object v) {
         super(k);
         value = v;
@@ -732,7 +732,84 @@
     
     
     
-    <div class="total-archive"> 总计 : 29 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 30 </div>
     
     <div class="post-archive">
     
@@ -741,6 +818,11 @@
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2018/03/15/人人必知的10个jQuery小技巧/" >人人必知的10个jQuery小技巧</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -901,11 +983,11 @@
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
@@ -925,10 +1007,6 @@
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
@@ -936,6 +1014,12 @@
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
     
