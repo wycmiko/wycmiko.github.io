@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        docker基本使用 · 翁玉川Miko个人博客
+        翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -58,8 +58,6 @@
 </head>
 
     
-        <body class="post-body">
-    
     
 <header class="header">
 
@@ -67,73 +65,27 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
-    <div class="banner">
-            <div class="blog-title">
-                <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
-            </div>
-            <div class="post-title">
-                <a href="#" class="post-name">docker基本使用</a>
-            </div>
-    </div>
-    
     <a class="home-link" href=/>Yuchuan Weng.Miko Tech-Blog.</a>
 </header>
     <div class="wrapper">
         <div class="site-intro">
     
     <!-- 主页  -->
-    
-    
-    <!-- 404页  -->
             
-    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            docker基本使用
-            <!-- 404 -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
-            
-            <!-- 404 -->
-            
         </p>
         <!-- 文章页meta -->
-        
-            <!-- 文章页标签  -->
-            
-                <div class= post-intro-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = docker>docker</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 容器>容器</a>
-    
-</div>
-            
-            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
-            <div class="post-intro-meta">
-                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2017/03/01</span>
-                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
-                    <span class="iconfont-archer">&#xe604;</span>
-                    <span id="busuanzi_value_page_pv"></span>
-                </span>
-                <span class="shareWrapper">
-                    <span class="iconfont-archer shareIcon">
-                        &#xe601;
-                    </span>
-                    <span class="bdsharebuttonbox">
-                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
-                    </span>
-                </span>
-            </div>
         
     </div>
 </div>
@@ -201,85 +153,32 @@
             }
         </script>
         <div class="container container-unloaded">
-            <main class="main post-page">
-    <article class="article-entry">
-        <h1 id="Docker简介"><a href="#Docker简介" class="headerlink" title="Docker简介"></a>Docker简介</h1><blockquote>
-<p>简介：Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。<br>Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。 </p>
-</blockquote>
-<p>Docker通常用于如下场景：<br>  ● web应用的自动化打包和发布；<br>  ● 自动化测试和持续集成、发布；<br>  ● 在服务型环境中部署和调整数据库或其他的后台应用；<br>  ● 从头编译或者扩展现有的OpenShift或Cloud Foundry平台来搭建自己的PaaS环境。<br>Windows下安装好打开虚拟机为ENNABLED </p>
-<p>安装好后启动 控制台输入<br><code>docker version</code>  查看docker版本号</p>
-<h1 id="docker基本操作"><a href="#docker基本操作" class="headerlink" title="docker基本操作"></a>docker基本操作</h1><h2 id="搜索可用的docker镜像"><a href="#搜索可用的docker镜像" class="headerlink" title="搜索可用的docker镜像"></a>搜索可用的docker镜像</h2><p>使用docker最简单的方式莫过于从现有的容器镜像开始。Docker官方网站专门有一个页面来存储所有可用的镜像，网址是：index.docker.io。你可以通过浏览这个网页来查找你想要使用的镜像，或者使用命令行的工具来检索。</p>
-<p>目标：<br>学会使用命令行的工具来检索名字叫做tutorial的镜像。<br>提示：<br>命令行的格式为：<code>docker search 镜像名字</code><br>正确的命令：<br><code>$docker search tutorial</code></p>
-<h2 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h2><p>学会使用docker命令来下载镜像<br>下载镜像的命令非常简单，使用docker pull命令即可。(译者按：docker命令和git有一些类似的地方）。在docker的镜像索引网站上面，镜像都是按照用户名/镜像名的方式来存储的。有一组比较特殊的镜像，比如ubuntu这类基础镜像，经过官方的验证，值得信任，可以直接用镜像名来检索到。<br>目标：<br>通过docker命令下载tutorial镜像。<br>提示：<br>执行pull命令的时候要写完整的名字，比如”learn/tutorial”。<br>正确的命令：<br><code>$docker pull learn/tutorial</code><br>简介：通过<code>docker run</code>命令可以启动某一个镜像，并运行一个命令。</p>
-<h2 id="输出指令"><a href="#输出指令" class="headerlink" title="输出指令"></a>输出指令</h2><p>在docker容器中运行hello world!<br>docker容器可以理解为在沙盒中运行的进程。这个沙盒包含了该进程运行所必须的资源，包括文件系统、系统类库、shell 环境等等。但这个沙盒默认是不会运行任何程序的。你需要在沙盒中运行一个进程来启动某一个容器。这个进程是该容器的唯一进程，所以当该进程结束的时候，容器也会完全的停止。<br>目标：<br>在我们刚刚下载的镜像中输出”hello word”。为了达到这个目的，我们需要在这个容器中运行”echo”命令，输出”hello word”。<br>提示：<br><code>docker run</code>命令有两个参数，一个是镜像名，一个是要在镜像中运行的命令。<br>正确的命令：<br><code>$docker run learn/tutorial echo &quot;hello word&quot;</code></p>
-<h2 id="安装程序"><a href="#安装程序" class="headerlink" title="安装程序"></a>安装程序</h2><p>简介：在docker容器中安装新的程序。<br>下一步我们要做的事情是在容器里面安装一个简单的程序(ping)。我们之前下载的tutorial镜像是基于ubuntu的，所以你可以使用ubuntu的<code>apt-get</code>命令来安装ping程序：<code>apt-get install -y ping</code>。<br>备注：apt-get 命令执行完毕之后，容器就会停止，但对容器的改动不会丢失。<br>目标：<br>在learn/tutorial镜像里面安装ping程序。<br>提示：<br>在执行<code>apt-get</code> 命令的时候，要带上-y参数。如果不指定-y参数的话，<code>apt-get</code>命令会进入交互模式，需要用户输入命令来进行确认，但在docker环境中是无法响应这种交互的。<br>正确的命令：<br><code>$docker run learn/tutorial apt-get install -y ping</code><br>通过<code>docker commit</code>命令保存对容器的修改<br>保存对容器的修改<br>当你对某一个容器做了修改之后（通过在容器中运行某一个命令），可以把对容器的修改保存下来，这样下次可以从保存后的最新状态运行该容器。docker中保存状态的过程称之为committing，它保存的新旧状态之间的区别，从而产生一个新的版本。<br>目标：<br>首先使用<code>docker ps -l</code>命令获得安装完ping命令之后容器的id。然后把这个镜像保存为learn/ping。</p>
-<p>提示：</p>
-<ol>
-<li>运行<code>docker commit</code>，可以查看该命令的参数列表。</li>
-<li>你需要指定要提交保存容器的ID。(译者按：通过docker ps -l 命令获得)</li>
-<li>无需拷贝完整的id，通常来讲最开始的三至四个字母即可区分。（译者按：非常类似git里面的版本号)<br>正确的命令：<br><code>$docker commit 698(ID) learn/ping</code>（要保存的容器名）</li>
-</ol>
-<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><p>简介：对一个镜像提交修改之后，就可以运行它里面新安装的命令了。<br>ok，到现在为止，你已经建立了一个完整的、自成体系的docker环境，并且安装了ping命令在里面。它可以在任何支持docker环境的系统中运行啦！(译者按：是不是很神奇呢？)让我们来体验一下吧！<br>目标：<br>在新的镜像中运行ping <a href="http://www.google.com命令。" target="_blank" rel="noopener">www.google.com命令。</a><br>提示：<br>一定要使用新的镜像名learn/ping来运行ping命令。(译者按：最开始下载的learn/tutorial镜像中是没有ping命令的)<br>正确的命令：<br><code>$docker run learn/ping ping www.google.com</code></p>
-<h2 id="检查运行中的镜像"><a href="#检查运行中的镜像" class="headerlink" title="检查运行中的镜像"></a>检查运行中的镜像</h2><p>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br><strong> 检查运行中的镜像 </strong><br>现在你已经运行了一个docker容器，让我们来看下正在运行的容器。<br>使用<code>docker ps</code>命令可以查看所有正在运行中的容器列表，使用<code>docker inspect</code>命令我们可以查看更详细的关于某一个容器的信息。<br>目标：<br>查找某一个运行中容器的id，然后使用<code>docker inspect</code>命令查看容器的信息。<br>提示：<br>可以使用镜像id的前面部分，不需要完整的id。<br>正确的命令：<br><code>$ docker inspect efe</code></p>
-<h2 id="发布docker镜像"><a href="#发布docker镜像" class="headerlink" title="发布docker镜像"></a>发布docker镜像</h2><p>简介：我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br><strong> 发布docker镜像 </strong><br>现在我们已经验证了新镜像可以正常工作，下一步我们可以将其发布到官方的索引网站。还记得我们最开始下载的learn/tutorial镜像吧，我们也可以把我们自己编译的镜像发布到索引页面，一方面可以自己重用，另一方面也可以分享给其他人使用。<br>目标：<br>把learn/ping镜像发布到docker的index网站。<br>提示：</p>
-<ol>
-<li><p><code>docker images</code>命令可以列出所有安装过的镜像。</p>
-</li>
-<li><p><code>docker push</code>命令可以将某一个镜像发布到官方网站。</p>
-</li>
-<li>你只能将镜像发布到自己的空间下面。这个模拟器登录的是learn帐号。<br>预期的命令：<br><code>$ docker push learn/ping</code></li>
-</ol>
-
-    </article>
-    <!-- 前后页  -->
-    <ul class="post-pager">
-        
-            <li class="next">
-                <a href= "/2017/03/22/浅谈Redis部分应用/" title= 浅谈Redis部分应用 >
-                    <span>Next Post</span>
-                    <span>浅谈Redis部分应用</span>
-                </a>
-            </li>
-        
-        
-            <li class="previous">
-                <a href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" title= 超快速KV NOSQL-LevelDB >
-                    <span>Previous Post</span>
-                    <span>超快速KV NOSQL-LevelDB</span>
-                </a>
-            </li>
-        
-    </ul>
-    <!-- 评论插件 -->
-    <!-- 来必力City版安装代码 -->
-
-<!-- City版安装代码已完成 -->
+            <main class="main index-page">
     
     
-<div id="container"></div>
-<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script>
-<script>
-    var gitment = new Gitment({
-        id: 'Wed Mar 01 2017 17:41:41 GMT+0800', // 可选。默认为 location.href
-        owner: 'wycmiko',
-        repo: 'blogcomment.github.io',
-        oauth: {
-            client_id: '712556ec4c3ca7b31d60',
-            client_secret: '4b0ec453ed9b66699036bd2586f3fece0371e1a1',
-        },
-    })
-    gitment.render('container')
-
-</script>
-
-    <!--PC版-->
-
-    <!--PC版-->
-
-
     
-    <!-- 评论 -->
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/07/17/test/" >
+                
+                    <span>test</span>
+            </a>
+            <a class="content-show-full" href = "/2018/07/17/test/" >
+                <div class="abstract-content">
+                    
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/07/17</span>
+                </div>
+            </div>
+        </article>
+    
+    <!-- paginator  -->
+    
 </main>
             <!-- profile -->
             
@@ -339,13 +238,6 @@
 </footer>
     </div>
     <!-- toc -->
-    
-    <div class="toc-wrapper">
-        <div class="toc-catalog">
-            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
-        </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker简介"><span class="toc-number">1.</span> <span class="toc-text">Docker简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#docker基本操作"><span class="toc-number">2.</span> <span class="toc-text">docker基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#搜索可用的docker镜像"><span class="toc-number">2.1.</span> <span class="toc-text">搜索可用的docker镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载镜像"><span class="toc-number">2.2.</span> <span class="toc-text">下载镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输出指令"><span class="toc-number">2.3.</span> <span class="toc-text">输出指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装程序"><span class="toc-number">2.4.</span> <span class="toc-text">安装程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运行程序"><span class="toc-number">2.5.</span> <span class="toc-text">运行程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查运行中的镜像"><span class="toc-number">2.6.</span> <span class="toc-text">检查运行中的镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布docker镜像"><span class="toc-number">2.7.</span> <span class="toc-text">发布docker镜像</span></a></li></ol></li></ol>
-    </div>
     
     <div class="back-top">&#xe639;</div>
     <div class="sidebar">
