@@ -158,6 +158,39 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
+                
+                    <span>HBase概念及操作（四）内部表原理以及拆分操作</span>
+            </a>
+            <a class="content-show-full" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
+                <div class="abstract-content">
+                    
+上一篇介绍了JavaAPI以及基本Shell指令，这一篇我们将介绍HBase内部表原理以及拆分操作
+
+hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出scan扫描hbase名称空间下的meta表，返回列加Cell。rowKey为唯一的，info为列族，：regioninfo为列名。123456timestamp这个时刻该行的的cell的值格式（都是key=&gt;value对 &apos;,&apos;分割） 或者单独的一个值，val=xxx ：value=&#123;EN 3498206.ab1abd27f20f CO...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/16</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >
                 
                     <span>HBase概念及操作（三）HBase JavaAPI以及Shell命令</span>
@@ -177,9 +210,9 @@
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
     
 </div>
                 
@@ -212,9 +245,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
     
 </div>
                 
@@ -242,9 +275,9 @@ HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方�
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
     
 </div>
                 
@@ -469,54 +502,10 @@ LevelD...
             </div>
         </article>
     
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/01/21/密码学原理/" >
-                
-                    <span>密码学原理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/01/21/密码学原理/" >
-                <div class="abstract-content">
-                    密码学原理对称加密算法对称加密算法用来对敏感数据等信息进行加密，常用的算法包括： DES（Data Encryption Standard） ：数据加密标准，速度较快，适用于加密大量数据的场合。 3DES（Triple DES） ：是基于DES，对一块数据用三个不同的密钥进行三次加密，强度更高。 AES（Advanced Encryption Standard） ：高级加密标准，是下一代的加密算法标准，速度快，安全级别高；
-AES与3DES的比较
-
-
-算法名称
-算法类型
-密钥长度
-速度
-解密时间（建设机器每秒尝试255个密钥）
-资源消耗
-
-
-
-
-AES
-对称block密码
-128、192...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 密码学>密码学</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/01/21</span>
-                </div>
-            </div>
-        </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/page/2/">#PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
+        <a class="extend prev" rel="prev" href="/archives/page/2/">#PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/4/">#NEXT</a>
     </nav>
     
 </main>
@@ -968,7 +957,32 @@ AES
     
     
     
-    <div class="total-archive"> 总计 : 30 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 31 </div>
     
     <div class="post-archive">
     
@@ -977,6 +991,11 @@ AES
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/InnoDB七种类型锁/" >InnoDB七种类型锁</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1142,25 +1161,33 @@ AES
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+        <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+        <span class="sidebar-tag-name"><a href= "#">InnoDB</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
     
@@ -1169,10 +1196,6 @@ AES
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
@@ -1184,13 +1207,13 @@ AES
     
         <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
     

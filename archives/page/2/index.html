@@ -158,6 +158,38 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
+                
+                    <span>Java并发编程笔记（九）NIO与AIO2</span>
+            </a>
+            <a class="content-show-full" href = "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >
+                <div class="abstract-content">
+                    读完了再通知我 AIOAIO即为Asynchronized。异步IO， NIO只是newIO不是异步的，只是同步可以设置为非阻塞模式 ，真正异步的是AIO。AIO将Future模式运用的十分广泛，它不是等待IO准备好后再通知线程。而是等待IO操作完成后再通知线程，实现异步IO。
+AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketChannel。
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/12/14</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
                 
                     <span>Java并发编程笔记（八）NIO与AIO</span>
@@ -425,43 +457,10 @@
             </div>
         </article>
     
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                
-                    <span>HBase概念及操作（四）内部表原理以及拆分操作</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                <div class="abstract-content">
-                    
-上一篇介绍了JavaAPI以及基本Shell指令，这一篇我们将介绍HBase内部表原理以及拆分操作
-
-hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出scan扫描hbase名称空间下的meta表，返回列加Cell。rowKey为唯一的，info为列族，：regioninfo为列名。123456timestamp这个时刻该行的的cell的值格式（都是key=&gt;value对 &apos;,&apos;分割） 或者单独的一个值，val=xxx ：value=&#123;EN 3498206.ab1abd27f20f CO...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/16</span>
-                </div>
-            </div>
-        </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/">#PREV</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/">#NEXT</a>
+        <a class="extend prev" rel="prev" href="/archives/">#PREV</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/3/">#NEXT</a>
     </nav>
     
 </main>
@@ -913,7 +912,32 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
     
     
     
-    <div class="total-archive"> 总计 : 30 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 31 </div>
     
     <div class="post-archive">
     
@@ -922,6 +946,11 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/InnoDB七种类型锁/" >InnoDB七种类型锁</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1087,25 +1116,33 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+        <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+        <span class="sidebar-tag-name"><a href= "#">InnoDB</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
     
@@ -1114,10 +1151,6 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
@@ -1129,13 +1162,13 @@ hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出sca
     
         <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
     
