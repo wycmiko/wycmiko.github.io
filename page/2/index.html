@@ -171,6 +171,71 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/08/分布式流数据处理Kafka-一/" >
+                
+                    <span>分布式流数据处理Kafka(一)</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/08/分布式流数据处理Kafka-一/" >
+                <div class="abstract-content">
+                    Kafka简介Kafka 起初是由 LinkedIn 公司开发的一个分布式的消息系统，后成为 Apache 的一部分，它使用 Scala 编写，以可水平扩展和高吞吐率而被广泛使用。目前越来越多的开源分布式处理系统如 Cloudera、Apache Storm、Spark 等都支持与 Kafka 集成。随着微服务的流行，很多公司都在尝试将现有的系统进行架构升级。促成 Movio 公司架构改造的一项关键技术就是 Kafka 消息队列。Kafka 作为分布式消息队列，在可靠性和可扩展性方面有非常大的优势。它不仅成为了 Movio 公司基础架构的关键组成部分，还为正在创建的系统架构提供了依据。本...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/08</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/05/Java8与并发2/" >
+                
+                    <span>Java8与并发2</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/05/Java8与并发2/" >
+                <div class="abstract-content">
+                    
+上一篇我们介绍了Java8函数式编程的特点和基本操作，以及增强型的Future,CompletableFuture,这一篇我们将继续介绍Java8为并发所做的努力。
+
+组合多个CompletableFutureCompletableFuture 还允许你将多个CompletableFuture 进行组合。一种方法是使用thenCompose() 。将一个CompletableFuture执行完成的结果传递给下一个CompletionStage进行处理（返回新的实例）。下面演示一个一个CompletableFuture调用后的结果作为另一个的参数调用的函数式过程：1234567final...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Java8特性>Java8特性</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 函数式编程>函数式编程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/05</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/12/28/Java8与并发/" >
                 
                     <span>Java8与并发</span>
@@ -412,64 +477,6 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
                 <!-- date  -->
                 <div class="abstract-date">
                     <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/07/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >
-                
-                    <span>Java并发编程笔记（二）JDK并发包详解1</span>
-            </a>
-            <a class="content-show-full" href = "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >
-                <div class="abstract-content">
-                    synchronized的功能扩展：重入锁重入锁完全可以替代Synchronized关键字,在java5以前重入锁的性能远远好于synchronized关键字，但从jdk6开始，synchronized上做足了优化，使得两者性能差距并不大。重入锁使用java.util.concurrent.locks.ReentrantLock类来实现。重入锁的基本示例如下：
-123456789101112131415161718192021222324252627282930313233343536373839404142package thread.test.concurrent;import ja...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/06/27</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >
-                
-                    <span>Java并发编程笔记（一）基础概念理解</span>
-            </a>
-            <a class="content-show-full" href = "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >
-                <div class="abstract-content">
-                    走入并行世界Linux之父  Linus Torvalds 表示忘掉那该死的并行，除服务端和图像处理之外。（因为图像处理需要极大的计算量，一张1024*768的像素图片需要78万6千多像素 所以设计大量的矩阵计算 需要并行处理提高效率。服务端也一样，就想TB Tmall的双十一。）
-摩尔定律的失效：摩尔定律是由英特尔创始人之一戈登摩尔提出来的，其内容为：集成电路上可容纳的晶体管的数目 约每隔24个月便会增加一倍，经常被引用为18个月，即每隔18-24个月计算机性能就会翻上一番。然而英特尔公司在CPU 4GHz芯片上失败了 ，硬件方面无法实现便使得多核汇聚在一个核上，出现了各式各样的多核处...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/06/06</span>
                 </div>
             </div>
         </article>
@@ -1037,7 +1044,83 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     
     
-    <div class="total-archive"> 总计 : 32 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 34 </div>
     
     <div class="post-archive">
     
@@ -1046,6 +1129,16 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/12</span><a class="archive-post-title" href= "/2018/08/12/高效编写Dockerfile的几条准则/" >高效编写Dockerfile的几条准则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/2018/07/02/40个Java多线程问题总结/" >40个Java多线程问题总结</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1223,9 +1316,13 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
     
@@ -1233,31 +1330,31 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">InnoDB</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
@@ -1273,11 +1370,13 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Docker</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
