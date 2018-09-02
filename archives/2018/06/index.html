@@ -58,10 +58,8 @@
 </head>
 
     
-        <body class="home-body">
     
-    
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -73,29 +71,18 @@
         <div class="site-intro">
     
     <!-- 主页  -->
-    
-    
-    <!-- 文章页  -->
             
-    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/intro-desktop.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Yuchuan Weng.Miko Tech-Blog.
-            <!-- 文章页  -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
-            
-            
-                Welcome to QuanQuan.Miko Tech-Blog.<br>Java开发、大数据、分布式系统、技术总结、技术分享<br>Java-Develop、BigData、Distributed System、Technical  Summary、Technical Sharing<br>.
-            
-            <!-- 文章页  -->
             
         </p>
         <!-- 文章页meta -->
@@ -171,13 +158,23 @@
     
     
         <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/26/缓存那些事儿/" >
+            <a class="abstract-title" href = "/2018/06/02/Java程序猿必备Idea插件/" >
                 
-                    <span>缓存那些事儿</span>
+                    <span>Java程序猿必备Idea插件</span>
             </a>
-            <a class="content-show-full" href = "/2017/05/26/缓存那些事儿/" >
+            <a class="content-show-full" href = "/2018/06/02/Java程序猿必备Idea插件/" >
                 <div class="abstract-content">
-                    前言一般而言，现在互联网应用（网站或App）的整体流程，可以概括如图1所示，用户请求从界面（浏览器或App界面）到网络转发、应用服务再到存储（数据库或文件系统），然后返回到界面呈现内容。随着互联网的普及，内容信息越来越复杂，用户数和访问量越来越大，我们的应用需要支撑更多的并发量，同时我们的应用服务器和数据库服务器所做的计算也越来越多。但是往往我们的应用服务器资源是有限的，且技术变革是缓慢的，数据库每秒能接受的请求次数也是有限的（或者文件的读写也是有限的），如何能够有效利用有限的资源来提供尽可能大的吞吐量？一个有效的办法就是引入缓存，打破标准流程，每个环节中请求可以从缓存中直接获取目标数据...
+                    善用Intellij插件可大幅提升我们的效率以下是我用过不错的Intellij插件
+.ignore生成各种ignore文件，一键创建git ignore文件的模板，免得自己去写
+截图:
+
+lombok支持lombok的各种注解，从此不用写getter setter这些 可以把注解还原为原本的java代码 非常方便
+截图：
+
+p3c阿里巴巴出品的java代码规范插件
+可以扫描整个项目 找到不规范的地方 并且大部分可以自动修复
+更多可看: https://github.com/alibaba/p3c/tree/master/idea-plugin
+FindBugs-IDEA检测代码中可能的b...
                 </div>
             </a>
             <div class="abstract-post-meta">
@@ -185,407 +182,21 @@
                 
                 <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = 缓存>缓存</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 优化>优化</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 插件>插件</a>
     
 </div>
                 
                 <!-- date  -->
                 <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/26</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                
-                    <span>HBase概念及操作（四）内部表原理以及拆分操作</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >
-                <div class="abstract-content">
-                    
-上一篇介绍了JavaAPI以及基本Shell指令，这一篇我们将介绍HBase内部表原理以及拆分操作
-
-hbase(main):013:0&gt; scan &#39;hbase:meta&#39;这个指令我们可以看出scan扫描hbase名称空间下的meta表，返回列加Cell。rowKey为唯一的，info为列族，：regioninfo为列名。123456timestamp这个时刻该行的的cell的值格式（都是key=&gt;value对 &apos;,&apos;分割） 或者单独的一个值，val=xxx ：value=&#123;EN 3498206.ab1abd27f20f CO...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/16</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >
-                
-                    <span>HBase概念及操作（三）HBase JavaAPI以及Shell命令</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >
-                <div class="abstract-content">
-                    
-上一篇我们提到了HBase的安装和基本操作，这一节我们将介绍一下HBaseJavaAPI的使用。
-
-我们知道Hbase是存储于HDFS之上的，在rootDir这里可以查看到其路径s2:50070/ 浏览文件系统可以查看到hbase这个目录，点进去可以看到两个内置的名称空间 default和hbase。
-
-创建Maven项目 HbaseDemo.配置pom:123456789101112131415161718192021222324252627282930313233343536373839404142  &lt;dependencies&gt;  &lt;!-- 引入之前项目的 Ha...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/06</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >
-                
-                    <span>HBase概念及操作（二）HBase安装体验</span>
-            </a>
-            <a class="content-show-full" href = "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >
-                <div class="abstract-content">
-                    
-前面一篇对HBase做了一个基本的概念，本篇将介绍HBase的安装和使用
-
-HBase安装以及体验快速开始本指南介绍了在单机安装HBase的方法。会引导你通过shell创建一个表，插入一行，然后删除它，最后停止HBase。只要10分钟就可以完成以下的操作。
-下载解压最新版本选择一个Apache 下载镜像下载 HBase Releases. 点击 stable目录，然后下载后缀为 .tar.gz 的文件; 例如 hbase-0.95-SNAPSHOT.tar.gz.
-我们这里下载的是：解压缩，然后进入到那个要解压的目录.$ tar xfz hbase-0.95-SNAPSHOT.tar....
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/05/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >
-                
-                    <span>HBase概念及操作（一）HBase基本概念及原理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >
-                <div class="abstract-content">
-                    Hbase简介HBase是一个开源的非关系型分布式数据库（NoSQL），它参考了谷歌的BigTable建模，实现的编程语言为 Java。它是Apache软件基金会的Hadoop项目的一部分，运行于HDFS文件系统之上，为 Hadoop 提供类似于BigTable 规模的服务。因此，它可以容错地存储海量稀疏的数据。hbase是bigtable的开源山寨版本。是建立的hdfs之上，提供高可靠性、高性能、列存储、可伸缩、实时读写的数据库系统。它介于nosql和RDBMS之间，仅能通过主键(row key)和主键的range来检索数据，仅支持单行事务(可通过hive支持来实现多表join等复杂操...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = HBase>HBase</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/04/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/30/JVM总体梳理/" >
-                
-                    <span>JVM总体梳理</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/30/JVM总体梳理/" >
-                <div class="abstract-content">
-                    对于Java程序员来讲，spring全家桶几乎可以搞定一切，spring全家桶便是精妙的招式，jvm就是内功心法很重要的一块，线上出现性能问题，jvm调优更是不可回避的问题。因此JVM基础知识对于高级程序员的重要性不必言语，我司在面试高级开发的时候，jvm相关知识也必定是考核的标准之一。本篇文章会根据之前写的jvm系列文章梳理出jvm需要关注的所有考察点。
-jvm 总体梳理jvm体系总体分四大块：
-
-类的加载机制
-jvm内存结构
-GC算法 垃圾回收
-GC分析 命令调优
-
-
-类的加载机制主要关注点：
-
-什么是类的加载
-类的生命周期
-类加载器
-双亲委派模型
-
-什么是类的加载？
-&nbsp;&...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = JVM虚拟机>JVM虚拟机</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/30</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/22/浅谈Redis部分应用/" >
-                
-                    <span>浅谈Redis部分应用</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/22/浅谈Redis部分应用/" >
-                <div class="abstract-content">
-                    当前已经进入大数据时代，大数据技术和产品百花齐放，在各自的应用场景发挥重要作用，Redis做为高性能的键值数据库与这些技术有着千丝万缕的联系，本文将介绍如何将Redis与Hadoop、ELK等技术进行结合。
-Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高可用性、可扩展性、高容错、低成本等特性，已经是大数据系统的标配，但是Hadoop中HDFS的存储机制使得它无法面向终端用户(例如利用用户的历史浏览记录为用户推荐新闻、商品等)，所以通常是将离线计算的结果导入到面向用户的存储中(例如Redis、HBase等)。而Hadoop支持自定义OutPutFormat，如...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Redis>Redis</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Hadoop>Hadoop</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/22</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/03/01/docker基本使用/" >
-                
-                    <span>docker基本使用</span>
-            </a>
-            <a class="content-show-full" href = "/2017/03/01/docker基本使用/" >
-                <div class="abstract-content">
-                    Docker简介
-简介：Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在笔记本上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。 
-
-Docker通常用于如下场景：  ● web应用的自动化打包和发布；  ...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = docker>docker</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 容器>容器</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/03/01</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
-                
-                    <span>超快速KV NOSQL-LevelDB</span>
-            </a>
-            <a class="content-show-full" href = "/2017/02/25/超快速KV-NOSQL-LevelDB/" >
-                <div class="abstract-content">
-                    LevelDB简介LevelDb就是这两位大神级别的工程师发起的开源项目，简而言之，LevelDb是能够处理十亿级别规模Key-Value型数据持久性存储的C++ 程序库。正像上面介绍的，这二位是Bigtable的设计和实现者，如果了解Bigtable的话，应该知道在这个影响深远的分布式存储系统中有两个核心的部分：Master Server和Tablet Server。其中Master Server做一些管理数据的存储以及分布式调度工作，实际的分布式数据存储以及读写操作是由Tablet Server完成的，而LevelDb则可以理解为一个简化版的Tablet Server。
-LevelD...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = NoSQL>NoSQL</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = LevelDB>LevelDB</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/25</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/02/11/区块链概念（二）/" >
-                
-                    <span>区块链概念（二）</span>
-            </a>
-            <a class="content-show-full" href = "/2017/02/11/区块链概念（二）/" >
-                <div class="abstract-content">
-                    上一篇我们介绍了区块链基本概念，作为一种概念金融货币。
-比特币主要是希望解决已有金融货币系统的几个问题：
-
-被掌控在发行机构手中；
-自身的价值无法保证；
-无法匿名化交易。
-
-实际场景  搞金融的人都能想到，实际上，要设计这么一套系统，最关键的还是一套强大的交易记录系统和中立的货币发行机制。首先，这个系统要能中立、公正、无法被篡改地记录发生过的每一笔交易。对比已有的银行系统，可以看出，现在的银行机制作为第三方，是有代价的提供了这样的服务，即如果交易双方都相信银行的数据库，那么就没问题了。可是如果是世界范围内流通的货币呢？有哪个银行能让大家完全信任它？于是，需要有一套分布式的数据库，在世界范...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 区块链>区块链</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/02/11</span>
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/06/02</span>
                 </div>
             </div>
         </article>
     
     <!-- paginator  -->
     
-    <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/page/2/">#PREV</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">#NEXT</a>
-    </nav>
-    
 </main>
             <!-- profile -->
-            
-            <div class="profile">
-    <img class="profile-avatar" src= /avatar/touxiang3.jpg >
-    <div class="profile-name">翁玉川Miko</div>
-    
-    <div class="profile-signature">
-        现居：ShangHai·China 欢迎交流留言~
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
-            
-                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
-            
-        
-    
-        
-            
-                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
-            
-        
-    
-        
-            
-                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
-            
-        
-    
-        
-            
-                <a href="//wycmiko.cn/about" class="iconfont-archer linkedin" target="_blank" title="linkedin"></a>
-            
-        
-    
-
-    </div>
-    
-    
-        <div class="friends">
-            <div>Fast Link</div>
-            
-                <span>
-                    <a href= //www.baidu.com target="_black">百度</a>
-                </span>
-            
-                <span>
-                    <a href= //www.stackoverflow.com target="_black">栈溢出</a>
-                </span>
-            
-                <span>
-                    <a href= //blog.csdn.net target="_black">CSDN</a>
-                </span>
-            
-        </div>
-    
-    
-        <div class="about-me">
-            <div>
-                <a href = "/about" >关于我</a>
-            </div>
-        </div>
-    
-</div>
             
         </div>
         <footer class="footer footer-unloaded">

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        分布式流数据处理Kafka(二) · 翁玉川Miko个人博客
+        Java程序猿必备Idea插件 · 翁玉川Miko个人博客
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -72,7 +72,7 @@
                 <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">分布式流数据处理Kafka(二)</a>
+                <a href="#" class="post-name">Java程序猿必备Idea插件</a>
             </div>
     </div>
     
@@ -93,7 +93,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            分布式流数据处理Kafka(二)
+            Java程序猿必备Idea插件
             <!-- 404 -->
             
         </h1>
@@ -111,16 +111,14 @@
             
                 <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+        <a class="post-tag" href="javascript:void(0);" data-href = 插件>插件</a>
     
 </div>
             
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2018/01/11</span>
+                <span class="post-intro-time">2018/06/02</span>
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
                     <span id="busuanzi_value_page_pv"></span>
@@ -203,84 +201,54 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>上一篇介绍了基本概念，本篇则介绍一些基本使用。</p>
-<h1 id="下载代码"><a href="#下载代码" class="headerlink" title="下载代码"></a>下载代码</h1><p>下载0.10.0.0版本并且解压它。<br><code>&gt; tar -xzf kafka_2.11-0.10.0.0.tgz</code><br><code>&gt; cd kafka_2.11-0.10.0.0</code></p>
-<h1 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h1><p>运行kafka需要使用Zookeeper，所以你需要先启动Zookeeper，如果你没有Zookeeper，你可以使用kafka自带打包和配置好的Zookeeper。<br><code>&gt; bin/zookeeper-server-start.sh config/zookeeper.properties</code><br>打印日志：<br>    [2013-04-22 15:01:37,495] INFO Reading configuration from: config/zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig)<br>    …</p>
-<p>现在启动kafka服务<br><code>&gt; bin/kafka-server-start.sh config/server.properties &amp;</code><br>[2013-04-22 15:01:47,028] INFO Verifying properties (kafka.utils.VerifiableProperties)<br>[2013-04-22 15:01:47,051] INFO Property socket.send.buffer.bytes is overridden to 1048576 (kafka.utils.VerifiableProperties)<br>…</p>
-<h1 id="创建一个主题-topic"><a href="#创建一个主题-topic" class="headerlink" title="创建一个主题(topic)"></a>创建一个主题(topic)</h1><p>创建一个名为“test”的Topic，只有一个分区和一个备份：<br><code>&gt; bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test</code></p>
-<p>创建好之后，可以通过运行以下命令，查看已创建的topic信息：<br><code>&gt; bin/kafka-topics.sh --list --zookeeper localhost:2181</code><br>test</p>
-<p>或者，除了手工创建topic外，你也可以配置你的broker，当发布一个不存在的topic时自动创建topic。</p>
-<h1 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h1><p>Kafka提供了一个命令行的工具，可以从输入文件或者命令行中读取消息并发送给Kafka集群。每一行是一条消息。<br>运行producer（生产者）,然后在控制台输入几条消息到服务器。<br><code>&gt; bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test</code><br>This is a message<br>This is another message</p>
-<h1 id="消费消息"><a href="#消费消息" class="headerlink" title="消费消息"></a>消费消息</h1><p>Kafka也提供了一个消费消息的命令行工具，将存储的信息输出出来。<br><code>&gt; bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning</code><br>This is a message<br>This is another message</p>
-<p>如果你有2台不同的终端上运行上述命令，那么当你在运行生产者时，消费者就能消费到生产者发送的消息。<br>所有的命令行工具有很多的选项，你可以查看文档来了解更多的功能。</p>
-<h1 id="设置多个broker集群"><a href="#设置多个broker集群" class="headerlink" title="设置多个broker集群"></a>设置多个broker集群</h1><p>到目前，我们只是单一的运行一个broker,，没什么意思。对于Kafka,一个broker仅仅只是一个集群的大小, 所有让我们多设几个broker.<br>首先为每个broker创建一个配置文件:<br><code>&gt; cp config/server.properties config/server-1.properties</code><br><code>&gt; cp config/server.properties config/server-2.properties</code></p>
-<p>现在编辑这些新建的文件，设置以下属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config/server-1.properties: </span><br><span class="line">    broker.id=1 </span><br><span class="line">    listeners=PLAINTEXT://:9093 </span><br><span class="line">    log.dir=/tmp/kafka-logs-1</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config/server-2.properties: </span><br><span class="line">    broker.id=2 </span><br><span class="line">    listeners=PLAINTEXT://:9094 </span><br><span class="line">    log.dir=/tmp/kafka-logs-2</span><br></pre></td></tr></table></figure>
-<p>broker.id是集群中每个节点的唯一且永久的名称，我们修改端口和日志分区是因为我们现在在同一台机器上运行，我们要防止broker在同一端口上注册和覆盖对方的数据。<br>我们已经运行了zookeeper和刚才的一个kafka节点，所有我们只需要在启动2个新的kafka节点。<br><code>&gt; bin/kafka-server-start.sh config/server-1.properties &amp;</code><br>…<br><code>&gt; bin/kafka-server-start.sh config/server-2.properties &amp;</code><br>…<br>启动好一个集群了（2台broker对应2台机器）</p>
-<p>现在，我们创建一个新topic，把备份设置为：3 一个分区<br><code>&gt; bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic     my-replicated-topic</code></p>
-<p>好了，现在我们已经有了一个集群了，我们怎么知道每个集群在做什么呢？运行命令“describe topics”<br><code>&gt; bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic</code><br>Topic:my-replicated-topic    PartitionCount:1    ReplicationFactor:3    Configs:<br>Topic: my-replicated-topic    Partition: 0    Leader: 1    Replicas: 1,2,0    Isr: 1,2,0</p>
-<p>这是一个解释输出，第一行是所有分区的摘要，每一行提供一个分区信息，因为我们只有一个分区，所以只有一行。<br>  ● “leader”：该节点负责所有指定分区的读和写，每个节点的领导都是随机选择的。<br>  ● “replicas”:备份的节点，无论该节点是否是leader或者目前是否还活着，只是显示。<br>  ● “isr”：备份节点的集合，也就是活着的节点集合。</p>
-<p>  我们运行这个命令，看看一开始我们创建的那个节点：</p>
-<blockquote>
-<p>bin/kafka-topics.sh –describe –zookeeper localhost:2181 –topic test<br>Topic:test    PartitionCount:1    ReplicationFactor:1    Configs:<br>Topic: test    Partition: 0    Leader: 0    Replicas: 0    Isr: 0</p>
-</blockquote>
-<p>没有惊喜，刚才创建的topic（主题）没有Replicas，所以是0。<br>让我们来发布一些信息在新的topic上：</p>
-<blockquote>
-<p>bin/kafka-console-producer.sh –broker-list localhost:9092 –topic my-replicated-topic<br> …<br>my test message 1<br>my test message 2<br>^C</p>
-</blockquote>
-<p>现在，消费这些消息。</p>
-<blockquote>
-<p>bin/kafka-console-consumer.sh –zookeeper localhost:2181 –from-beginning –topic my-replicated-topic<br> …<br>my test message 1<br>my test message 2<br>^C</p>
-</blockquote>
-<p>我们要测试集群的容错，kill掉leader，Broker1作为当前的leader，也就是kill掉Broker1。</p>
-<blockquote>
-<p>ps | grep server-1.properties<br>7564 ttys002    0:15.91 /System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home/bin/java…<br>kill -9 7564</p>
-</blockquote>
-<p>备份节点之一成为新的leader，而broker1已经不在同步备份集合里了。</p>
-<blockquote>
-<p>bin/kafka-topics.sh –describe –zookeeper localhost:2181 –topic my-replicated-topic<br>Topic:my-replicated-topic    PartitionCount:1    ReplicationFactor:3    Configs:<br>Topic: my-replicated-topic    Partition: 0    Leader: 2    Replicas: 1,2,0    Isr: 2,0</p>
-</blockquote>
-<p>但是，消息仍然没丢：</p>
-<blockquote>
-<p>bin/kafka-console-consumer.sh –zookeeper localhost:2181 –from-beginning –topic my-replicated-topic<br>…<br>my test message 1<br>my test message 2<br>^C</p>
-</blockquote>
-<h1 id="使用-Kafka-Connect-来-导入-导出-数据"><a href="#使用-Kafka-Connect-来-导入-导出-数据" class="headerlink" title="使用 Kafka Connect 来 导入/导出 数据"></a>使用 Kafka Connect 来 导入/导出 数据</h1><p>从控制台写入和写回数据是一个方便的开始，但你可能想要从其他来源导入或导出数据到其他系统。对于大多数系统，可以使用kafka Connect，而不需要编写自定义集成代码。Kafka Connect是导入和导出数据的一个工具。它是一个可扩展的工具，运行连接器，实现与自定义的逻辑的外部系统交互。在这个快速入门里，我们将看到如何运行Kafka Connect用简单的连接器从文件导入数据到Kafka主题，再从Kafka主题导出数据到文件，首先，我们首先创建一些种子数据用来测试：<br><code>echo -e &quot;foo\nbar&quot; &gt; test.txt</code></p>
-<p>接下来，我们开始2个连接器运行在独立的模式，这意味着它们运行在一个单一的，本地的，专用的进程。我们提供3个配置文件作为参数。第一个始终是kafka Connect进程，如kafka broker连接和数据库序列化格式，剩下的配置文件每个指定的连接器来创建，这些文件包括一个独特的连接器名称，连接器类来实例化和任何其他配置要求的。<br><code>&gt; bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties</code></p>
-<p>这是示例的配置文件，使用默认的本地集群配置并创建了2个连接器：第一个是导入连接器，从导入文件中读取并发布到Kafka主题，第二个是导出连接器，从kafka主题读取消息输出到外部文件，在启动过程中，你会看到一些日志消息，包括一些连接器实例化的说明。一旦kafka Connect进程已经开始，导入连接器应该读取从<br>test.txt</p>
-<p>和写入到topic<br>connect-test</p>
-<p>,导出连接器从主题<br>connect-test</p>
-<p>读取消息写入到文件<br>test.sink.txt</p>
-<p>. 我们可以通过验证输出文件的内容来验证数据数据已经全部导出：<br>cat test.sink.txt<br> foo<br> bar</p>
-<p>注意，导入的数据也已经在Kafka主题<br>connect-test</p>
-<p>里,所以我们可以使用该命令查看这个主题：<br>bin/kafka-console-consumer.sh –zookeeper localhost:2181 –topic connect-test –from-beginning<br> {“schema”:{“type”:”string”,”optional”:false},”payload”:”foo”}<br>{“schema”:{“type”:”string”,”optional”:false},”payload”:”bar”}<br>…</p>
-<p>连接器继续处理数据，因此我们可以添加数据到文件并通过管道移动：<br>echo “Another line” &gt;&gt; test.txt</p>
-<p>你应该会看到出现在消费者控台输出一行信息并导出到文件。</p>
-<h1 id="使用Kafka-Stream来处理数据"><a href="#使用Kafka-Stream来处理数据" class="headerlink" title="使用Kafka Stream来处理数据"></a>使用Kafka Stream来处理数据</h1><p>Kafka Stream是kafka的客户端库，用于实时流处理和分析存储在kafka broker的数据，这个快速入门示例将演示如何运行一个流应用程序。一个WordCountDemo的例子（为了方便阅读，使用的是java8 lambda表达式）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">KTable wordCounts = textLines</span><br><span class="line">   <span class="comment">// Split each text line, by whitespace, into words.</span></span><br><span class="line">   .flatMapValues(value -&gt; Arrays.asList(value.toLowerCase().split(<span class="string">"W+"</span>)))</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Ensure the words are available as record keys for the next aggregate operation.</span></span><br><span class="line">   .map((key, value) -&gt; <span class="keyword">new</span> KeyValue&lt;&gt;(value, value))</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Count the occurrences of each word (record key) and store the results into a table named "Counts".</span></span><br><span class="line">   .countByKey(<span class="string">"Counts"</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>它实现了wordcount算法，从输入的文本计算出一个词出现的次数。然而，不像其他的WordCount的例子，你可能会看到，在有限的数据之前，执行的演示应用程序的行为略有不同，因为它的目的是在一个无限的操作，数据流。类似的有界变量，它是一种动态算法，跟踪和更新的单词计数。然而，由于它必须假设潜在的无界输入数据，它会定期输出其当前状态和结果，同时继续处理更多的数据，因为它不知道什么时候它处理过的“所有”的输入数据。<br>现在准备输入数据到kafka的topic中，随后kafka Stream应用处理这个topic的数据。<br><code>&gt; echo -e &quot;all streams lead to kafka\nhello kafka streams\njoin kafka summit&quot; &gt; file-input.txt</code></p>
-<p>接下来，使用控制台的producer 将输入的数据发送到指定的topic（streams-file-input）中，（在实践中，stream数据可能会持续流入，其中kafka的应用将启动并运行）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; bin/kafka-topics.sh --create \</span><br><span class="line">            --zookeeper localhost:2181 \</span><br><span class="line">            --replication-factor 1 \</span><br><span class="line">            --partitions 1 \</span><br><span class="line">            --topic streams-file-input</span><br></pre></td></tr></table></figure></p>
-<p><code>&gt; cat /tmp/file-input.txt | ./bin/kafka-console-producer --broker-list localhost:9092 --topic streams-file-input</code></p>
-<p>现在，我们运行 WordCount 处理输入的数据：<br><code>&gt; ./bin/kafka-run-class org.apache.kafka.streams.examples.wordcount.WordCountDemo</code></p>
-<p>不会有任何的STDOUT输出，除了日志，结果不断地写回另一个topic（streams-wordcount-output），demo运行几秒，然后，不像典型的流处理应用程序，自动终止。<br>现在我们检查WordCountDemo应用，从输出的topic读取。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; ./bin/kafka-console-consumer --zookeeper localhost:2181 </span><br><span class="line">            --topic streams-wordcount-output </span><br><span class="line">            --from-beginning </span><br><span class="line">            --formatter kafka.tools.DefaultMessageFormatter </span><br><span class="line">            --property print.key=true </span><br><span class="line">            --property print.key=true </span><br><span class="line">            --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer </span><br><span class="line">            --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer</span><br></pre></td></tr></table></figure></p>
-<p>输出数据打印到控台（你可以使用Ctrl-C停止）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">all     1</span><br><span class="line">streams 1</span><br><span class="line">lead    1</span><br><span class="line">to      1</span><br><span class="line">kafka   1</span><br><span class="line">hello   1</span><br><span class="line">kafka   2</span><br><span class="line">streams 2</span><br><span class="line">join    1</span><br><span class="line">kafka   3</span><br><span class="line">summit  1</span><br><span class="line">^C</span><br></pre></td></tr></table></figure></p>
-<p>第一列是message的key，第二列是message的value，要注意，输出的实际是一个连续的更新流，其中每条数据（即：原始输出的每行）是一个单词的最新的count，又叫记录键“kafka”。对于同一个key有多个记录，每个记录之后是前一个的更新。</p>
+        <h2 id="善用Intellij插件可大幅提升我们的效率"><a href="#善用Intellij插件可大幅提升我们的效率" class="headerlink" title="善用Intellij插件可大幅提升我们的效率"></a>善用Intellij插件可大幅提升我们的效率</h2><p>以下是我用过不错的Intellij插件</p>
+<h3 id="ignore"><a href="#ignore" class="headerlink" title=".ignore"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/7495--ignore" target="_blank" rel="noopener">.ignore</a></h3><p>生成各种ignore文件，一键创建git ignore文件的模板，免得自己去写</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t1.jpeg" alt=""></p>
+<h3 id="lombok"><a href="#lombok" class="headerlink" title="lombok"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/6317-lombok-plugin" target="_blank" rel="noopener">lombok</a></h3><p>支持lombok的各种注解，从此不用写getter setter这些 可以把注解还原为原本的java代码 非常方便</p>
+<p>截图：</p>
+<p><img src="/avatar/idea/t2.jpeg" alt=""></p>
+<h3 id="p3c"><a href="#p3c" class="headerlink" title="p3c"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/10046-alibaba-java-coding-guidelines" target="_blank" rel="noopener">p3c</a></h3><p>阿里巴巴出品的java代码规范插件</p>
+<p>可以扫描整个项目 找到不规范的地方 并且大部分可以自动修复</p>
+<p>更多可看: <a href="http://link.zhihu.com/?target=https%3A//github.com/alibaba/p3c/tree/master/idea-plugin" target="_blank" rel="noopener">https://github.com/alibaba/p3c/tree/master/idea-plugin</a></p>
+<h3 id="FindBugs-IDEA"><a href="#FindBugs-IDEA" class="headerlink" title="FindBugs-IDEA"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/3847-findbugs-idea" target="_blank" rel="noopener">FindBugs-IDEA</a></h3><p>检测代码中可能的bug及不规范的位置，检测的模式相比p3c更多，</p>
+<p>写完代码后检测下 避免低级bug，强烈建议用一下，一不小心就发现很多老代码的bug</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t3.jpeg" alt=""></p>
+<h3 id="GsonFormat"><a href="#GsonFormat" class="headerlink" title="GsonFormat"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/7654-gsonformat" target="_blank" rel="noopener">GsonFormat</a></h3><p>一键根据json文本生成java类 非常方便</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t4.jpeg" alt=""></p>
+<h3 id="Maven-Helper"><a href="#Maven-Helper" class="headerlink" title="Maven Helper"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/7179-maven-helper" target="_blank" rel="noopener">Maven Helper</a></h3><p>一键查看maven依赖，查看冲突的依赖，一键进行exclude依赖</p>
+<p>对于大型项目 非常方便</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t5.jpeg" alt=""></p>
+<h3 id="VisualVM-Launcher"><a href="#VisualVM-Launcher" class="headerlink" title="VisualVM Launcher"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/7115-visualvm-launcher" target="_blank" rel="noopener">VisualVM Launcher</a></h3><p>运行java程序的时候启动visualvm，方便查看jvm的情况 比如堆内存大小的分配</p>
+<p>某个对象占用了多大的内存，jvm调优必备工具</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t6.jpeg" alt=""></p>
+<h3 id="GenerateAllSetter"><a href="#GenerateAllSetter" class="headerlink" title="GenerateAllSetter"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/9360-generateallsetter" target="_blank" rel="noopener">GenerateAllSetter</a></h3><p>一键调用一个对象的所有set方法并且赋予默认值 在对象字段多的时候非常方便</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t7.jpeg" alt=""></p>
+<h3 id="MyBatisCodeHelperPro"><a href="#MyBatisCodeHelperPro" class="headerlink" title="MyBatisCodeHelperPro"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/9837-mybatiscodehelperpro" target="_blank" rel="noopener">MyBatisCodeHelperPro</a></h3><p>mybatis代码自动生成插件，大部分单表操作的代码可自动生成 减少重复劳动 大幅提升效率</p>
+<p>截图:</p>
+<p><img src="/avatar/idea/t8.jpeg" alt=""></p>
+<p>其他还有很多通用的插件 也非常好用 推荐几个</p>
+<h3 id="Rainbow-Brackets"><a href="#Rainbow-Brackets" class="headerlink" title="Rainbow Brackets"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/10080-rainbow-brackets" target="_blank" rel="noopener">Rainbow Brackets</a></h3><p>彩虹颜色的括号 看着很舒服 敲代码效率变高</p>
+<p><img src="/avatar/idea/t9.jpeg" alt=""></p>
+<h3 id="Translation"><a href="#Translation" class="headerlink" title="Translation"></a><a href="http://link.zhihu.com/?target=https%3A//plugins.jetbrains.com/plugin/8579-translation" target="_blank" rel="noopener">Translation</a></h3><p>最好用的翻译插件，功能很强大，界面很漂亮.</p>
+<p>以上插件均可在Intellij 插件市场中搜索到 或者 点击插件名字的链接 从硬盘安装插件</p>
+<p>详细的话可以看p3c插件的安装文档 <a href="http://link.zhihu.com/?target=https%3A//github.com/alibaba/p3c/tree/master/idea-plugin" target="_blank" rel="noopener">https://github.com/alibaba/p3c/tree/master/idea-plugin</a></p>
+<p>有其他插件推荐的话，欢迎留言</p>
 
     </article>
     <!-- 前后页  -->
     <ul class="post-pager">
         
-            <li class="next">
-                <a href= "/2018/01/15/分布式流数据处理Kafka-三/" title= 分布式流数据处理Kafka-三 >
-                    <span>Next Post</span>
-                    <span>分布式流数据处理Kafka-三</span>
-                </a>
-            </li>
-        
         
             <li class="previous">
-                <a href= "/2018/01/08/分布式流数据处理Kafka-一/" title= 分布式流数据处理Kafka(一) >
+                <a href= "/2018/05/01/InnoDB七种类型锁/" title= InnoDB七种类型锁 >
                     <span>Previous Post</span>
-                    <span>分布式流数据处理Kafka(一)</span>
+                    <span>InnoDB七种类型锁</span>
                 </a>
             </li>
         
@@ -296,7 +264,7 @@
 <script src="https://billts.site/js/gitment.js"></script>
 <script>
     var gitment = new Gitment({
-        id: 'Thu Jan 11 2018 09:24:50 GMT+0800', // 可选。默认为 location.href
+        id: 'Sat Jun 02 2018 10:36:00 GMT+0800', // 可选。默认为 location.href
         owner: 'wycmiko',
         repo: 'blogcomment.github.io',
         oauth: {
@@ -379,7 +347,7 @@
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#下载代码"><span class="toc-number">1.</span> <span class="toc-text">下载代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动服务"><span class="toc-number">2.</span> <span class="toc-text">启动服务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#创建一个主题-topic"><span class="toc-number">3.</span> <span class="toc-text">创建一个主题(topic)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#发送消息"><span class="toc-number">4.</span> <span class="toc-text">发送消息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#消费消息"><span class="toc-number">5.</span> <span class="toc-text">消费消息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#设置多个broker集群"><span class="toc-number">6.</span> <span class="toc-text">设置多个broker集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用-Kafka-Connect-来-导入-导出-数据"><span class="toc-number">7.</span> <span class="toc-text">使用 Kafka Connect 来 导入/导出 数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Kafka-Stream来处理数据"><span class="toc-number">8.</span> <span class="toc-text">使用Kafka Stream来处理数据</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#善用Intellij插件可大幅提升我们的效率"><span class="toc-number">1.</span> <span class="toc-text">善用Intellij插件可大幅提升我们的效率</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ignore"><span class="toc-number">1.1.</span> <span class="toc-text">.ignore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lombok"><span class="toc-number">1.2.</span> <span class="toc-text">lombok</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#p3c"><span class="toc-number">1.3.</span> <span class="toc-text">p3c</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FindBugs-IDEA"><span class="toc-number">1.4.</span> <span class="toc-text">FindBugs-IDEA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GsonFormat"><span class="toc-number">1.5.</span> <span class="toc-text">GsonFormat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Maven-Helper"><span class="toc-number">1.6.</span> <span class="toc-text">Maven Helper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VisualVM-Launcher"><span class="toc-number">1.7.</span> <span class="toc-text">VisualVM Launcher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GenerateAllSetter"><span class="toc-number">1.8.</span> <span class="toc-text">GenerateAllSetter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MyBatisCodeHelperPro"><span class="toc-number">1.9.</span> <span class="toc-text">MyBatisCodeHelperPro</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rainbow-Brackets"><span class="toc-number">1.10.</span> <span class="toc-text">Rainbow Brackets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Translation"><span class="toc-number">1.11.</span> <span class="toc-text">Translation</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top">&#xe639;</div>
