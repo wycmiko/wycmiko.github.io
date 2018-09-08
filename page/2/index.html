@@ -171,6 +171,105 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/18/Spark基础性能调优/" >
+                
+                    <span>Spark基础性能调优</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/18/Spark基础性能调优/" >
+                <div class="abstract-content">
+                    在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。
+后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/18</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
+                
+                    <span>分布式流数据处理Kafka-三</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
+                <div class="abstract-content">
+                    
+上一篇介绍了基本的终端操作，这一篇将介绍介绍kafka的JavaAPI操作。
+
+Apache Kafka引入一个新的java客户端（在org.apache.kafka.clients 包中），替代老的Scala客户端，但是为了兼容，将会共存一段时间。为了减少依赖，这些客户端都有一个独立的jar，而旧的Scala客户端继续与服务端保留在同个包下。
+Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到kafka集群中的topic。  ● Consumer API 允许应用程序从kafka集群的topic中读取数据流。  ● Streams API 允许从输...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/15</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
+                
+                    <span>分布式流数据处理Kafka(二)</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
+                <div class="abstract-content">
+                    上一篇介绍了基本概念，本篇则介绍一些基本使用。
+下载代码下载0.10.0.0版本并且解压它。&gt; tar -xzf kafka_2.11-0.10.0.0.tgz&gt; cd kafka_2.11-0.10.0.0
+启动服务运行kafka需要使用Zookeeper，所以你需要先启动Zookeeper，如果你没有Zookeeper，你可以使用kafka自带打包和配置好的Zookeeper。&gt; bin/zookeeper-server-start.sh config/zookeeper.properties打印日志：    [2013-04-22 15:01:37,495] IN...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/11</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2018/01/08/分布式流数据处理Kafka-一/" >
                 
                     <span>分布式流数据处理Kafka(一)</span>
@@ -390,93 +489,6 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
                 <!-- date  -->
                 <div class="abstract-date">
                     <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/09/07</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
-                
-                    <span>Java并发编程笔记（五）锁的优化及其注意事项2</span>
-            </a>
-            <a class="content-show-full" href = "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >
-                <div class="abstract-content">
-                    让普通变量也享受原子操作：AtomicIntegerFieldUpdater/Long/Reference普通变量通过该类也可以享受原子操作CAS的线程安全特性。使用如下：public static final AtomicIntegerFieldUpdater&lt;T&gt; field = AtomicIntegerFieldUpdater.newUpdater(T.class,&quot;FieldName&quot;);来进行构造，也可以使用cas的incrementAndGet()方法进行自增等操作。但是使用该类需要注意以下几点：1、Updater只能修改其可见范围，例如必须...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/17</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >
-                
-                    <span>Java并发编程笔记（四）锁的优化及其注意事项</span>
-            </a>
-            <a class="content-show-full" href = "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >
-                <div class="abstract-content">
-                    我们采用并行算法的目的是为了提升效率，但事实上使用多线程的方式会额外地增加系统开销，如果在单核CPU上并行CPU的效率一般低于串行的，因此合理地使用并发才能将CPU性能发挥到极致。
-有助于提高锁性能的几点建议减少锁持有时间如果每个程序都占用锁时间很长。那么将是是一笔非常大的开销，只在必要时候进行同步就能明显减少开销，提高系统吞吐量。（减少锁的占有时间也有效地降低锁冲突的可能性 进而提升系统的并发能力）
-减小锁粒度减小锁的粒度也是一种削弱多线程锁竞争 的有效手段。前面所介绍的HashMap，如果你直接在类上加synchronized锁 那么无疑是线程安全的，但是这也锁粒度太大，所以性能很低...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/08/07</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
-                
-                    <span>Java并发编程笔记（三）JDK并发包详解2</span>
-            </a>
-            <a class="content-show-full" href = "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >
-                <div class="abstract-content">
-                    线程复用：线程池一个系统中，如果盲目大量地创建线程对系统是有伤害的。大量的线程回收也会给GC增加很大的压力，延长GC的停顿时间，同数据库连接池一样，为了避免创建和销毁线程的高开销，对线程进行复用，需要时从线程池中获取线程，用完还给线程池，让线程池 空闲线程 和 工作线程 处于一个动态平衡之中。
-不要重复发明轮子：JDK对线程池的支持为了更好地控制多线程，JDK提供了一套Executor框架，帮助开发人员进行线程控制，其本质就是线程池。包含了许许多多的方法，以上成员均在java.util.concurrent包中，都是jdk并发包的核心类。其中ThreadPoolExecutor表示一个线...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/07/01</span>
                 </div>
             </div>
         </article>
@@ -1120,7 +1132,68 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     
     
-    <div class="total-archive"> 总计 : 34 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 37 </div>
     
     <div class="post-archive">
     
@@ -1129,6 +1202,21 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2018/09/02/分布式锁-ZK实现/" >分布式锁-ZK实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2018/08/28/分布式锁-Redis实现/" >分布式锁-Redis实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/CPU多级缓存以及伪共享问题/" >CPU多级缓存以及伪共享问题</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1314,21 +1402,15 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
@@ -1336,35 +1418,41 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">插件</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
     
@@ -1375,8 +1463,6 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Docker</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">

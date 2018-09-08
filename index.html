@@ -171,6 +171,103 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/09/02/分布式锁-ZK实现/" >
+                
+                    <span>分布式锁-ZK实现</span>
+            </a>
+            <a class="content-show-full" href = "/2018/09/02/分布式锁-ZK实现/" >
+                <div class="abstract-content">
+                    前言最近在做一个系统功能时，发现有个方法是需要做同步的，but，生产环境中项目的部署是多个tomcat做集群的，而简单的使用synchronized加锁只是针对同一个JVM进程中的多线程实现同步，对于跨进程的同步无法达到统一加锁的目的。于是，小白便想到了分布式锁。前段时间刚好看到一幅有意思的漫画，其中就提到Zookeeper被设计的初衷，就是利用临时顺序节点，可以轻松实现分布式锁，便研究了下利用zk实现分布式锁。本文只研究了zk的基本特性以及使用java实现一个简单的分布式锁，如有错误，欢迎拍砖，另外稍微白话，不喜勿喷。
+假设背景假设小白的系统生产环境上部署了2台tomcat（t1 和 ...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发>并发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/09/02</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/08/28/分布式锁-Redis实现/" >
+                
+                    <span>分布式锁-Redis实现</span>
+            </a>
+            <a class="content-show-full" href = "/2018/08/28/分布式锁-Redis实现/" >
+                <div class="abstract-content">
+                    前言分布式锁一般有三种实现方式：1. 数据库乐观锁；2. 基于Redis的分布式锁；3. 基于ZooKeeper的分布式锁。本篇博客将介绍第二种方式，基于Redis实现分布式锁。虽然网上已经有各种介绍Redis分布式锁实现的博客，然而他们的实现却有着各种各样的问题，为了避免误人子弟，本篇博客将详细介绍如何正确地实现Redis分布式锁。
+可靠性首先，为了确保分布式锁可用，我们至少要确保锁的实现同时满足以下四个条件：
+
+互斥性。在任意时刻，只有一个客户端能持有锁。
+不会发生死锁。即使有一个客户端在持有锁的期间崩溃而没有主动解锁，也能保证后续其他客户端能加锁。
+具有容错性。只要大部分的Redi...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发>并发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/08/28</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/08/18/CPU多级缓存以及伪共享问题/" >
+                
+                    <span>CPU多级缓存以及伪共享问题</span>
+            </a>
+            <a class="content-show-full" href = "/2018/08/18/CPU多级缓存以及伪共享问题/" >
+                <div class="abstract-content">
+                    典型的 CPU 有三级缓存，距离核心越近，速度越快，空间越小。
+L1 一般 32k，L2 一般 256k，L3 一般12M。内存速度需要200个 CPU 周期，CPU 缓存需要1个CPU周期。
+ CPU是计算机的大脑，它负责执行程序的指令；内存负责存数据，包括程序自身数据。内存比CPU慢很多，现在获取内存中的一条数据大概需要200多个CPU周期(CPU cycles)，而CPU寄存器一般情况下1个CPU周期就够了。
+​       网页浏览器为了加快速度，会在本机存缓存以前浏览过的数据；传统数据库或NoSQL数据库为了加速查询,常在内存设置一个缓存，减少对磁盘(慢)的IO。同样内存与CP...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发>并发</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/08/18</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2018/08/12/高效编写Dockerfile的几条准则/" >
                 
                     <span>高效编写Dockerfile的几条准则</span>
@@ -401,105 +498,6 @@ Nginx对于中间件nginx常用来做流量的分发，同时nginx本身也有�
                 <!-- date  -->
                 <div class="abstract-date">
                     <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/24</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/18/Spark基础性能调优/" >
-                
-                    <span>Spark基础性能调优</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/18/Spark基础性能调优/" >
-                <div class="abstract-content">
-                    在项目的开发中，最开始我把所有任务丢在一个进程里，需要花两个多小时才能跑完；后来在Hive建了一张中间表，把预处理的数据存到Hive里，再从Hive读取数据做预测，这样只需要20min就能跑完，性能大约提高了6倍。
-后来想了一下，我的脚本之所以执行得慢有两个重要的原因：使用了太多shuffle类算子，如join、group by等；没有把预处理的数据缓存到内存中，导致后面的action算子都会重新计算那个RDD。这就是为什么我仅仅建了一张中间表就使速度提高了6倍，其实有更好的做法，只要cache()一下就好了。开发调优最基本的Spark性能优化，就是要优化你的代码。Spark中rdd内部...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 大数据>大数据</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = Spark>Spark</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 性能调优>性能调优</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/18</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
-                
-                    <span>分布式流数据处理Kafka-三</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/15/分布式流数据处理Kafka-三/" >
-                <div class="abstract-content">
-                    
-上一篇介绍了基本的终端操作，这一篇将介绍介绍kafka的JavaAPI操作。
-
-Apache Kafka引入一个新的java客户端（在org.apache.kafka.clients 包中），替代老的Scala客户端，但是为了兼容，将会共存一段时间。为了减少依赖，这些客户端都有一个独立的jar，而旧的Scala客户端继续与服务端保留在同个包下。
-Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到kafka集群中的topic。  ● Consumer API 允许应用程序从kafka集群的topic中读取数据流。  ● Streams API 允许从输...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/15</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
-                
-                    <span>分布式流数据处理Kafka(二)</span>
-            </a>
-            <a class="content-show-full" href = "/2018/01/11/分布式流数据处理Kafka-二/" >
-                <div class="abstract-content">
-                    上一篇介绍了基本概念，本篇则介绍一些基本使用。
-下载代码下载0.10.0.0版本并且解压它。&gt; tar -xzf kafka_2.11-0.10.0.0.tgz&gt; cd kafka_2.11-0.10.0.0
-启动服务运行kafka需要使用Zookeeper，所以你需要先启动Zookeeper，如果你没有Zookeeper，你可以使用kafka自带打包和配置好的Zookeeper。&gt; bin/zookeeper-server-start.sh config/zookeeper.properties打印日志：    [2013-04-22 15:01:37,495] IN...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = kafka>kafka</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/11</span>
                 </div>
             </div>
         </article>
@@ -1143,7 +1141,68 @@ Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到k
     
     
     
-    <div class="total-archive"> 总计 : 34 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 37 </div>
     
     <div class="post-archive">
     
@@ -1152,6 +1211,21 @@ Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到k
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2018/09/02/分布式锁-ZK实现/" >分布式锁-ZK实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2018/08/28/分布式锁-Redis实现/" >分布式锁-Redis实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/CPU多级缓存以及伪共享问题/" >CPU多级缓存以及伪共享问题</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1337,21 +1411,15 @@ Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到k
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
@@ -1359,35 +1427,41 @@ Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到k
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">插件</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
     
@@ -1398,8 +1472,6 @@ Kafka有4个核心API：  ● Producer API 允许应用程序发送数据流到k
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Docker</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">

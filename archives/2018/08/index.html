@@ -158,6 +158,72 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/08/28/分布式锁-Redis实现/" >
+                
+                    <span>分布式锁-Redis实现</span>
+            </a>
+            <a class="content-show-full" href = "/2018/08/28/分布式锁-Redis实现/" >
+                <div class="abstract-content">
+                    前言分布式锁一般有三种实现方式：1. 数据库乐观锁；2. 基于Redis的分布式锁；3. 基于ZooKeeper的分布式锁。本篇博客将介绍第二种方式，基于Redis实现分布式锁。虽然网上已经有各种介绍Redis分布式锁实现的博客，然而他们的实现却有着各种各样的问题，为了避免误人子弟，本篇博客将详细介绍如何正确地实现Redis分布式锁。
+可靠性首先，为了确保分布式锁可用，我们至少要确保锁的实现同时满足以下四个条件：
+
+互斥性。在任意时刻，只有一个客户端能持有锁。
+不会发生死锁。即使有一个客户端在持有锁的期间崩溃而没有主动解锁，也能保证后续其他客户端能加锁。
+具有容错性。只要大部分的Redi...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发>并发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 分布式>分布式</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/08/28</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/08/18/CPU多级缓存以及伪共享问题/" >
+                
+                    <span>CPU多级缓存以及伪共享问题</span>
+            </a>
+            <a class="content-show-full" href = "/2018/08/18/CPU多级缓存以及伪共享问题/" >
+                <div class="abstract-content">
+                    典型的 CPU 有三级缓存，距离核心越近，速度越快，空间越小。
+L1 一般 32k，L2 一般 256k，L3 一般12M。内存速度需要200个 CPU 周期，CPU 缓存需要1个CPU周期。
+ CPU是计算机的大脑，它负责执行程序的指令；内存负责存数据，包括程序自身数据。内存比CPU慢很多，现在获取内存中的一条数据大概需要200多个CPU周期(CPU cycles)，而CPU寄存器一般情况下1个CPU周期就够了。
+​       网页浏览器为了加快速度，会在本机存缓存以前浏览过的数据；传统数据库或NoSQL数据库为了加速查询,常在内存设置一个缓存，减少对磁盘(慢)的IO。同样内存与CP...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 并发>并发</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/08/18</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2018/08/12/高效编写Dockerfile的几条准则/" >
                 
                     <span>高效编写Dockerfile的几条准则</span>
@@ -751,7 +817,68 @@ Dockerfile 是专门用来进行自动化构建镜像的编排文件（就像Jen
     
     
     
-    <div class="total-archive"> 总计 : 34 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 37 </div>
     
     <div class="post-archive">
     
@@ -760,6 +887,21 @@ Dockerfile 是专门用来进行自动化构建镜像的编排文件（就像Jen
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2018/09/02/分布式锁-ZK实现/" >分布式锁-ZK实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2018/08/28/分布式锁-Redis实现/" >分布式锁-Redis实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/CPU多级缓存以及伪共享问题/" >CPU多级缓存以及伪共享问题</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -945,21 +1087,15 @@ Dockerfile 是专门用来进行自动化构建镜像的编排文件（就像Jen
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
@@ -967,35 +1103,41 @@ Dockerfile 是专门用来进行自动化构建镜像的编排文件（就像Jen
     
         <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
     
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">插件</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">docker</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
     
@@ -1006,8 +1148,6 @@ Dockerfile 是专门用来进行自动化构建镜像的编排文件（就像Jen
         <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">优化</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">Docker</a></span>
     
     </div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
