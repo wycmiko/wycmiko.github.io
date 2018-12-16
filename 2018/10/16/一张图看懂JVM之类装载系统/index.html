@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        一张图看懂JVM之类装载系统 · 翁玉川Miko个人博客
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Yuchuan Weng.Miko Tech-Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">一张图看懂JVM之类装载系统</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Yuchuan Weng.Miko Tech-Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            一张图看懂JVM之类装载系统
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = JVM虚拟机>JVM虚拟机</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/scripts/baidu.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/10/16</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p><img src="/avatar/jvm/jvm1.jpg" alt=""></p>
+<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a><strong>导读</strong></h2><blockquote>
+<p>在之前的文章中，我们通过一张图的方式（图👆）整体上了解了JVM的结构，并重点讲解了JVM的内存结构、内存回收算法及回收器方面的知识。收到了不少读者朋友们的反馈和指正，在这里作者向这些提出中肯建议的读者朋友们表示感谢，谢谢你们的支持。</p>
+<p>在今天的文章中将主要和大家一起探讨关于类装载子系统的内容。我们知道，Java源代码（.java文件）需要通过编译器编译成字节码文件（.class）后由类装载子系统（ClassLoader）载入运行时数据区（&lt;jdk1.8之前是载入方法区，&gt;=jdk1.8以后是载入元数据区）才能被后续的Java运行程序（线程）正常使用（实例化或引用）。</p>
+<p>那么类装载的具体机制是什么样的呢？下面就让我们一起进一步来了解下吧！</p>
+</blockquote>
+<h2 id="JVM类装载概述"><a href="#JVM类装载概述" class="headerlink" title="JVM类装载概述"></a>JVM类装载概述</h2><p>与C/C++那些需要在编译器期进行连接工作的语言不同，Java类的加载、连接和初始化都是在程序运行时完成的，只有在类被需要的时候才进行动态加载，这种方式被称为“<strong>Java语言的运行期类加载机制</strong>”。</p>
+<p>例如我们在实际使用Java语言进行编程时通常会编写一个面向接口的应用程序，可以等到运行时再指定其实际的实现类。此外，更高级一点的做法是可以通过自定义的类加载器（关于具体的ClassLoader在后面的内容会提到），让一个本地的应用程序可以在运行时从网络或其他地方加载一个二进制流作为程序代码的一部分（Applet就是这么干的），这种组装应用程序的方式目前已广泛的应用于Java程序之中。</p>
+<p>类（Class）从被加载到虚拟机内存中开始，到卸载出内存为止会经历如下生命周期：</p>
+<p><img src="/avatar/jvm/j2.jpg" alt=""></p>
+<p>其中验证、准备、解析3个部分又统称为连接（Linking）。在以上过程中，除解析外，加载、验证、准备、初始化、卸载这5个阶段的顺序都是确定的，JVM规定类的加载过程必须按照这种顺序按部就班地开始。而解析阶段则不一定，为了支持Java语言的运行时绑定，解析过程在某些情况下可以在初始化阶段之后再开始。</p>
+<p>需要注意的是，这些阶段并不是必须等到上一个阶段完成才能开始下一个阶段，这些阶段通常都是互相交叉地混合式进行的，会在一个阶段执行的过程中就会调用、激活另外一个阶段。</p>
+<p>聊到这里，我们大概了解了从一个class字节码文件变成加载到内存中能够被使用的类，按照先后顺序需要经过加载、连接、初始化三大主要步骤。连接过程又需要经历验证、准备、解析三个阶段，完成后类被加载至内存，但此时并不能被使用，还需要经过初始化阶段。</p>
+<p>那么，在Java中是否所有的类型在类加载的过程中都需要经过这几个步骤呢？</p>
+<p>我们知道Java语言的类型可以分为两大类：<strong>基本类型、引用类型</strong>。基本类型是由虚拟机预先定义好的，所以不会经历单独的类加载过程。而引用类型又分为四种：<strong>类、接口、数组类、泛型参数</strong>。由于泛型参数会在编译的过程中被擦除（关于类型擦除的知识，大家可以查下资料），所以在Java中只有类、接口、数组类三种类型需要经历JVM对其进行连接和初始化的过程。</p>
+<p>在上述三种类型中数组类是由JVM直接生成的，类和接口则有对应的字节流，字节流最常见的形式就是我们由编译器生成的class文件，另外的形式也有在前面说到的通过网络加载的二进制流（例如网页中内嵌的小程序 Java applet），这些不同形式的字节流都会被JVM加载到内存中，成为类或接口。</p>
+<h2 id="JVM类装载过程"><a href="#JVM类装载过程" class="headerlink" title="JVM类装载过程"></a>JVM类装载过程</h2><p>那么这些过程具体会干些什么事呢？接下来我们就详细了解下这些具体步骤的细节。</p>
+<h3 id="加载（Loading）"><a href="#加载（Loading）" class="headerlink" title="| 加载（Loading）"></a>| 加载（Loading）</h3><p>“加载”是“类加载”（Class Loading）过程的一个阶段，是查找字节流并据此创建类的过程。在前面我们提到过说数组类因为没有对应的字节流所以是由JVM直接生成的，而对于类和接口来说则需要借助类加载器（后面会讲到）来完成查找字节流的过程。</p>
+<p>但是我们在回答上面关于Java中哪些类型需要经历类加载的阶段时，又明确说了数组类型也是需要JVM对其进行连接和初始化的，这是不是有点矛盾呢？事实上，虽然数组类本身并不通过类加载器加载（由虚拟机直接创建），但是数组类与类加载器仍然有很密切的关系，因为数组类的元素类型（Element Type）如对象数组，最终还是要靠类加载器去创建。</p>
+<p>关于数组类的加载创建过程是需要遵循如下规范的：</p>
+<ul>
+<li>如果数组的元素类型是引用类型的话，那么就会递归采用前面内容中定义的类加载过程去加载这个元素类型，该数组本身将会在加载该元素类型的类加载器的类名称空间上被标识（这一点非常重要，在讲述类加载器的时候会介绍到，一个类必须与类加载器一起确定唯一性）。</li>
+</ul>
+<ul>
+<li>如果数组的元素类型不是引用类型（例如int[]数组），JVM则会把该int[]数组标记为启动类加载器（Bootstrap Classloader）关联。</li>
+</ul>
+<p>实际上，在加载阶段虚拟机需要完成以下三件事：</p>
+<ul>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流。</li>
+</ul>
+<ul>
+<li>将这个字节流所代表的静态存储结构转换为方法区（JDK1.8以前）或者元数据（JDK1.8以后）的运行时数据结构。</li>
+</ul>
+<ul>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区或元数据区这个类的各种数据的访问入口。</li>
+</ul>
+<p>加载阶段完成后，JVM外部的二进制字节流就按照虚拟机所需要的格式存储在了方法区或元数据区的内存中了。</p>
+<h3 id="验证（Verification）"><a href="#验证（Verification）" class="headerlink" title="| 验证（Verification）"></a>| 验证（Verification）</h3><p>验证是连接阶段的第一步，这一阶段的主要目的是为了确保Class文件的字节流中所包含的信息符合当前JVM的要求，并且不会危害JVM自身的安全。虚拟机如果不检查输入的字节流，对其完全信任的话，很可能会因为载入了有害的字节流而导致系统崩溃，所以验证阶段是非常重要的，这个阶段是否严谨，直接决定了JVM是否能承受恶意代码的攻击。</p>
+<p>那么验证阶段具体应当检查哪些方面？如何检查？何时检查呢？</p>
+<p>在《Java虚拟机规范（Java SE 7版）》中大概是有130页左右的篇幅是来描述验证的过程的，受篇幅所限，我们无法逐条规则去探讨。但从整体上来看，验证阶段大致会完成如下四个阶段的检验动作：</p>
+<p>1）、文件格式验证</p>
+<p>文件格式验证就是要验证字节流是否符合Class文件格式的规范，以及是否能被当前版本的虚拟机处理。例如，常量池的常量中是否有不被支持的常量类型；Class文件中各个部分及文件本身是否有被删除的或附加的其他信息等等。</p>
+<p>这个阶段验证的主要目的就是为了保证输入的字节流能正确地解析并存储于方法区或元数据区之内，格式上符合描述一个Java类型信息的要求。本阶段的验证是基于二进制字节流进行的，只有通过了这个阶段的验证，字节流才会正常进入内存（方法区／元数据区）中进行存储，所以后面剩下的3个验证阶段全部是基于已经载入内存的存储结构进行的，而不会再直接操作字节流了。</p>
+<p>2）、元数据验证</p>
+<p>元数据区验证的主要目的是对类的元数据信息进行语义的校验，以保证描述的信息符合Java语言规范的要求。</p>
+<p>例如：</p>
+<p>这个类是否有父类（除了java.lang.Object之外，所有的类都应该有父类）？这个类的父类是否继承了不允许被继承的类（如被final修饰的类）？如果这个类不是抽象类，是否实现了其父类或接口之中要求实现的所有方法？类中的字段、方法是否与父类产生矛盾？等等。虽然这些逻辑目前编译器都会在编译字节码文件时加以校验，但是作为JVM类加载本身为了确保自身的安全性，也是需要进行严格校验的。</p>
+<p>3）、字节码验证</p>
+<p>字节码验证是一个更加复杂的阶段，主要目的是通过数据流和控制流的分析，确定程序语义是合法的、符合逻辑的。在元数据验证阶段主要是完成了对元数据信息的类型校验，而这个阶段则是对类的方法体进行校验分析，确保被校验类的方法在运行时不会做出危害虚拟机安全的事件。例如，保证方法体中的类型转换是有效的，可以把一个子类对象赋值给父类的数据类型（上溯造型），但是不能把父类对象赋值给子类数据类型或者把对象赋值给与与它毫无继承关系的类型。</p>
+<p>4）、符号引用验证</p>
+<p>符号引用验证可以看做是对类自身以外（主要是常量池中的各种符号引用）的信息进行匹配性校验。目的是确保后面进入解析阶段后，解析动作能够正常执行。如果无法通过符号引用验证，就会抛出如“java.lang.IllegalAccessError”、“java.lang.NoSuchFileIdError”、“java.lang.NoSuchMethodError”等这样的异常信息。</p>
+<p>对于JVM的类加载机制来说，验证阶段是一个非常重要，但是不一定必要（对程序的运行期没有影响）的阶段。如果所运行的全部代码，包括自己编写的以及第三方包中的代码都已经被反复使用和验证过，那么就可以考虑使用</p>
+<p>“-Xverify:none”参数来关闭大部分的验证措施，以缩短虚拟机类加载的时间。</p>
+<h3 id="准备（Preparation）"><a href="#准备（Preparation）" class="headerlink" title="| 准备（Preparation）"></a>| 准备（Preparation）</h3><p>准备阶段是正式为类变量（被static修饰的变量）分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区（&lt;Jdk1.8）元数据区（&gt;=Jdk1.8）中进行分配。这时候进行内存分配的仅包括类变量，而不包括实例变量，实例变量将会在对象实例化的时候随对象一起分配在Java堆中。</p>
+<p>另外，上面所说的对类变量进行初始值，通常情况下是初始为零值。如int类型的类变量，初始值就是0。</p>
+<h3 id="解析（Resolution）"><a href="#解析（Resolution）" class="headerlink" title="| 解析（Resolution）"></a>| 解析（Resolution）</h3><p>在class文件被加载至JVM之前，这个类是无法知道其他类及方法、字段所对应的具体地址的，甚至不知道自己方法、字段的内存地址。因此，每当需要引用这些成员时Java编译器会生成一个符号引用。在运行阶段这个符号引用一般都能无歧义地定位在具体目标上。举个例子，对于一个方法调用，编译器会生成一个包含目标方法所在类的名字、目标方法的名字、接收参数类型以及返回值类型的符号引用，来指代所要调用的方法。</p>
+<p>解析阶段的目的就是将这些符号引用解析成为实际引用。而实际引用就是真正指向内存地址的指针、相对偏移量或能间接定位到目标的句柄。解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符这7类符号引用进行。</p>
+<p>在前面我们提到过，解析阶段并不一定会在连接过程中完成，因为JVM虚拟机规范并没有对此作明确的要求，只是规定了：“如果某些字节码使用了符号引用，那么在执行这些字节码之前，需要完成对这些符号引用的解析”。对于这一点大家不要搞错了。</p>
+<h3 id="初始化（Intialization）"><a href="#初始化（Intialization）" class="headerlink" title="| 初始化（Intialization）"></a>| 初始化（Intialization）</h3><p>类初始化是类加载过程的最后一步，是为标记为常量值的字段赋值，以及执行<clinit>方法的过程。那么什么样的字段才会被标记为常量值呢？<clinit>方法又是什么呢？</clinit></clinit></p>
+<p>在Java代码中如果要初始化一个静态字段，我们可以在声明时直接赋值，也可以在静态代码块中对其赋值。在这里，如果直接赋值的静态字段被 final 所修饰，并且它的类型是基本类型或字符串时，那么该字段便会被 Java 编译器标记成常量值（ConstantValue），其初始化直接由Java 虚拟机完成。</p>
+<p>而除此之外的直接赋值操作，以及所有静态代码块中的代码则都会被Java编译器置于同一方法中，这个方法就是<clinit>方法，也称为类构造器方法。Java 虚拟机会通过加锁来确保类的 <clinit> 只会被执行一次。</clinit></clinit></p>
+<p>在我们讲述JVM类加载过程的时候，并没有特别说明什么情况下需要开始类加载过程的第一个阶段：加载？这是因为JVM虚拟机规范并没有进行强制约束。但是对于初始化阶段，JVM规范则是严格规定了发生如下情况时必须立刻对类进行“初始化”，而加载、验证、准备也自然需要在此之前开始。</p>
+<p>这几种情况如下：</p>
+<p>1）、当虚拟机启动时，初始化用户指定的主类（包含main方法的类）；</p>
+<p>2）、当遇到用以新建目标类实例的 new 指令时，初始化 new 指令的目标类；</p>
+<p>3）、当遇到调用静态方法的指令时，初始化该静态方法所在的类；</p>
+<p>4）、当遇到访问静态字段的指令时，初始化该静态字段所在的类；</p>
+<p>5）、子类的初始化会先触发父类的初始化（如果父类还没有进行过初始化的话）；</p>
+<p>6）、如果一个接口定义了 default 方法，那么直接实现或者间接实现该接口的类的初始化，会触发该接口的初始化；</p>
+<p>7）、使用反射 API 对某个类进行反射调用时，初始化这个类；</p>
+<p>8）、当初次调用 MethodHandle 实例时（JDK1.7的动态语言支持），初始化该 MethodHandle 指向的方法所在的类;</p>
+<p>以上基本上就是类加载机制中初始化的大致过程，只有当初始化完成之后，类才能正式成为可执行的状态。</p>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>在整个类加载过程中，除了在加载阶段用户应用程序可以通过自定义类加载器参与之外，其余的动作完全是由虚拟机主导和控制的。那么什么是类加载器呢？</p>
+<p>在上述类加载机制的第一个阶段：”加载”中，把“通过一个类的全限定名来获取描述此类的二进制字节流”这个动作由JVM外部实现的代码模块称为“类加载器”。</p>
+<p>从JVM的角度来看，只存在两种不同的类加载器：启动类加载器（Bootstrap ClassLoader）、其他类的加载器。启动类加载器是由C++语言实现的，属于JVM自身的一部分，而其他的类加载器则都是独立于JVM外部，由Java语言实现的继承java.lang.ClassLoader的类型。</p>
+<p>而从Java程序员的角度看，类加载器还可以划分得更加细致一些。示意图如下：<img src="/avatar/jvm/t3.jpg" alt=""></p>
+<p>在上图中的类加载器，是有层次关系的，这种关系被称之为类加载器的“双亲委派模式”，它要求除了顶层启动类加载器外，其余所有的类加载器都应当有自己的父类加载器，并且如果一个类加载器在收到类加载的请求之后都要先把这个请求委派给父类加载器去完成（每一个层次的类加载器都是如此，因此所有的加载请求最终都应该会传送到顶层的启动类加载器中），只有当父类加载器反馈自己无法完成这个加载请求（在搜索范围没有找到所需的类）时，子加载器才会尝试自己去加载。</p>
+<p>双亲委派模式不是强制性的约束模型，只是Java设计者推荐给开发者的类加载器的实现方式，但是采用这种模式对于保证Java程序的稳定运作确实很重要的，因为它可以避免Java体系中基础的类型被混乱加载的风险。例如类java.lang.Object，它存放在rt.jar之中，无论那一个类加载器要加载这个类，最终都会委派给启动类加载器，这样Object类在程序的各种类加载器环境中都是一个类，否则就会导致系统中出现多个不同的Object类，从而连Java类型体系中最基本的行为都无法保证。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2018/09/02/分布式锁-ZK实现/" title= 分布式锁-ZK实现 >
+                    <span>Previous Post</span>
+                    <span>分布式锁-ZK实现</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+<div id="container"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+    var gitment = new Gitment({
+        id: 'Tue Oct 16 2018 10:48:38 GMT+0800', // 可选。默认为 location.href
+        owner: 'wycmiko',
+        repo: 'blogcomment.github.io',
+        oauth: {
+            client_id: '712556ec4c3ca7b31d60',
+            client_secret: '4b0ec453ed9b66699036bd2586f3fece0371e1a1',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wycmiko@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wycmiko/wycmiko.github.io" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/eversince2012" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="//www.zhihu.com/people/newbee66" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+            
+        
+    
+        
+            
+                <a href="//wycmiko.cn/about" class="iconfont-archer linkedin" target="_blank" title="linkedin"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Hexo 强力驱动 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+    </div>
+    <!-- 不蒜子  -->
+    
+	
+	
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM类装载概述"><span class="toc-number">2.</span> <span class="toc-text">JVM类装载概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM类装载过程"><span class="toc-number">3.</span> <span class="toc-text">JVM类装载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载（Loading）"><span class="toc-number">3.1.</span> <span class="toc-text">| 加载（Loading）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证（Verification）"><span class="toc-number">3.2.</span> <span class="toc-text">| 验证（Verification）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备（Preparation）"><span class="toc-number">3.3.</span> <span class="toc-text">| 准备（Preparation）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析（Resolution）"><span class="toc-number">3.4.</span> <span class="toc-text">| 解析（Resolution）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化（Intialization）"><span class="toc-number">3.5.</span> <span class="toc-text">| 初始化（Intialization）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类加载器"><span class="toc-number">4.</span> <span class="toc-text">类加载器</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>全部文章</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>标签</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 38 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2018/10/16/一张图看懂JVM之类装载系统/" >一张图看懂JVM之类装载系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2018/09/02/分布式锁-ZK实现/" >分布式锁-ZK实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2018/08/28/分布式锁-Redis实现/" >分布式锁-Redis实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/CPU多级缓存以及伪共享问题/" >CPU多级缓存以及伪共享问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/12</span><a class="archive-post-title" href= "/2018/08/12/高效编写Dockerfile的几条准则/" >高效编写Dockerfile的几条准则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/2018/07/02/40个Java多线程问题总结/" >40个Java多线程问题总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/02</span><a class="archive-post-title" href= "/2018/06/02/Java程序猿必备Idea插件/" >Java程序猿必备Idea插件</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/InnoDB七种类型锁/" >InnoDB七种类型锁</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2018/03/15/人人必知的10个jQuery小技巧/" >人人必知的10个jQuery小技巧</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/12</span><a class="archive-post-title" href= "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" >Nginx+Redis+Ehcache三层缓存架构总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >Consul vs Zookeeper vs Etcd vs Eureka</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/18</span><a class="archive-post-title" href= "/2018/01/18/Spark基础性能调优/" >Spark基础性能调优</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2018/01/15/分布式流数据处理Kafka-三/" >分布式流数据处理Kafka-三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/11</span><a class="archive-post-title" href= "/2018/01/11/分布式流数据处理Kafka-二/" >分布式流数据处理Kafka(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2018/01/08/分布式流数据处理Kafka-一/" >分布式流数据处理Kafka(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2018/01/05/Java8与并发2/" >Java8与并发2</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/28</span><a class="archive-post-title" href= "/2017/12/28/Java8与并发/" >Java8与并发</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href= "/2017/12/14/Java并发编程笔记（九）NIO与AIO2/" >Java并发编程笔记（九）NIO与AIO2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href= "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >Java并发编程笔记（八）NIO与AIO</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >Java并发编程笔记（七）并行模式与算法2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/07</span><a class="archive-post-title" href= "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >Java并发编程笔记（六）并行模式与算法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2017/08/17/Java并发编程笔记（五）锁的优化及其注意事项2/" >Java并发编程笔记（五）锁的优化及其注意事项2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2017/08/07/Java并发编程笔记（四）锁的优化及其注意事项/" >Java并发编程笔记（四）锁的优化及其注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Java并发编程笔记（三）JDK并发包详解2/" >Java并发编程笔记（三）JDK并发包详解2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/27</span><a class="archive-post-title" href= "/2017/06/27/Java并发编程笔记（二）JDK并发包详解1/" >Java并发编程笔记（二）JDK并发包详解1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/Java并发编程笔记（一）基础概念理解/" >Java并发编程笔记（一）基础概念理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/26</span><a class="archive-post-title" href= "/2017/05/26/缓存那些事儿/" >缓存那些事儿</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2017/05/16/HBase概念及操作（四）内部表原理以及拆分操作/" >HBase概念及操作（四）内部表原理以及拆分操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2017/05/06/HBase概念及操作（三）HBase JavaAPI以及Shell命令/" >HBase概念及操作（三）HBase JavaAPI以及Shell命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2017/05/01/HBase概念及操作（二）HBase安装体验/" >HBase概念及操作（二）HBase安装体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2017/04/01/HBase概念及操作（一）HBase基本概念及原理/" >HBase概念及操作（一）HBase基本概念及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2017/03/30/JVM总体梳理/" >JVM总体梳理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span><a class="archive-post-title" href= "/2017/03/22/浅谈Redis部分应用/" >浅谈Redis部分应用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/01</span><a class="archive-post-title" href= "/2017/03/01/docker基本使用/" >docker基本使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2017/02/25/超快速KV-NOSQL-LevelDB/" >超快速KV NOSQL-LevelDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（二）/" >区块链概念（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/11</span><a class="archive-post-title" href= "/2017/02/11/区块链概念（一）/" >区块链概念（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/21</span><a class="archive-post-title" href= "/2017/01/21/密码学原理/" >密码学原理</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">InnoDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JVM虚拟机</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Java8特性</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">函数式编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">算法</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">缓存</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">docker</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">容器</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">区块链</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Redis</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Hadoop</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">NoSQL</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">LevelDB</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">优化</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <!-- CNZZ统计  -->
+    
+    <div style="display: none">
+        <script src="https://s13.cnzz.com/z_stat.php?id=true&web_id=true" language="JavaScript"></script>
+        
+    </div>
+    </body>
+</html>
+
+

@@ -77,7 +77,7 @@
     
     <!-- 文章页  -->
             
-    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/intro-desktop.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/intro-desktop.jpg)"></div>
     <div class="site-intro-placeholder"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
@@ -167,6 +167,35 @@
         </script>
         <div class="container container-unloaded">
             <main class="main index-page">
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >
+                
+                    <span>Consul vs Zookeeper vs Etcd vs Eureka</span>
+            </a>
+            <a class="content-show-full" href = "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >
+                <div class="abstract-content">
+                    
+  ● 服务的健康检查Euraka 使用时需要显式配置健康检查支持；Zookeeper,Etcd 则在失去了和服务进程的连接情况下任务不健康，而 Consul 相对更为详细点，比如内存是否已使用了90%，文件系统的空间是不是快不足了。  ● 多数据中心支持Consul 通过 WAN 的 Gossip 协议，完成跨数据中心的同步；而且其他的产品则需要额外的开发工作来实现；  ● KV 存储服务除了 Eureka ,其他几款都能够对外支持 k-v 的存储服务，所以后面会讲到这几款产品追求高一致性的重要原因。而提供存储服务，也能够较好的转化为动态配置服务哦。  ● 产品设计中 CAP 理论的...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 服务治理>服务治理</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/01/24</span>
+                </div>
+            </div>
+        </article>
     
     
     
@@ -461,38 +490,6 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
             </div>
         </article>
     
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >
-                
-                    <span>Java并发编程笔记（六）并行模式与算法</span>
-            </a>
-            <a class="content-show-full" href = "/2017/09/07/Java并发编程笔记（六）并行模式与算法/" >
-                <div class="abstract-content">
-                    单例模式除了懒汉式、饿汉式外、线程安全可以创建一个静态内部类来维护单例。1234567891011public class SingletonDemo&#123; private SingletonDemo()&#123;&#125;//私有静态内部类来维护单例private static class LoadInstance()&#123;private static SingletonDemo single = new SingletonDemo();&#125;//公共方法供外部访问public static SingletonDemo getInstance()&#123;ret...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/09/07</span>
-                </div>
-            </div>
-        </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
@@ -616,14 +613,9 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     <!-- powered by Hexo  -->
     <div class="copyright">
-        <span id="hexo-power">Powered by 翁玉川 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
+        <span id="hexo-power">Hexo 强力驱动 <a href="https://github.com/wycmiko/wycmiko.github.io" target="_blank">@WycMiko</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">个人博客</span>
     </div>
     <!-- 不蒜子  -->
-    
-    <div class="busuanzi-container">
-        <span id="busuanzi_container_site_pv">总访问量: <span id="busuanzi_value_site_pv"></span>
-        </span>
-    </div>
     
 	
 	
@@ -1193,7 +1185,42 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     
     
-    <div class="total-archive"> 总计 : 37 </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> 总计 : 38 </div>
     
     <div class="post-archive">
     
@@ -1202,6 +1229,11 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2018/10/16/一张图看懂JVM之类装载系统/" >一张图看懂JVM之类装载系统</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1502,10 +1534,11 @@ jsonContent:
 </script>
     <!-- 不蒜子  -->
     
-    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
     <!-- CNZZ统计  -->
     
+    <div style="display: none">
+        <script src="https://s13.cnzz.com/z_stat.php?id=true&web_id=true" language="JavaScript"></script>
+        
     </div>
     </body>
 </html>
