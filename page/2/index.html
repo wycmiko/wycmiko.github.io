@@ -171,6 +171,69 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2018/03/15/人人必知的10个jQuery小技巧/" >
+                
+                    <span>人人必知的10个jQuery小技巧</span>
+            </a>
+            <a class="content-show-full" href = "/2018/03/15/人人必知的10个jQuery小技巧/" >
+                <div class="abstract-content">
+                    返回顶部按钮你可以利用 animate 和 scrollTop 来实现返回顶部的动画，而不需要使用其他插件。12345// Back to top$(&apos;a.top&apos;).click(function () &#123;  $(document.body).animate(&#123;scrollTop: 0&#125;, 800);  return false;&#125;);&lt;!-- Create an anchor tag --&gt;&lt;a class=&quot;top&quot; href=&quot;#&quot;&gt;Back to top&l...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = JQuery>JQuery</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/03/15</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
+            <a class="abstract-title" href = "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" >
+                
+                    <span>Nginx+Redis+Ehcache三层缓存架构总结</span>
+            </a>
+            <a class="content-show-full" href = "/2018/02/12/Nginx+Redis+Ehcache三层缓存架构总结/" >
+                <div class="abstract-content">
+                    
+摘要: 对于高并发架构，毫无疑问缓存是最重要的一环，对于大量的高并发，可以采用三层缓存架构来实现，nginx+redis+ehcache
+
+Nginx对于中间件nginx常用来做流量的分发，同时nginx本身也有自己的缓存（容量有限），我们可以用来缓存热点数据，让用户的请求直接走缓存并返回，减少流向服务器的流量
+一、模板引擎通常我们可以配合使用freemaker/velocity等模板引擎来抗住大量的请求
+小型系统可能直接在服务器端渲染出所有的页面并放入缓存，之后的相同页面请求就可以直接返回，不用去查询数据源或者做数据逻辑处理对于页面非常之多的系统，当模板有改变，上述方法就需要重新渲染...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 高并发>高并发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 缓存>缓存</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2018/02/12</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2018/01/24/Consul vs Zookeeper vs Etcd vs Eureka/" >
                 
                     <span>Consul vs Zookeeper vs Etcd vs Eureka</span>
@@ -423,69 +486,6 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
                 <!-- date  -->
                 <div class="abstract-date">
                     <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/12/14</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
-                
-                    <span>Java并发编程笔记（八）NIO与AIO</span>
-            </a>
-            <a class="content-show-full" href = "/2017/11/11/Java并发编程笔记（八）NIO与AIO/" >
-                <div class="abstract-content">
-                    NIO简介Java NIO(New IO)是一个可以替代标准Java IO API的IO API（从Java 1.4开始)，Java NIO提供了与标准IO不同的IO工作方式。
-基本概念 Java NIO: Channels and Buffers（通道和缓冲区） 标准的IO基于字节流和字符流进行操作的，而NIO是基于通道（Channel）和缓冲区（Buffer）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。 Java NIO: Non-blocking IO（非阻塞IO） Java NIO可以让你非阻塞的使用IO，例如：当线程从通道读取数据到缓冲区时，线程还是可以进...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 网络通信>网络通信</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/11/11</span>
-                </div>
-            </div>
-        </article>
-    
-    
-    
-        <article class="index-post">
-            <a class="abstract-title" href = "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >
-                
-                    <span>Java并发编程笔记（七）并行模式与算法2</span>
-            </a>
-            <a class="content-show-full" href = "/2017/10/07/Java并发编程笔记（七）并行模式与算法2/" >
-                <div class="abstract-content">
-                    改进的插入排序：希尔排序插入排序是一种很常用的排序算法，它的基本思想是：一个未排序的数组（当然也可以是链表）可以分为2个部分，前半部分是已经排序的，后半部分是未排序的，在进行排序时候只需要在未排序的部分中选择一个元素将其插入到前面有序的数组中即可，最终未排序的元素越来越少直至为0，初始时可以假设已排序部分就是第一个元素。插入排序算法如下：1234567891011121314151617181920212223242526/**	 * 插入排序展示	 */	public static void insertSort(int arr[])&#123;				Objects.requireN...
-                </div>
-            </a>
-            <div class="abstract-post-meta">
-                <!-- tags  -->
-                
-                <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 并发编程>并发编程</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 算法>算法</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-href = 设计模式>设计模式</a>
-    
-</div>
-                
-                <!-- date  -->
-                <div class="abstract-date">
-                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2017/10/07</span>
                 </div>
             </div>
         </article>
@@ -1198,34 +1198,31 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="total-archive"> 总计 : 38 </div>
+    <div class="total-archive"> 总计 : 40 </div>
     
     <div class="post-archive">
     
     
     
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2019/04/10/Redis集群模式工作原理/" >Redis集群模式工作原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2019/03/14/请使用java8的线程安全日期类/" >请使用java8的线程安全日期类</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
@@ -1434,15 +1431,15 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
@@ -1456,15 +1453,11 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
@@ -1474,13 +1467,17 @@ AIO来实现服务器异步IO需要使用异步通道AsynchronousServerSocketCha
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     

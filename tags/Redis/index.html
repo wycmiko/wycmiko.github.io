@@ -158,6 +158,39 @@
     
     
         <article class="index-post">
+            <a class="abstract-title" href = "/2019/04/10/Redis集群模式工作原理/" >
+                
+                    <span>Redis集群模式工作原理</span>
+            </a>
+            <a class="content-show-full" href = "/2019/04/10/Redis集群模式工作原理/" >
+                <div class="abstract-content">
+                    redis cluster 介绍
+自动将数据进行分片，每个 master 上放一部分数据
+提供内置的高可用支持，部分 master 不可用时，还是可以继续工作的
+
+在 redis cluster 架构下，每个 redis 要放开两个端口号，比如一个是 6379，另外一个就是 加1w 的端口号，比如 16379。
+16379 端口号是用来进行节点间通信的，也就是 cluster bus 的东西，cluster bus 的通信，用来进行故障检测、配置更新、故障转移授权。cluster bus 用了另外一种二进制的协议，gossip 协议，用于节点间进行高效的数据交换，占用更少的网络带宽和处理...
+                </div>
+            </a>
+            <div class="abstract-post-meta">
+                <!-- tags  -->
+                
+                <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = Redis>Redis</a>
+    
+</div>
+                
+                <!-- date  -->
+                <div class="abstract-date">
+                    <span class="abstract-calander iconfont-archer"></span><span class="abstract-time">2019/04/10</span>
+                </div>
+            </div>
+        </article>
+    
+    
+    
+        <article class="index-post">
             <a class="abstract-title" href = "/2017/03/22/浅谈Redis部分应用/" >
                 
                     <span>浅谈Redis部分应用</span>
@@ -818,34 +851,31 @@ Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="total-archive"> 总计 : 38 </div>
+    <div class="total-archive"> 总计 : 40 </div>
     
     <div class="post-archive">
     
     
     
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span><a class="archive-post-title" href= "/2019/04/10/Redis集群模式工作原理/" >Redis集群模式工作原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2019/03/14/请使用java8的线程安全日期类/" >请使用java8的线程安全日期类</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
@@ -1054,15 +1084,15 @@ Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高
         <div class="sidebar-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">服务治理</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">大数据</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">HBase</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">并发</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">多线程</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">MySQL</a></span>
     
@@ -1076,15 +1106,11 @@ Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高
     
         <span class="sidebar-tag-name"><a href= "#">并发编程</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
-    
         <span class="sidebar-tag-name"><a href= "#">算法</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">设计模式</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
+        <span class="sidebar-tag-name"><a href= "#">网络通信</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">高并发</a></span>
     
@@ -1094,13 +1120,17 @@ Redis与HadoopHadoop作为大数据时代的分布式计算平台，由于其高
     
         <span class="sidebar-tag-name"><a href= "#">容器</a></span>
     
-        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
-    
-        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+        <span class="sidebar-tag-name"><a href= "#">插件</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">kafka</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">分布式</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">Spark</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">性能调优</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">JQuery</a></span>
     
         <span class="sidebar-tag-name"><a href= "#">密码学</a></span>
     
